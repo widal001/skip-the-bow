@@ -1,10 +1,23 @@
 import type { Gift } from "../content/types";
-import { gifts } from "../content/config";
+import { GiftCategory } from "../content/types";
+import { getCollection } from "astro:content";
 
 export async function getGiftIdeas(): Promise<Gift[]> {
-  return gifts;
+  const ideas = await getCollection("ideas");
+  return ideas.map((idea) => idea.data);
+}
+
+export async function getGiftsByCategory(
+  category: GiftCategory
+): Promise<Gift[]> {
+  const ideas = await getCollection("ideas");
+  return ideas
+    .map((idea) => idea.data)
+    .filter((gift) => gift.category === category);
 }
 
 export async function getGiftBySlug(slug: string): Promise<Gift | undefined> {
-  return gifts.find((gift) => gift.slug === slug);
+  const ideas = await getCollection("ideas");
+  const idea = ideas.find((idea) => idea.data.slug === slug);
+  return idea?.data;
 }

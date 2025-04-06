@@ -2,9 +2,22 @@
 // src/pages/index.astro
 import Layout from "../layouts/Layout.astro";
 import GiftIdeaCard from "../components/GiftIdeaCard.astro";
-import { getGiftIdeas } from "../lib/idea-service";
+import { getGiftsByCategory } from "../lib/idea-service";
+import { GiftCategory } from "../content/types";
 
-const ideas = await getGiftIdeas();
+const categories = [
+  { id: GiftCategory.enum.subscription, title: "Subscriptions" },
+  { id: GiftCategory.enum.experience, title: "Experiences" },
+  { id: GiftCategory.enum.giftcard, title: "Gift Cards" },
+  { id: GiftCategory.enum.other, title: "Other Gifts" },
+];
+
+const categoryGifts = await Promise.all(
+  categories.map(async (category) => ({
+    ...category,
+    gifts: await getGiftsByCategory(category.id),
+  }))
+);
 ---
 
 <Layout
@@ -12,16 +25,50 @@ const ideas = await getGiftIdeas();
   description="A gift guide for people who'd rather not get gifts — and would rather support local businesses, nonprofits, and experiences."
 >
   <h1>Skip the Bow</h1>
-  <div class="gift-grid">
-    {ideas.map((idea) => <GiftIdeaCard gift={idea} />)}
-  </div>
+  <p class="description">
+    A gift guide for people who'd rather not get gifts — and would rather
+    support local businesses, nonprofits, and experiences.
+  </p>
+
+  {
+    categoryGifts.map(({ id, title, gifts }) => {
+      if (gifts.length === 0) return null;
+      return (
+        <section class="category-section">
+          <h2 class="category-title">{title}</h2>
+          <div class="gift-grid">
+            {gifts.map((gift) => (
+              <GiftIdeaCard gift={gift} />
+            ))}
+          </div>
+        </section>
+      );
+    })
+  }
 </Layout>
 
 <style>
+  .description {
+    font-size: 1.125rem;
+    color: #4b5563;
+    margin: 1rem 0 2rem;
+    max-width: 600px;
+  }
+
+  .category-section {
+    margin-bottom: 4rem;
+  }
+
+  .category-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 1.5rem;
+  }
+
   .gift-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 2rem;
-    margin-top: 2rem;
   }
 </style>

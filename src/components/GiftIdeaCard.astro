@@ -1,5 +1,6 @@
 ---
 import type { Gift } from "../content/types";
+import { GiftCategory } from "../content/types";
 
 interface Props {
   gift: Gift;
@@ -7,6 +8,14 @@ interface Props {
 
 const { gift } = Astro.props;
 const hasImage = gift.image && gift.image !== "";
+
+const categoryColors = {
+  [GiftCategory.enum.donation]: "#3B82F6", // blue
+  [GiftCategory.enum.subscription]: "#10B981", // green
+  [GiftCategory.enum.experience]: "#F59E0B", // yellow
+  [GiftCategory.enum.giftcard]: "#8B5CF6", // purple
+  [GiftCategory.enum.other]: "#6B7280", // gray
+} as const;
 ---
 
 <a href={`/ideas/${gift.slug}`} class="gift-card">
@@ -20,7 +29,12 @@ const hasImage = gift.image && gift.image !== "";
     }
   </div>
   <div class="gift-card__content">
-    <h3 class="gift-card__title">{gift.name}</h3>
+    <h3
+      class="gift-card__title"
+      style={`color: ${categoryColors[gift.category]}`}
+    >
+      {gift.name}
+    </h3>
     <p class="gift-card__description">{gift.description}</p>
     <div class="gift-card__tags">
       {gift.tags.map((tag) => <span class="gift-card__tag">{tag}</span>)}
@@ -76,7 +90,7 @@ const hasImage = gift.image && gift.image !== "";
     margin: 0 0 0.5rem;
     font-size: 1.25rem;
     font-weight: 600;
-    color: #111827;
+    transition: color 0.2s ease;
   }
 
   .gift-card__description {

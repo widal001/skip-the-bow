@@ -1,15 +1,12 @@
 import { defineCollection } from "astro:content";
-import giftsData from "./gifts.json";
 import { giftSchema } from "./types";
+import { file } from "astro/loaders";
 
 const ideasCollection = defineCollection({
-  type: "data",
+  loader: file("src/content/ideas/gifts.json"),
   schema: giftSchema,
 });
 
 export const collections = {
   ideas: ideasCollection,
 };
-
-// Export the gifts data for use in getCollection
-export const gifts = giftsData.gifts;
