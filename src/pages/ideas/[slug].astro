@@ -1,0 +1,14 @@
+---
+import Layout from "../../layouts/Layout.astro";
+const { slug } = Astro.params;
+---
+
+<Layout
+  title={`Gift Idea: ${slug}`}
+  description={`Discover this unique gift idea: ${slug}`}
+>
+  <h1>{slug}</h1>
+  <article>
+    <!-- Content will be dynamically loaded here -->
+  </article>
+</Layout>
