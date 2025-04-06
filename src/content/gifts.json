@@ -1,0 +1,84 @@
+{
+  "gifts": [
+    {
+      "slug": "bookshop-org-gift-card",
+      "name": "Bookshop.org Gift Card",
+      "description": "Support indie bookstores with a digital gift card. Bookshop.org is an online bookstore with a mission to financially support local, independent bookstores.",
+      "priceRange": { "min": 10, "max": 100 },
+      "image": "https://via.placeholder.com/320x180?text=Bookshop",
+      "link": "https://bookshop.org",
+      "tags": ["subscriptions", "books", "local"],
+      "isHidden": false
+    },
+    {
+      "slug": "community-supported-agriculture",
+      "name": "CSA Subscription",
+      "description": "Weekly local produce from small farms. Community Supported Agriculture (CSA) connects consumers directly with local farmers, providing fresh, seasonal produce while supporting sustainable agriculture.",
+      "priceRange": { "min": 25, "max": 50 },
+      "image": "https://via.placeholder.com/320x180?text=CSA",
+      "link": "https://example-csa.org",
+      "tags": ["subscriptions", "food", "local", "sustainable"],
+      "isHidden": false
+    },
+    {
+      "slug": "local-coffee-subscription",
+      "name": "Local Coffee Subscription",
+      "description": "Monthly delivery of freshly roasted coffee from local roasters. Support small coffee businesses while enjoying high-quality, ethically sourced beans.",
+      "priceRange": { "min": 15, "max": 30 },
+      "image": "https://via.placeholder.com/320x180?text=Coffee",
+      "link": "https://example-coffee.org",
+      "tags": ["subscriptions", "food", "local", "beverages"],
+      "isHidden": false
+    },
+    {
+      "slug": "cooking-class",
+      "name": "Local Cooking Class",
+      "description": "Learn to cook with local chefs using seasonal ingredients. A fun experience that supports local culinary talent and teaches valuable skills.",
+      "priceRange": { "min": 75, "max": 150 },
+      "image": "https://via.placeholder.com/320x180?text=Cooking",
+      "link": "https://example-cooking.org",
+      "tags": ["experiences", "food", "local", "learning"],
+      "isHidden": false
+    },
+    {
+      "slug": "museum-membership",
+      "name": "Museum Membership",
+      "description": "Annual membership to a local museum or cultural institution. Supports arts and education while providing year-round access to exhibitions and events.",
+      "priceRange": { "min": 50, "max": 150 },
+      "image": "https://via.placeholder.com/320x180?text=Museum",
+      "link": "https://example-museum.org",
+      "tags": ["memberships", "arts", "local", "education"],
+      "isHidden": false
+    },
+    {
+      "slug": "plant-subscription",
+      "name": "Plant Subscription Box",
+      "description": "Monthly delivery of a new houseplant with care instructions. A sustainable way to bring nature indoors and support local plant nurseries.",
+      "priceRange": { "min": 20, "max": 40 },
+      "image": "https://via.placeholder.com/320x180?text=Plants",
+      "link": "https://example-plants.org",
+      "tags": ["subscriptions", "plants", "local", "sustainable"],
+      "isHidden": false
+    },
+    {
+      "slug": "local-theater-tickets",
+      "name": "Local Theater Tickets",
+      "description": "Season tickets to a local theater company. Support performing arts in your community while enjoying live entertainment.",
+      "priceRange": { "min": 100, "max": 300 },
+      "image": "https://via.placeholder.com/320x180?text=Theater",
+      "link": "https://example-theater.org",
+      "tags": ["experiences", "arts", "local", "entertainment"],
+      "isHidden": false
+    },
+    {
+      "slug": "zero-waste-kit",
+      "name": "Zero Waste Starter Kit",
+      "description": "A collection of reusable items to help reduce waste, including bamboo utensils, reusable bags, and stainless steel containers.",
+      "priceRange": { "min": 30, "max": 60 },
+      "image": "https://via.placeholder.com/320x180?text=ZeroWaste",
+      "link": "https://example-zerowaste.org",
+      "tags": ["sustainable", "local", "kitchen", "eco-friendly"],
+      "isHidden": false
+    }
+  ]
+}
