@@ -1,14 +1,27 @@
 ---
-import Welcome from "../components/Welcome.astro";
+// src/pages/index.astro
 import Layout from "../layouts/Layout.astro";
+import GiftIdeaCard from "../components/GiftIdeaCard.astro";
+import { getGiftIdeas } from "../lib/idea-service";
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const ideas = await getGiftIdeas();
 ---
 
 <Layout
-  title="Home"
-  description="Welcome to Skip the Bow - Your Ultimate Gift Experience"
+  title="Skip the Bow"
+  description="A gift guide for people who'd rather not get gifts — and would rather support local businesses, nonprofits, and experiences."
 >
-  <Welcome />
+  <h1>Skip the Bow</h1>
+  <div class="gift-grid">
+    {ideas.map((idea) => <GiftIdeaCard gift={idea} />)}
+  </div>
 </Layout>
+
+<style>
+  .gift-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+</style>
