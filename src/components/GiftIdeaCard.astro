@@ -7,7 +7,6 @@ interface Props {
 }
 
 const { gift } = Astro.props;
-const hasImage = gift.image && gift.image !== "";
 
 const categoryColors = {
   [GiftCategory.enum.donation]: "#3B82F6", // blue
@@ -19,22 +18,15 @@ const categoryColors = {
 ---
 
 <a href={`/gifts/${gift.slug}`} class="gift-card">
-  <div class="gift-card__image-container">
-    {
-      hasImage ? (
-        <img src={gift.image} alt={gift.name} class="gift-card__image" />
-      ) : (
-        <div
-          class="gift-card__image-placeholder"
-          style={`background-color: ${categoryColors[gift.category]}`}
-        />
-      )
-    }
+  <div class="gift-card__header">
+    <div
+      class="gift-card__header-bg"
+      style={`background-color: ${categoryColors[gift.category]}`}
+    >
+    </div>
+    <h3 class="gift-card__title">{gift.name}</h3>
   </div>
   <div class="gift-card__content">
-    <h3 class="gift-card__title">
-      {gift.name}
-    </h3>
     <p class="gift-card__description">{gift.description}</p>
     <div class="gift-card__tags">
       {gift.tags.map((tag) => <span class="gift-card__tag">{tag}</span>)}
@@ -64,33 +56,36 @@ const categoryColors = {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
 
-  .gift-card__image-container {
+  .gift-card__header {
     width: 100%;
-    aspect-ratio: 16/9;
+    aspect-ratio: 4/1;
     overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    padding: 1rem;
   }
 
-  .gift-card__image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .gift-card__image-placeholder {
+  .gift-card__header-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     opacity: 0.1;
   }
 
-  .gift-card__content {
-    padding: 1rem;
+  .gift-card__title {
+    position: relative;
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #111827;
+    text-align: left;
   }
 
-  .gift-card__title {
-    margin: 0 0 0.5rem;
-    font-size: 1.25rem;
-    font-weight: 600;
-    transition: color 0.2s ease;
+  .gift-card__content {
+    padding: 1rem;
   }
 
   .gift-card__description {

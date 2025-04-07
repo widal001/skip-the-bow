@@ -18,7 +18,6 @@ export const giftSchema = z.object({
     min: z.number(),
     max: z.number(),
   }),
-  image: z.string().optional(),
   link: z.string().url(),
   tags: z.array(z.string()),
   isHidden: z.boolean().default(false),

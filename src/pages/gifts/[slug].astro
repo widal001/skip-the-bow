@@ -15,11 +15,6 @@ const { gift } = Astro.props;
 
 <Layout title={gift.name} description={gift.description}>
   <article class="gift-detail">
-    {
-      gift.image && (
-        <img src={gift.image} alt={gift.name} class="gift-detail__image" />
-      )
-    }
     <h1 class="gift-detail__title">{gift.name}</h1>
     <p class="gift-detail__description">{gift.description}</p>
     <div class="gift-detail__tags">
