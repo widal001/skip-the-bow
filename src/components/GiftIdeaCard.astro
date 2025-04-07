@@ -24,15 +24,15 @@ const categoryColors = {
       hasImage ? (
         <img src={gift.image} alt={gift.name} class="gift-card__image" />
       ) : (
-        <div class="gift-card__image-placeholder" />
+        <div
+          class="gift-card__image-placeholder"
+          style={`background-color: ${categoryColors[gift.category]}`}
+        />
       )
     }
   </div>
   <div class="gift-card__content">
-    <h3
-      class="gift-card__title"
-      style={`color: ${categoryColors[gift.category]}`}
-    >
+    <h3 class="gift-card__title">
       {gift.name}
     </h3>
     <p class="gift-card__description">{gift.description}</p>
@@ -79,7 +79,7 @@ const categoryColors = {
   .gift-card__image-placeholder {
     width: 100%;
     height: 100%;
-    background: #f3f4f6;
+    opacity: 0.1;
   }
 
   .gift-card__content {
