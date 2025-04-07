@@ -1,0 +1,46 @@
+---
+import { GiftCategory } from "../../content/types";
+
+interface Props {
+  categories: string[];
+}
+
+const { categories } = Astro.props;
+---
+
+<div class="filter-section">
+  <h3>Categories</h3>
+  <div class="category-filters">
+    {
+      categories.map((category) => (
+        <label class="checkbox">
+          <input type="checkbox" value={category} />
+          {category}
+        </label>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .filter-section h3 {
+    margin: 0 0 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #111827;
+  }
+
+  .category-filters {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: #4b5563;
+  }
+</style>

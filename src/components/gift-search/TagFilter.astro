@@ -1,0 +1,55 @@
+---
+interface Props {
+  tags: string[];
+}
+
+const { tags } = Astro.props;
+---
+
+<div class="filter-section">
+  <h3>Tags</h3>
+  <div class="tag-filters">
+    <input type="text" placeholder="Search tags..." />
+    <div class="tag-list">
+      {
+        tags.map((tag) => (
+          <label class="checkbox">
+            <input type="checkbox" value={tag} />
+            {tag}
+          </label>
+        ))
+      }
+    </div>
+  </div>
+</div>
+
+<style>
+  .filter-section h3 {
+    margin: 0 0 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #111827;
+  }
+
+  .tag-filters input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+  }
+
+  .tag-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: #4b5563;
+  }
+</style>

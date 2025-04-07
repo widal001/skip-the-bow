@@ -1,0 +1,42 @@
+---
+interface Props {
+  min?: number;
+  max?: number;
+  step?: number;
+}
+
+const { min = 0, max = 500, step = 10 } = Astro.props;
+---
+
+<div class="filter-section">
+  <h3>Price Range</h3>
+  <div class="price-range">
+    <input type="range" min={min} max={max} step={step} />
+    <div class="price-labels">
+      <span>${min}</span>
+      <span>${max}</span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .filter-section h3 {
+    margin: 0 0 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #111827;
+  }
+
+  .price-range {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .price-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+    color: #4b5563;
+  }
+</style>

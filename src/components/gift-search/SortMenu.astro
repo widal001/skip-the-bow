@@ -1,0 +1,35 @@
+---
+interface Props {
+  options?: {
+    value: string;
+    label: string;
+  }[];
+}
+
+const defaultOptions = [
+  { value: "name", label: "Name (A-Z)" },
+  { value: "price-low", label: "Price (Low to High)" },
+  { value: "price-high", label: "Price (High to Low)" },
+];
+
+const { options = defaultOptions } = Astro.props;
+---
+
+<div class="sort-menu">
+  <select>
+    {
+      options.map((option) => (
+        <option value={option.value}>{option.label}</option>
+      ))
+    }
+  </select>
+</div>
+
+<style>
+  .sort-menu select {
+    padding: 0.5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    font-size: 0.875rem;
+  }
+</style>

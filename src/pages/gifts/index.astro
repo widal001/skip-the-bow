@@ -1,11 +1,72 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import GiftIdeaCard from "../../components/GiftIdeaCard.astro";
+import { GiftCategory } from "../../content/types";
+import { getGiftIdeas } from "../../lib/gift-service";
+import SearchBar from "../../components/gift-search/SearchBar.astro";
+import CategoryFilter from "../../components/gift-search/CategoryFilter.astro";
+import TagFilter from "../../components/gift-search/TagFilter.astro";
+import PriceRangeFilter from "../../components/gift-search/PriceRangeFilter.astro";
+import SortMenu from "../../components/gift-search/SortMenu.astro";
+
+const gifts = await getGiftIdeas();
+const categories = Object.values(GiftCategory.enum);
+const tags = [...new Set(gifts.flatMap((gift) => gift.tags))].sort();
 ---
 
 <Layout
   title="Gift Ideas"
   description="Browse our collection of unique gift ideas"
 >
-  <h1>Gift Ideas</h1>
-  <p>Explore our curated collection of gift ideas for every occasion.</p>
+  <div class="search-page">
+    <aside class="filters">
+      <SearchBar />
+      <CategoryFilter categories={categories} />
+      <TagFilter tags={tags} />
+      <PriceRangeFilter />
+    </aside>
+
+    <main class="results">
+      <div class="results-header">
+        <h1>Gift Ideas</h1>
+        <SortMenu />
+      </div>
+
+      <div class="gift-grid">
+        {gifts.map((gift) => <GiftIdeaCard gift={gift} />)}
+      </div>
+    </main>
+  </div>
 </Layout>
+
+<style>
+  .search-page {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 2rem;
+    padding: 2rem;
+  }
+
+  .filters {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    height: fit-content;
+    position: sticky;
+    top: 2rem;
+  }
+
+  .results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+
+  .gift-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+</style>
