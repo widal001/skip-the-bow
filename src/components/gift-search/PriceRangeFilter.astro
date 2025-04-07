@@ -9,34 +9,134 @@ const { min = 0, max = 500, step = 10 } = Astro.props;
 ---
 
 <div class="filter-section">
-  <h3>Price Range</h3>
-  <div class="price-range">
-    <input type="range" min={min} max={max} step={step} />
-    <div class="price-labels">
-      <span>${min}</span>
-      <span>${max}</span>
-    </div>
-  </div>
+  <details>
+    <summary><h3>Price range</h3></summary>
+    <fieldset class="price-range">
+      <legend class="sr-only">Select price range</legend>
+      <div class="price-inputs">
+        <div class="input-group">
+          <label for="min-price">Min</label>
+          <input
+            type="number"
+            id="min-price"
+            min={min}
+            max={max}
+            step={step}
+            value={min}
+          />
+        </div>
+        <div class="input-group">
+          <label for="max-price">Max</label>
+          <input
+            type="number"
+            id="max-price"
+            min={min}
+            max={max}
+            step={step}
+            value={max}
+          />
+        </div>
+      </div>
+    </fieldset>
+  </details>
 </div>
 
 <style>
-  .filter-section h3 {
-    margin: 0 0 1rem;
+  .filter-section details {
+    margin-bottom: 1rem;
+  }
+
+  .filter-section summary {
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .filter-section summary h3 {
+    margin: 0;
     font-size: 1rem;
     font-weight: 600;
     color: #111827;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .filter-section summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .filter-section summary::before {
+    content: "▸";
+    margin-right: 0.5rem;
+    display: inline-block;
+    transition: transform 0.2s;
+  }
+
+  .filter-section details[open] summary::before {
+    transform: rotate(90deg);
   }
 
   .price-range {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+    margin: 0.5rem 0 0;
+    border: none;
+    padding: 0;
+    width: 100%;
   }
 
-  .price-labels {
+  .price-range legend {
+    display: none;
+  }
+
+  .price-inputs {
     display: flex;
-    justify-content: space-between;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .input-group label {
     font-size: 0.875rem;
     color: #4b5563;
   }
+
+  .input-group input {
+    padding: 0.5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    width: 100px;
+  }
+
+  .input-group input:focus {
+    outline: none;
+    border-color: #2563eb;
+  }
 </style>
+
+<script>
+  const minInput = document.getElementById("min-price") as HTMLInputElement;
+  const maxInput = document.getElementById("max-price") as HTMLInputElement;
+
+  if (minInput && maxInput) {
+    minInput.addEventListener("change", () => {
+      const min = parseInt(minInput.value);
+      const max = parseInt(maxInput.value);
+
+      if (min > max) {
+        minInput.value = max.toString();
+      }
+    });
+
+    maxInput.addEventListener("change", () => {
+      const min = parseInt(minInput.value);
+      const max = parseInt(maxInput.value);
+
+      if (max < min) {
+        maxInput.value = min.toString();
+      }
+    });
+  }
+</script>

@@ -3,8 +3,6 @@ interface Props {
   title: string;
   description?: string;
 }
-
-const { title, description = "A modern web application" } = Astro.props;
 ---
 
 <html lang="en">
@@ -28,7 +26,7 @@ const { title, description = "A modern web application" } = Astro.props;
         border-bottom: 1px solid #eee;
       }
       main {
-        max-width: 720px;
+        max-width: 1200px;
         margin: 0 auto;
         padding-bottom: 4rem;
       }

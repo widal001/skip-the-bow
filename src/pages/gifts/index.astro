@@ -2,7 +2,7 @@
 import Layout from "../../layouts/Layout.astro";
 import GiftIdeaCard from "../../components/GiftIdeaCard.astro";
 import { GiftCategory } from "../../content/types";
-import { getGiftIdeas } from "../../lib/gift-service";
+import { getGiftIdeas, toSentenceCase } from "../../lib/gift-service";
 import SearchBar from "../../components/gift-search/SearchBar.astro";
 import CategoryFilter from "../../components/gift-search/CategoryFilter.astro";
 import TagFilter from "../../components/gift-search/TagFilter.astro";
@@ -20,10 +20,14 @@ const tags = [...new Set(gifts.flatMap((gift) => gift.tags))].sort();
 >
   <div class="search-page">
     <aside class="filters">
-      <SearchBar />
-      <CategoryFilter categories={categories} />
-      <TagFilter tags={tags} />
-      <PriceRangeFilter />
+      <form id="filter-form">
+        <SearchBar />
+        <PriceRangeFilter />
+        <CategoryFilter
+          categories={categories.map((category) => toSentenceCase(category))}
+        />
+        <TagFilter tags={tags.map((tag) => toSentenceCase(tag))} />
+      </form>
     </aside>
 
     <main class="results">
@@ -53,8 +57,30 @@ const tags = [...new Set(gifts.flatMap((gift) => gift.tags))].sort();
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     height: fit-content;
-    position: sticky;
-    top: 2rem;
+  }
+
+  .filters form {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+  }
+
+  @media (min-width: 769px) {
+    .filters {
+      position: sticky;
+      top: 2rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .search-page {
+      grid-template-columns: 1fr;
+      padding: 1rem;
+    }
+
+    .filters {
+      margin-bottom: 1rem;
+    }
   }
 
   .results-header {

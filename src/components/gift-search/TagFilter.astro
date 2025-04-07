@@ -7,10 +7,10 @@ const { tags } = Astro.props;
 ---
 
 <div class="filter-section">
-  <h3>Tags</h3>
-  <div class="tag-filters">
-    <input type="text" placeholder="Search tags..." />
-    <div class="tag-list">
+  <details>
+    <summary><h3>Tags</h3></summary>
+    <fieldset class="tag-filters">
+      <legend class="sr-only">Select gift tags</legend>
       {
         tags.map((tag) => (
           <label class="checkbox">
@@ -19,30 +19,56 @@ const { tags } = Astro.props;
           </label>
         ))
       }
-    </div>
-  </div>
+    </fieldset>
+  </details>
 </div>
 
 <style>
-  .filter-section h3 {
-    margin: 0 0 1rem;
+  .filter-section details {
+    margin-bottom: 1rem;
+  }
+
+  .filter-section summary {
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .filter-section summary h3 {
+    margin: 0;
     font-size: 1rem;
     font-weight: 600;
     color: #111827;
+    display: inline-flex;
+    align-items: center;
   }
 
-  .tag-filters input {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #e5e7eb;
-    border-radius: 4px;
-    margin-bottom: 0.5rem;
+  .filter-section summary::-webkit-details-marker {
+    display: none;
   }
 
-  .tag-list {
+  .filter-section summary::before {
+    content: "▸";
+    margin-right: 0.5rem;
+    display: inline-block;
+    transition: transform 0.2s;
+  }
+
+  .filter-section details[open] summary::before {
+    transform: rotate(90deg);
+  }
+
+  .tag-filters {
     display: flex;
     flex-direction: column;
+    margin: 0.5rem 0 0;
     gap: 0.5rem;
+    border: none;
+    padding: 0;
+    width: 100%;
+  }
+
+  .tag-filters legend {
+    display: none;
   }
 
   .checkbox {
@@ -51,5 +77,17 @@ const { tags } = Astro.props;
     gap: 0.5rem;
     font-size: 0.875rem;
     color: #4b5563;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
   }
 </style>

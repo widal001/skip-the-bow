@@ -1,6 +1,4 @@
 ---
-import { GiftCategory } from "../../content/types";
-
 interface Props {
   categories: string[];
 }
@@ -9,31 +7,68 @@ const { categories } = Astro.props;
 ---
 
 <div class="filter-section">
-  <h3>Categories</h3>
-  <div class="category-filters">
-    {
-      categories.map((category) => (
-        <label class="checkbox">
-          <input type="checkbox" value={category} />
-          {category}
-        </label>
-      ))
-    }
-  </div>
+  <details>
+    <summary><h3>Categories</h3></summary>
+    <fieldset class="category-filters">
+      <legend class="sr-only">Select gift categories</legend>
+      {
+        categories.map((category) => (
+          <label class="checkbox">
+            <input type="checkbox" value={category} />
+            {category}
+          </label>
+        ))
+      }
+    </fieldset>
+  </details>
 </div>
 
 <style>
-  .filter-section h3 {
-    margin: 0 0 1rem;
+  .filter-section details {
+    margin-bottom: 1rem;
+  }
+
+  .filter-section summary {
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .filter-section summary h3 {
+    margin: 0;
     font-size: 1rem;
     font-weight: 600;
     color: #111827;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .filter-section summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .filter-section summary::before {
+    content: "▸";
+    margin-right: 0.5rem;
+    display: inline-block;
+    transition: transform 0.2s;
+  }
+
+  .filter-section details[open] summary::before {
+    transform: rotate(90deg);
   }
 
   .category-filters {
     display: flex;
     flex-direction: column;
+    margin: 0.5rem 0 0;
     gap: 0.5rem;
+    border: none;
+    padding: 0;
+    width: 100%;
+  }
+
+  .category-filters legend {
+    display: none;
   }
 
   .checkbox {
@@ -42,5 +77,22 @@ const { categories } = Astro.props;
     gap: 0.5rem;
     font-size: 0.875rem;
     color: #4b5563;
+    cursor: pointer;
+  }
+
+  .checkbox input[type="checkbox"] {
+    margin: 0;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
   }
 </style>

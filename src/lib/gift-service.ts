@@ -21,3 +21,7 @@ export async function getGiftBySlug(slug: string): Promise<Gift | undefined> {
   const idea = ideas.find((idea) => idea.data.slug === slug);
   return idea?.data;
 }
+
+export function toSentenceCase(str: string): string {
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
