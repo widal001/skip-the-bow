@@ -27,6 +27,7 @@ const tags = [...new Set(gifts.flatMap((gift) => gift.tags))].sort();
           categories={categories.map((category) => toSentenceCase(category))}
         />
         <TagFilter tags={tags.map((tag) => toSentenceCase(tag))} />
+        <button type="submit" class="submit-button">View results</button>
       </form>
     </aside>
 
@@ -95,4 +96,71 @@ const tags = [...new Set(gifts.flatMap((gift) => gift.tags))].sort();
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 2rem;
   }
+
+  .submit-button {
+    width: 100%;
+    padding: 0.75rem 1.5rem;
+    margin-top: 0.5rem;
+    background: #111827;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: 500;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  .submit-button:hover {
+    background: #1f2937;
+  }
+
+  .submit-button:focus {
+    outline: 2px solid #60a5fa;
+    outline-offset: 2px;
+  }
 </style>
+
+<script>
+  const form = document.getElementById("filter-form") as HTMLFormElement;
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+    const queryParts = [];
+
+    // Handle search query
+    const searchQuery = formData.get("search")?.toString();
+    if (searchQuery) {
+      queryParts.push(`q=${encodeURIComponent(searchQuery)}`);
+    }
+
+    // Handle price range
+    const minPrice = formData.get("min-price")?.toString().trim();
+    const maxPrice = formData.get("max-price")?.toString().trim();
+    if (minPrice) queryParts.push(`min=${minPrice}`);
+    if (maxPrice) queryParts.push(`max=${maxPrice}`);
+
+    // Handle categories
+    const categories = formData.getAll("category");
+    if (categories.length > 0) {
+      queryParts.push(
+        `categories=${categories.map((c) => c.toString().toLowerCase()).join(",")}`
+      );
+    }
+
+    // Handle tags
+    const tags = formData.getAll("tag");
+    if (tags.length > 0) {
+      queryParts.push(
+        `tags=${tags.map((t) => t.toString().toLowerCase()).join(",")}`
+      );
+    }
+
+    // Update URL with query params
+    const url = new URL(window.location.href);
+    url.search = queryParts.length > 0 ? `?${queryParts.join("&")}` : "";
+    window.location.href = url.toString();
+  });
+</script>

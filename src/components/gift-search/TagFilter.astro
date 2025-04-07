@@ -14,7 +14,7 @@ const { tags } = Astro.props;
       {
         tags.map((tag) => (
           <label class="checkbox">
-            <input type="checkbox" value={tag} />
+            <input type="checkbox" name="tag" value={tag} />
             {tag}
           </label>
         ))
