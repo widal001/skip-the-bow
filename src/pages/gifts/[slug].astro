@@ -1,6 +1,6 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { getGiftIdeas } from "../../lib/idea-service";
+import { getGiftIdeas } from "../../lib/gift-service";
 
 export async function getStaticPaths() {
   const ideas = await getGiftIdeas();
