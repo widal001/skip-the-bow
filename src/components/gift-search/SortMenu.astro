@@ -16,7 +16,8 @@ const { options = defaultOptions } = Astro.props;
 ---
 
 <div class="sort-menu">
-  <select>
+  <label for="sort-select" class="sort-menu__label">Sort by</label>
+  <select id="sort-select" name="sort">
     {
       options.map((option) => (
         <option value={option.value}>{option.label}</option>
@@ -26,6 +27,17 @@ const { options = defaultOptions } = Astro.props;
 </div>
 
 <style>
+  .sort-menu {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .sort-menu__label {
+    font-size: 0.875rem;
+    color: #4b5563;
+  }
+
   .sort-menu select {
     padding: 0.5rem;
     border: 1px solid #e5e7eb;

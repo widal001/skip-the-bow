@@ -15,28 +15,32 @@ const { min = 0, max = 500, step = 10 } = Astro.props;
       <legend class="sr-only">Select price range</legend>
       <div class="price-inputs">
         <div class="input-group">
-          <label for="min-price">Min</label>
-          <input
-            type="number"
-            id="min-price"
-            name="min-price"
-            min={min}
-            max={max}
-            step={step}
-            value={min}
-          />
+          <label for="min-price">
+            Min
+            <input
+              type="number"
+              id="min-price"
+              name="min-price"
+              min={min}
+              max={max}
+              step={step}
+              value={min}
+            />
+          </label>
         </div>
         <div class="input-group">
-          <label for="max-price">Max</label>
-          <input
-            type="number"
-            id="max-price"
-            name="max-price"
-            min={min}
-            max={max}
-            step={step}
-            value={max}
-          />
+          <label for="max-price">
+            Max
+            <input
+              type="number"
+              id="max-price"
+              name="max-price"
+              min={min}
+              max={max}
+              step={step}
+              value={max}
+            />
+          </label>
         </div>
       </div>
     </fieldset>
