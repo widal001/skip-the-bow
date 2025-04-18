@@ -1,0 +1,91 @@
+---
+interface Props {
+  links?: Array<{
+    href: string;
+    text: string;
+  }>;
+}
+
+const { links = [] } = Astro.props;
+---
+
+<nav>
+  <div class="nav-container">
+    <div class="nav-left">
+      <a href="/" class="nav-link home-link">Skip the Bow</a>
+    </div>
+    <div class="nav-right">
+      {
+        links.map((link) => (
+          <a href={link.href} class="nav-link">
+            {link.text}
+          </a>
+        ))
+      }
+      <div class="nav-link login-placeholder">Login</div>
+    </div>
+  </div>
+</nav>
+
+<style>
+  nav {
+    position: sticky;
+    top: 0;
+    background: white;
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+  }
+  .nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .nav-left {
+    display: flex;
+    align-items: center;
+  }
+  .nav-right {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+  }
+  .nav-link {
+    color: #111827;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    position: relative;
+  }
+  .nav-link:hover {
+    background-color: #f3f4f6;
+  }
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: #111827;
+    transform: scaleX(0);
+    transition: transform 0.2s ease;
+  }
+  .nav-link:hover::after {
+    transform: scaleX(1);
+  }
+  .home-link {
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+  .login-placeholder {
+    color: #6b7280;
+    cursor: pointer;
+  }
+</style>
+

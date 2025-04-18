@@ -1,8 +1,12 @@
 ---
+import Navigation from "../components/Navigation.astro";
+
 interface Props {
   title: string;
   description?: string;
 }
+
+const navigationLinks = [{ href: "/gifts", text: "Gifts" }];
 ---
 
 <html lang="en">
@@ -16,19 +20,15 @@ interface Props {
       body {
         font-family: system-ui, sans-serif;
         margin: 0;
-        padding: 0 1rem;
+        padding: 0;
         line-height: 1.6;
         color: #222;
         background: #fefefe;
       }
-      header {
-        padding: 2rem 0 1rem;
-        border-bottom: 1px solid #eee;
-      }
       main {
         max-width: 1200px;
         margin: 0 auto;
-        padding-bottom: 4rem;
+        padding: 2rem 1rem 4rem;
       }
       h1 {
         font-size: 2rem;
@@ -41,6 +41,7 @@ interface Props {
     </style>
   </head>
   <body>
+    <Navigation links={navigationLinks} />
     <main>
       <slot />
     </main>
