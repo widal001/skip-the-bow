@@ -25,3 +25,15 @@ export const giftSchema = z.object({
 });
 
 export type Gift = z.infer<typeof giftSchema>;
+
+// Search Parameters Types
+export interface GiftSearchParams {
+  query?: string;
+  categories?: string[];
+  tags?: string[];
+  priceRange?: {
+    min?: number;
+    max?: number;
+  };
+  sortBy?: string;
+}
