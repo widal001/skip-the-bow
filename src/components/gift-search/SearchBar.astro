@@ -1,13 +1,14 @@
 ---
 interface Props {
   placeholder?: string;
+  value?: string;
 }
 
-const { placeholder = "Search gifts..." } = Astro.props;
+const { placeholder = "Search gifts...", value } = Astro.props;
 ---
 
 <div class="search-bar">
-  <input type="text" name="search" placeholder={placeholder} />
+  <input type="text" name="search" placeholder={placeholder} value={value} />
 </div>
 
 <style>

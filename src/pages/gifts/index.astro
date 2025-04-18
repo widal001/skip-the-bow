@@ -2,16 +2,83 @@
 import Layout from "../../layouts/Layout.astro";
 import GiftIdeaCard from "../../components/GiftIdeaCard.astro";
 import { GiftCategory } from "../../content/types";
-import { getGiftIdeas, toSentenceCase } from "../../lib/gift-service";
+import type { GiftSearchParams } from "../../content/types";
+import { searchGifts, toSentenceCase } from "../../lib/gift-service";
 import SearchBar from "../../components/gift-search/SearchBar.astro";
 import CategoryFilter from "../../components/gift-search/CategoryFilter.astro";
 import TagFilter from "../../components/gift-search/TagFilter.astro";
 import PriceRangeFilter from "../../components/gift-search/PriceRangeFilter.astro";
 import SortMenu from "../../components/gift-search/SortMenu.astro";
 
-const gifts = await getGiftIdeas();
+// Get all gifts to extract categories and tags
+const allGifts = await searchGifts({});
 const categories = Object.values(GiftCategory.enum);
-const tags = [...new Set(gifts.flatMap((gift) => gift.tags))].sort();
+const tags = [...new Set(allGifts.flatMap((gift) => gift.tags))].sort();
+
+// Handle form submission
+let searchParams: GiftSearchParams = {};
+if (Astro.request.method === "POST") {
+  const formData = await Astro.request.formData();
+  const queryParts = [];
+
+  // Handle search query
+  const searchQuery = formData.get("search")?.toString();
+  if (searchQuery) {
+    queryParts.push(`q=${encodeURIComponent(searchQuery)}`);
+  }
+
+  // Handle price range
+  const minPrice = formData.get("min-price")?.toString().trim();
+  const maxPrice = formData.get("max-price")?.toString().trim();
+  if (minPrice) queryParts.push(`min=${minPrice}`);
+  if (maxPrice) queryParts.push(`max=${maxPrice}`);
+
+  // Handle categories
+  const categories = formData.getAll("category");
+  if (categories.length > 0) {
+    queryParts.push(`categories=${categories.join(",")}`);
+  }
+
+  // Handle tags
+  const tags = formData.getAll("tag");
+  if (tags.length > 0) {
+    queryParts.push(`tags=${tags.join(",")}`);
+  }
+
+  // Handle sort
+  const sortBy = formData.get("sort")?.toString();
+  if (sortBy) {
+    queryParts.push(`sort=${sortBy}`);
+  }
+
+  // Redirect with query params
+  return Astro.redirect(`/gifts?${queryParts.join("&")}`);
+} else {
+  // Get search params from URL
+  const url = new URL(Astro.request.url);
+  searchParams = {
+    query: url.searchParams.get("q") || undefined,
+    categories:
+      url.searchParams.get("categories")?.split(",").filter(Boolean) ||
+      undefined,
+    tags: url.searchParams.get("tags")?.split(",").filter(Boolean) || undefined,
+    priceRange: {
+      min: url.searchParams.get("min")
+        ? Number(url.searchParams.get("min"))
+        : undefined,
+      max: url.searchParams.get("max")
+        ? Number(url.searchParams.get("max"))
+        : undefined,
+    },
+    sortBy: url.searchParams.get("sort") || undefined,
+  };
+}
+
+// Get filtered gifts
+const gifts = await searchGifts(searchParams);
+
+// Enable server-side rendering for this page
+export const prerender = false;
 ---
 
 <Layout
@@ -20,13 +87,20 @@ const tags = [...new Set(gifts.flatMap((gift) => gift.tags))].sort();
 >
   <div class="search-page">
     <aside class="filters">
-      <form id="filter-form">
-        <SearchBar />
-        <PriceRangeFilter />
+      <form id="filter-form" method="POST">
+        <SearchBar value={searchParams.query} />
+        <PriceRangeFilter
+          min={searchParams.priceRange?.min}
+          max={searchParams.priceRange?.max}
+        />
         <CategoryFilter
           categories={categories.map((category) => toSentenceCase(category))}
+          selected={searchParams.categories}
         />
-        <TagFilter tags={tags.map((tag) => toSentenceCase(tag))} />
+        <TagFilter
+          tags={tags.map((tag) => toSentenceCase(tag))}
+          selected={searchParams.tags}
+        />
         <button type="submit" class="submit-button">View results</button>
       </form>
     </aside>
@@ -34,7 +108,7 @@ const tags = [...new Set(gifts.flatMap((gift) => gift.tags))].sort();
     <main class="results">
       <div class="results-header">
         <h1>Gift Ideas</h1>
-        <SortMenu />
+        <SortMenu value={searchParams.sortBy} />
       </div>
 
       <div class="gift-grid">
@@ -120,94 +194,3 @@ const tags = [...new Set(gifts.flatMap((gift) => gift.tags))].sort();
     outline-offset: 2px;
   }
 </style>
-
-<script>
-  const form = document.getElementById("filter-form") as HTMLFormElement;
-
-  // Function to prefill form based on URL params
-  function prefillForm() {
-    const params = new URLSearchParams(window.location.search);
-
-    // Prefill search
-    const searchQuery = params.get("q");
-    if (searchQuery) {
-      const searchInput = form.querySelector(
-        'input[name="search"]'
-      ) as HTMLInputElement;
-      if (searchInput) searchInput.value = searchQuery;
-    }
-
-    // Prefill price range
-    const minPrice = params.get("min");
-    const maxPrice = params.get("max");
-    if (minPrice) {
-      const minInput = form.querySelector(
-        'input[name="min-price"]'
-      ) as HTMLInputElement;
-      if (minInput) minInput.value = minPrice;
-    }
-    if (maxPrice) {
-      const maxInput = form.querySelector(
-        'input[name="max-price"]'
-      ) as HTMLInputElement;
-      if (maxInput) maxInput.value = maxPrice;
-    }
-
-    // Prefill categories
-    const categories = params.get("categories")?.split(",") || [];
-    categories.forEach((category) => {
-      const checkbox = form.querySelector(
-        `input[name="category"][value="${category}"]`
-      ) as HTMLInputElement;
-      if (checkbox) checkbox.checked = true;
-    });
-
-    // Prefill tags
-    const tags = params.get("tags")?.split(",") || [];
-    tags.forEach((tag) => {
-      const checkbox = form.querySelector(
-        `input[name="tag"][value="${tag}"]`
-      ) as HTMLInputElement;
-      if (checkbox) checkbox.checked = true;
-    });
-  }
-
-  // Run on page load
-  prefillForm();
-
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    const formData = new FormData(form);
-    const queryParts = [];
-
-    // Handle search query
-    const searchQuery = formData.get("search")?.toString();
-    if (searchQuery) {
-      queryParts.push(`q=${encodeURIComponent(searchQuery)}`);
-    }
-
-    // Handle price range
-    const minPrice = formData.get("min-price")?.toString().trim();
-    const maxPrice = formData.get("max-price")?.toString().trim();
-    if (minPrice) queryParts.push(`min=${minPrice}`);
-    if (maxPrice) queryParts.push(`max=${maxPrice}`);
-
-    // Handle categories
-    const categories = formData.getAll("category");
-    if (categories.length > 0) {
-      queryParts.push(`categories=${categories.join(",")}`);
-    }
-
-    // Handle tags
-    const tags = formData.getAll("tag");
-    if (tags.length > 0) {
-      queryParts.push(`tags=${tags.join(",")}`);
-    }
-
-    // Update URL with query params
-    const url = new URL(window.location.href);
-    url.search = queryParts.length > 0 ? `?${queryParts.join("&")}` : "";
-    window.location.href = url.toString();
-  });
-</script>

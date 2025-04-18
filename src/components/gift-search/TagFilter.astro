@@ -1,20 +1,26 @@
 ---
 interface Props {
   tags: string[];
+  selected?: string[];
 }
 
-const { tags } = Astro.props;
+const { tags, selected = [] } = Astro.props;
 ---
 
 <div class="filter-section">
-  <details>
+  <details open={selected.length > 0}>
     <summary><h3>Tags</h3></summary>
     <fieldset class="tag-filters">
       <legend class="sr-only">Select gift tags</legend>
       {
         tags.map((tag) => (
           <label class="checkbox">
-            <input type="checkbox" name="tag" value={tag.toLowerCase()} />
+            <input
+              type="checkbox"
+              name="tag"
+              value={tag.toLowerCase()}
+              checked={selected.includes(tag.toLowerCase())}
+            />
             {tag}
           </label>
         ))

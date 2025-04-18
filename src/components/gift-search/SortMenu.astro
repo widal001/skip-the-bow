@@ -4,20 +4,22 @@ interface Props {
     value: string;
     label: string;
   }[];
+  value?: string;
 }
 
 const defaultOptions = [
-  { value: "name", label: "Name (A-Z)" },
-  { value: "price-low", label: "Price (Low to High)" },
-  { value: "price-high", label: "Price (High to Low)" },
+  { value: "name-asc", label: "Name (A-Z)" },
+  { value: "name-desc", label: "Name (Z-A)" },
+  { value: "price-asc", label: "Price (Low to High)" },
+  { value: "price-desc", label: "Price (High to Low)" },
 ];
 
-const { options = defaultOptions } = Astro.props;
+const { options = defaultOptions, value } = Astro.props;
 ---
 
 <div class="sort-menu">
   <label for="sort-select" class="sort-menu__label">Sort by</label>
-  <select id="sort-select" name="sort">
+  <select id="sort-select" name="sort" value={value}>
     {
       options.map((option) => (
         <option value={option.value}>{option.label}</option>
