@@ -127,7 +127,7 @@ export const prerender = false;
   }
 
   .filters {
-    background: white;
+    background: var(--color-white);
     padding: 1.5rem;
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -165,6 +165,13 @@ export const prerender = false;
     margin-bottom: 2rem;
   }
 
+  .results-header h1 {
+    font-size: 1.875rem;
+    font-weight: 600;
+    color: var(--color-gray-900);
+    margin: 0;
+  }
+
   .gift-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -175,22 +182,25 @@ export const prerender = false;
     width: 100%;
     padding: 0.75rem 1.5rem;
     margin-top: 0.5rem;
-    background: #111827;
-    color: white;
+    background: var(--color-primary);
+    color: var(--color-white);
     border: none;
-    border-radius: 4px;
+    border-radius: 8px;
     font-weight: 500;
     font-size: 1rem;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: all 0.2s ease;
   }
 
   .submit-button:hover {
-    background: #1f2937;
+    background: var(--color-primary-dark);
+    transform: translateY(-1px);
   }
 
   .submit-button:focus {
-    outline: 2px solid #60a5fa;
-    outline-offset: 2px;
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--color-white),
+      0 0 0 4px var(--color-primary);
   }
 </style>

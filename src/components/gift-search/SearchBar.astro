@@ -39,15 +39,15 @@ const { placeholder = "Search gifts...", value } = Astro.props;
     width: 100%;
     display: flex;
     position: relative;
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--color-gray-200);
     border-radius: 8px;
-    background: white;
+    background: var(--color-white);
     transition: all 0.2s ease;
   }
 
   .search-bar:focus-within {
-    border-color: #2563eb;
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px var(--color-primary-light);
   }
 
   .search-bar input {
@@ -57,7 +57,7 @@ const { placeholder = "Search gifts...", value } = Astro.props;
     border-radius: 8px 0 0 8px;
     font-size: 1rem;
     background: transparent;
-    color: #111827;
+    color: var(--color-gray-900);
   }
 
   .search-bar input:focus {
@@ -65,12 +65,12 @@ const { placeholder = "Search gifts...", value } = Astro.props;
   }
 
   .search-bar input::placeholder {
-    color: #9ca3af;
+    color: var(--color-gray-400);
   }
 
   .search-button {
-    background: #2563eb;
-    color: white;
+    background: var(--color-primary);
+    color: var(--color-white);
     border: none;
     margin: -1px;
     padding: 0 1.25rem;
@@ -79,17 +79,17 @@ const { placeholder = "Search gifts...", value } = Astro.props;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background-color 0.2s;
+    transition: all 0.2s ease;
   }
 
   .search-button:hover {
-    background: #1d4ed8;
+    background: var(--color-primary-dark);
   }
 
   .search-button:focus {
     outline: none;
     box-shadow:
-      0 0 0 2px white,
-      0 0 0 4px #2563eb;
+      0 0 0 2px var(--color-white),
+      0 0 0 4px var(--color-primary);
   }
 </style>

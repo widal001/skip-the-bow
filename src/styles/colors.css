@@ -12,6 +12,19 @@
   --color-gray-800: #1f2937;
   --color-gray-900: #111827;
 
+  /* Theme colors */
+  --color-primary: #4F46E5;    /* Indigo - matches donation category */
+  --color-primary-light: #EEF2FF;
+  --color-primary-dark: #4338CA;
+  
+  --color-secondary: #10B981;  /* Emerald - matches subscription category */
+  --color-secondary-light: #ECFDF5;
+  --color-secondary-dark: #059669;
+  
+  --color-accent: #F59E0B;     /* Amber - matches experience category */
+  --color-accent-light: #FFFBEB;
+  --color-accent-dark: #D97706;
+
   /* Category colors - Donation */
   --color-donation-primary: #4F46E5;
   --color-donation-secondary: #EEF2FF;
@@ -67,4 +80,23 @@
   --category-primary: var(--color-other-primary);
   --category-secondary: var(--color-other-secondary);
   --category-accent: var(--color-other-accent);
+}
+
+/* Theme color utilities */
+.theme-primary {
+  --theme-color: var(--color-primary);
+  --theme-color-light: var(--color-primary-light);
+  --theme-color-dark: var(--color-primary-dark);
+}
+
+.theme-secondary {
+  --theme-color: var(--color-secondary);
+  --theme-color-light: var(--color-secondary-light);
+  --theme-color-dark: var(--color-secondary-dark);
+}
+
+.theme-accent {
+  --theme-color: var(--color-accent);
+  --theme-color-light: var(--color-accent-light);
+  --theme-color-dark: var(--color-accent-dark);
 } 

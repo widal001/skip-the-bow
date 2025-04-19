@@ -31,12 +31,13 @@ const { links = [] } = Astro.props;
   nav {
     position: sticky;
     top: 0;
-    background: white;
+    background: var(--color-white);
     padding: 1rem;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--color-gray-200);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     z-index: 100;
   }
+
   .nav-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -44,17 +45,20 @@ const { links = [] } = Astro.props;
     justify-content: space-between;
     align-items: center;
   }
+
   .nav-left {
     display: flex;
     align-items: center;
   }
+
   .nav-right {
     display: flex;
-    gap: 2rem;
+    gap: 1.5rem;
     align-items: center;
   }
+
   .nav-link {
-    color: #111827;
+    color: var(--color-gray-900);
     text-decoration: none;
     font-weight: 500;
     padding: 0.5rem 1rem;
@@ -62,9 +66,12 @@ const { links = [] } = Astro.props;
     transition: all 0.2s ease;
     position: relative;
   }
+
   .nav-link:hover {
-    background-color: #f3f4f6;
+    background-color: var(--color-primary-light);
+    color: var(--color-primary-dark);
   }
+
   .nav-link::after {
     content: "";
     position: absolute;
@@ -72,20 +79,44 @@ const { links = [] } = Astro.props;
     left: 0;
     right: 0;
     height: 2px;
-    background-color: #111827;
+    background-color: var(--color-primary);
     transform: scaleX(0);
     transition: transform 0.2s ease;
   }
+
   .nav-link:hover::after {
     transform: scaleX(1);
   }
+
   .home-link {
     font-weight: 600;
-    font-size: 1.1rem;
+    font-size: 1.25rem;
+    color: var(--color-primary);
   }
+
+  .home-link:hover {
+    background-color: var(--color-primary-light);
+    color: var(--color-primary-dark);
+  }
+
   .login-placeholder {
-    color: #6b7280;
+    color: var(--color-gray-500);
     cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .login-placeholder:hover {
+    color: var(--color-primary);
+    background-color: var(--color-primary-light);
+  }
+
+  @media (max-width: 768px) {
+    .nav-right {
+      gap: 1rem;
+    }
+
+    .nav-link {
+      padding: 0.5rem 0.75rem;
+    }
   }
 </style>
-
