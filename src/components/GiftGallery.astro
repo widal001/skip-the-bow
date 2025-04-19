@@ -11,7 +11,7 @@ interface Props {
 const { title, gifts, category } = Astro.props;
 
 // Limit the number of displayed gifts to 6
-const displayedGifts = gifts.slice(0, 6);
+const displayedGifts = gifts.slice(0, 5);
 ---
 
 <section class="gallery-section">
@@ -103,16 +103,57 @@ const displayedGifts = gifts.slice(0, 6);
   }
 
   .gallery-container {
-    overflow: hidden;
+    position: relative;
+    margin: 0 -1rem;
+    padding: 0.5rem 1rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-gray-200) transparent;
+  }
+
+  .gallery-container::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .gallery-container::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .gallery-container::-webkit-scrollbar-thumb {
+    background-color: var(--color-gray-200);
+    border-radius: 3px;
   }
 
   .gallery-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    display: flex;
     gap: 2rem;
+    padding: 0.5rem;
+    min-width: min-content;
   }
 
   .gallery-item {
-    width: 100%;
+    flex: 0 0 calc((100vw - 4rem) / 4);
+    min-height: 280px;
+    display: flex;
+  }
+
+  @media (max-width: 1024px) {
+    .gallery-item {
+      flex: 0 0 calc((100vw - 4rem) / 3);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .gallery-item {
+      flex: 0 0 calc((100vw - 4rem) / 2);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .gallery-item {
+      flex: 0 0 calc(100vw - 3rem);
+    }
   }
 </style>
