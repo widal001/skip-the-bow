@@ -15,6 +15,12 @@ const categoryColors = {
   [GiftCategory.enum.giftcard]: "#8B5CF6", // purple
   [GiftCategory.enum.other]: "#6B7280", // gray
 } as const;
+
+// Truncate description to 120 characters
+const truncatedDescription =
+  gift.description.length > 120
+    ? `${gift.description.slice(0, 200).trim()}...`
+    : gift.description;
 ---
 
 <a href={`/gifts/${gift.slug}`} class="gift-card">
@@ -27,19 +33,24 @@ const categoryColors = {
     <h3 class="gift-card__title">{gift.name}</h3>
   </div>
   <div class="gift-card__content">
-    <p class="gift-card__description">{gift.description}</p>
-    <div class="gift-card__tags">
-      {gift.tags.map((tag) => <span class="gift-card__tag">{tag}</span>)}
-    </div>
-    <p class="gift-card__price">
-      ${gift.priceRange.min}–${gift.priceRange.max}
+    <p class="gift-card__description" title={gift.description}>
+      {truncatedDescription}
     </p>
+    <div class="gift-card__footer">
+      <div class="gift-card__tags">
+        {gift.tags.map((tag) => <span class="gift-card__tag">{tag}</span>)}
+      </div>
+      <p class="gift-card__price">
+        ${gift.priceRange.min}–${gift.priceRange.max}
+      </p>
+    </div>
   </div>
 </a>
 
 <style>
   .gift-card {
-    display: block;
+    display: flex;
+    flex-direction: column;
     text-decoration: none;
     color: inherit;
     background: white;
@@ -49,6 +60,8 @@ const categoryColors = {
       transform 0.2s ease,
       box-shadow 0.2s ease;
     overflow: hidden;
+    height: 100%;
+    width: 100%;
   }
 
   .gift-card:hover {
@@ -58,12 +71,13 @@ const categoryColors = {
 
   .gift-card__header {
     width: 100%;
-    aspect-ratio: 4/1;
+    height: 80px;
     overflow: hidden;
     position: relative;
     display: flex;
     align-items: flex-end;
     padding: 1rem;
+    flex-shrink: 0;
   }
 
   .gift-card__header-bg {
@@ -82,24 +96,36 @@ const categoryColors = {
     font-weight: 600;
     color: #111827;
     text-align: left;
+    line-height: 1.4;
   }
 
   .gift-card__content {
+    display: flex;
+    flex-direction: column;
     padding: 1rem;
+    flex: 1;
   }
 
   .gift-card__description {
-    margin: 0 0 1rem;
+    margin: 0;
     font-size: 0.875rem;
     color: #4b5563;
     line-height: 1.5;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .gift-card__footer {
+    margin-top: auto;
+    padding-top: 1rem;
   }
 
   .gift-card__tags {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
   }
 
   .gift-card__tag {

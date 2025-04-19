@@ -1,0 +1,107 @@
+---
+import type { Gift } from "../content/types";
+import GiftIdeaCard from "./GiftIdeaCard.astro";
+
+interface Props {
+  title: string;
+  gifts: Gift[];
+  category: string;
+}
+
+const { title, gifts, category } = Astro.props;
+---
+
+<section class="gallery-section">
+  <div class="gallery-header">
+    <h2 class="gallery-title">{title}</h2>
+    <a href={`/gifts?categories=${category}`} class="see-more">See more</a>
+  </div>
+  <div class="gallery-container">
+    <div class="gallery-grid">
+      {
+        gifts.map((gift) => (
+          <div class="gallery-item">
+            <GiftIdeaCard gift={gift} />
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .gallery-section {
+    margin-bottom: 4rem;
+  }
+
+  .gallery-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding: 0 0.5rem;
+  }
+
+  .gallery-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #111827;
+    margin: 0;
+  }
+
+  .see-more {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+  }
+
+  .see-more:hover {
+    background-color: #f3f4f6;
+  }
+
+  .gallery-container {
+    position: relative;
+    margin: 0 -1rem;
+    padding: 0.5rem 1rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: #e5e7eb transparent;
+  }
+
+  .gallery-container::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .gallery-container::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .gallery-container::-webkit-scrollbar-thumb {
+    background-color: #e5e7eb;
+    border-radius: 3px;
+  }
+
+  .gallery-grid {
+    display: flex;
+    gap: 2rem;
+    padding: 0.5rem;
+    min-width: min-content;
+  }
+
+  .gallery-item {
+    flex: 0 0 calc((100vw - 4rem) / 4);
+    min-height: 280px;
+    display: flex;
+  }
+
+  @media (max-width: 640px) {
+    .gallery-item {
+      flex: 0 0 calc(100vw - 3rem);
+    }
+  }
+</style>

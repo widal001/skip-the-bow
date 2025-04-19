@@ -1,0 +1,50 @@
+---
+import SearchBar from "./gift-search/SearchBar.astro";
+---
+
+<div class="hero-banner">
+  <div class="hero-content">
+    <h1>Skip the Bow</h1>
+    <p class="description">
+      A gift guide for people who'd rather not get gifts — and would rather
+      support local businesses, nonprofits, and experiences.
+    </p>
+    <form class="search-form" action="/gifts" method="GET" role="search">
+      <SearchBar placeholder="Search for gifts..." />
+    </form>
+  </div>
+</div>
+
+<style>
+  .hero-banner {
+    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+    padding: 4rem 1rem;
+    margin-bottom: 4rem;
+    border-radius: 1rem;
+  }
+
+  .hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 1rem;
+  }
+
+  .description {
+    font-size: 1.25rem;
+    color: #4b5563;
+    margin-bottom: 2rem;
+    line-height: 1.5;
+  }
+
+  .search-form {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+</style>
