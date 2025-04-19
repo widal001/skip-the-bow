@@ -18,8 +18,8 @@ const categoryColors = {
 
 // Truncate description to 120 characters
 const truncatedDescription =
-  gift.description.length > 120
-    ? `${gift.description.slice(0, 200).trim()}...`
+  gift.description.length > 255
+    ? `${gift.description.slice(0, 255).trim()}...`
     : gift.description;
 ---
 
