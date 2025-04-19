@@ -13,37 +13,6 @@ export async function getStaticPaths() {
 }
 
 const { gift } = Astro.props;
-
-// Category-specific color mappings
-const categoryColors = {
-  donation: {
-    primary: "#4F46E5", // Indigo
-    secondary: "#EEF2FF",
-    accent: "#818CF8",
-  },
-  subscription: {
-    primary: "#10B981", // Emerald
-    secondary: "#ECFDF5",
-    accent: "#34D399",
-  },
-  experience: {
-    primary: "#F59E0B", // Amber
-    secondary: "#FFFBEB",
-    accent: "#FBBF24",
-  },
-  giftcard: {
-    primary: "#8B5CF6", // Violet
-    secondary: "#F5F3FF",
-    accent: "#A78BFA",
-  },
-  other: {
-    primary: "#EC4899", // Pink
-    secondary: "#FDF2F8",
-    accent: "#F472B6",
-  },
-};
-
-const colors = categoryColors[gift.category];
 ---
 
 <Layout title={gift.name} description={gift.description}>

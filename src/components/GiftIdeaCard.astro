@@ -9,36 +9,6 @@ interface Props {
 
 const { gift } = Astro.props;
 
-const categoryColors = {
-  [GiftCategory.enum.donation]: {
-    primary: "#4F46E5", // Indigo
-    secondary: "#EEF2FF",
-    accent: "#818CF8",
-  },
-  [GiftCategory.enum.subscription]: {
-    primary: "#10B981", // Emerald
-    secondary: "#ECFDF5",
-    accent: "#34D399",
-  },
-  [GiftCategory.enum.experience]: {
-    primary: "#F59E0B", // Amber
-    secondary: "#FFFBEB",
-    accent: "#FBBF24",
-  },
-  [GiftCategory.enum.giftcard]: {
-    primary: "#8B5CF6", // Violet
-    secondary: "#F5F3FF",
-    accent: "#A78BFA",
-  },
-  [GiftCategory.enum.other]: {
-    primary: "#EC4899", // Pink
-    secondary: "#FDF2F8",
-    accent: "#F472B6",
-  },
-} as const;
-
-const colors = categoryColors[gift.category];
-
 // Truncate description to 120 characters
 const truncatedDescription =
   gift.description.length > 255
