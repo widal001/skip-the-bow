@@ -1,6 +1,8 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import { getGiftIdeas } from "../../lib/gift-service";
+import Pill from "../../components/Pill.astro";
+import "../../styles/colors.css";
 
 export async function getStaticPaths() {
   const ideas = await getGiftIdeas();
@@ -11,26 +13,76 @@ export async function getStaticPaths() {
 }
 
 const { gift } = Astro.props;
+
+// Category-specific color mappings
+const categoryColors = {
+  donation: {
+    primary: "#4F46E5", // Indigo
+    secondary: "#EEF2FF",
+    accent: "#818CF8",
+  },
+  subscription: {
+    primary: "#10B981", // Emerald
+    secondary: "#ECFDF5",
+    accent: "#34D399",
+  },
+  experience: {
+    primary: "#F59E0B", // Amber
+    secondary: "#FFFBEB",
+    accent: "#FBBF24",
+  },
+  giftcard: {
+    primary: "#8B5CF6", // Violet
+    secondary: "#F5F3FF",
+    accent: "#A78BFA",
+  },
+  other: {
+    primary: "#EC4899", // Pink
+    secondary: "#FDF2F8",
+    accent: "#F472B6",
+  },
+};
+
+const colors = categoryColors[gift.category];
 ---
 
 <Layout title={gift.name} description={gift.description}>
-  <article class="gift-detail">
-    <h1 class="gift-detail__title">{gift.name}</h1>
-    <p class="gift-detail__description">{gift.description}</p>
-    <div class="gift-detail__tags">
-      {gift.tags.map((tag) => <span class="gift-detail__tag">{tag}</span>)}
+  <article class="gift-detail" data-category={gift.category}>
+    <div class="gift-detail__header">
+      <Pill text={gift.category} category={gift.category} />
+      <h1 class="gift-detail__title">{gift.name}</h1>
+      <p class="gift-detail__description">{gift.description}</p>
     </div>
-    <p class="gift-detail__price">
-      Price Range: ${gift.priceRange.min}–${gift.priceRange.max}
-    </p>
-    <a
-      href={gift.link}
-      target="_blank"
-      rel="noopener noreferrer"
-      class="gift-detail__link"
-    >
-      Learn More
-    </a>
+
+    <div class="gift-detail__content">
+      <div class="gift-detail__tags">
+        {
+          gift.tags.map((tag) => (
+            <Pill
+              text={tag}
+              color="var(--color-white)"
+              backgroundColor="var(--category-accent)"
+            />
+          ))
+        }
+      </div>
+
+      <div class="gift-detail__price">
+        <span class="gift-detail__price-label">Price Range</span>
+        <span class="gift-detail__price-value"
+          >${gift.priceRange.min}–${gift.priceRange.max}</span
+        >
+      </div>
+
+      <a
+        href={gift.link}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="gift-detail__link"
+      >
+        Learn More
+      </a>
+    </div>
   </article>
 </Layout>
 
@@ -39,63 +91,86 @@ const { gift } = Astro.props;
     max-width: 800px;
     margin: 0 auto;
     padding: 2rem 1rem;
+    background: var(--color-white);
+    border-radius: 12px;
+    box-shadow:
+      0 4px 6px -1px rgb(0 0 0 / 0.1),
+      0 2px 4px -2px rgb(0 0 0 / 0.1);
   }
 
-  .gift-detail__image {
-    width: 100%;
-    max-height: 400px;
-    object-fit: cover;
-    border-radius: 8px;
+  .gift-detail__header {
     margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--color-gray-200);
   }
 
   .gift-detail__title {
     font-size: 2.5rem;
     margin: 0 0 1rem;
-    color: #111827;
+    color: var(--color-gray-900);
+    line-height: 1.2;
   }
 
   .gift-detail__description {
     font-size: 1.125rem;
     line-height: 1.7;
-    color: #4b5563;
-    margin-bottom: 2rem;
+    color: var(--color-gray-600);
+    margin-bottom: 0;
+  }
+
+  .gift-detail__content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
   }
 
   .gift-detail__tags {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-    margin-bottom: 2rem;
-  }
-
-  .gift-detail__tag {
-    padding: 0.5rem 1rem;
-    background: #f3f4f6;
-    border-radius: 4px;
-    font-size: 0.875rem;
-    color: #4b5563;
   }
 
   .gift-detail__price {
-    font-size: 1.25rem;
-    font-weight: 500;
-    color: #111827;
-    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .gift-detail__price-label {
+    font-size: 0.875rem;
+    color: var(--color-gray-500);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .gift-detail__price-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--category-primary);
   }
 
   .gift-detail__link {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     padding: 0.75rem 1.5rem;
-    background: #111827;
-    color: white;
+    background: var(--category-primary);
+    color: var(--color-white);
     text-decoration: none;
-    border-radius: 4px;
+    border-radius: 8px;
     font-weight: 500;
-    transition: background-color 0.2s ease;
+    transition: all 0.2s ease;
+    width: fit-content;
   }
 
   .gift-detail__link:hover {
-    background: #1f2937;
+    background: var(--category-accent);
+    transform: translateY(-1px);
+  }
+
+  @media (min-width: 640px) {
+    .gift-detail {
+      padding: 3rem 2rem;
+    }
   }
 </style>

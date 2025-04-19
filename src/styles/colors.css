@@ -1,0 +1,70 @@
+:root {
+  /* Base colors */
+  --color-white: #ffffff;
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+
+  /* Category colors - Donation */
+  --color-donation-primary: #4F46E5;
+  --color-donation-secondary: #EEF2FF;
+  --color-donation-accent: #818CF8;
+
+  /* Category colors - Subscription */
+  --color-subscription-primary: #10B981;
+  --color-subscription-secondary: #ECFDF5;
+  --color-subscription-accent: #34D399;
+
+  /* Category colors - Experience */
+  --color-experience-primary: #F59E0B;
+  --color-experience-secondary: #FFFBEB;
+  --color-experience-accent: #FBBF24;
+
+  /* Category colors - Giftcard */
+  --color-giftcard-primary: #8B5CF6;
+  --color-giftcard-secondary: #F5F3FF;
+  --color-giftcard-accent: #A78BFA;
+
+  /* Category colors - Other */
+  --color-other-primary: #EC4899;
+  --color-other-secondary: #FDF2F8;
+  --color-other-accent: #F472B6;
+}
+
+/* Category color mapping */
+[data-category="donation"] {
+  --category-primary: var(--color-donation-primary);
+  --category-secondary: var(--color-donation-secondary);
+  --category-accent: var(--color-donation-accent);
+}
+
+[data-category="subscription"] {
+  --category-primary: var(--color-subscription-primary);
+  --category-secondary: var(--color-subscription-secondary);
+  --category-accent: var(--color-subscription-accent);
+}
+
+[data-category="experience"] {
+  --category-primary: var(--color-experience-primary);
+  --category-secondary: var(--color-experience-secondary);
+  --category-accent: var(--color-experience-accent);
+}
+
+[data-category="giftcard"] {
+  --category-primary: var(--color-giftcard-primary);
+  --category-secondary: var(--color-giftcard-secondary);
+  --category-accent: var(--color-giftcard-accent);
+}
+
+[data-category="other"] {
+  --category-primary: var(--color-other-primary);
+  --category-secondary: var(--color-other-secondary);
+  --category-accent: var(--color-other-accent);
+} 

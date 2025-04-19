@@ -1,6 +1,7 @@
 ---
 import type { Gift } from "../content/types";
 import { GiftCategory } from "../content/types";
+import Pill from "./Pill.astro";
 
 interface Props {
   gift: Gift;
@@ -9,12 +10,34 @@ interface Props {
 const { gift } = Astro.props;
 
 const categoryColors = {
-  [GiftCategory.enum.donation]: "#3B82F6", // blue
-  [GiftCategory.enum.subscription]: "#10B981", // green
-  [GiftCategory.enum.experience]: "#F59E0B", // yellow
-  [GiftCategory.enum.giftcard]: "#8B5CF6", // purple
-  [GiftCategory.enum.other]: "#6B7280", // gray
+  [GiftCategory.enum.donation]: {
+    primary: "#4F46E5", // Indigo
+    secondary: "#EEF2FF",
+    accent: "#818CF8",
+  },
+  [GiftCategory.enum.subscription]: {
+    primary: "#10B981", // Emerald
+    secondary: "#ECFDF5",
+    accent: "#34D399",
+  },
+  [GiftCategory.enum.experience]: {
+    primary: "#F59E0B", // Amber
+    secondary: "#FFFBEB",
+    accent: "#FBBF24",
+  },
+  [GiftCategory.enum.giftcard]: {
+    primary: "#8B5CF6", // Violet
+    secondary: "#F5F3FF",
+    accent: "#A78BFA",
+  },
+  [GiftCategory.enum.other]: {
+    primary: "#EC4899", // Pink
+    secondary: "#FDF2F8",
+    accent: "#F472B6",
+  },
 } as const;
+
+const colors = categoryColors[gift.category];
 
 // Truncate description to 120 characters
 const truncatedDescription =
@@ -23,13 +46,9 @@ const truncatedDescription =
     : gift.description;
 ---
 
-<a href={`/gifts/${gift.slug}`} class="gift-card">
+<a href={`/gifts/${gift.slug}`} class="gift-card" data-category={gift.category}>
   <div class="gift-card__header">
-    <div
-      class="gift-card__header-bg"
-      style={`background-color: ${categoryColors[gift.category]}`}
-    >
-    </div>
+    <div class="gift-card__header-bg"></div>
     <h3 class="gift-card__title">{gift.name}</h3>
   </div>
   <div class="gift-card__content">
@@ -38,7 +57,15 @@ const truncatedDescription =
     </p>
     <div class="gift-card__footer">
       <div class="gift-card__tags">
-        {gift.tags.map((tag) => <span class="gift-card__tag">{tag}</span>)}
+        {
+          gift.tags.map((tag) => (
+            <Pill
+              text={tag}
+              color="var(--color-white)"
+              backgroundColor="var(--category-accent)"
+            />
+          ))
+        }
       </div>
       <p class="gift-card__price">
         ${gift.priceRange.min}–${gift.priceRange.max}
@@ -53,7 +80,7 @@ const truncatedDescription =
     flex-direction: column;
     text-decoration: none;
     color: inherit;
-    background: white;
+    background: var(--color-white);
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     transition:
@@ -87,6 +114,7 @@ const truncatedDescription =
     width: 100%;
     height: 100%;
     opacity: 0.1;
+    background-color: var(--category-primary);
   }
 
   .gift-card__title {
@@ -94,7 +122,7 @@ const truncatedDescription =
     margin: 0;
     font-size: 1.125rem;
     font-weight: 600;
-    color: #111827;
+    color: var(--color-gray-900);
     text-align: left;
     line-height: 1.4;
   }
@@ -109,7 +137,7 @@ const truncatedDescription =
   .gift-card__description {
     margin: 0;
     font-size: 0.875rem;
-    color: #4b5563;
+    color: var(--color-gray-600);
     line-height: 1.5;
     flex: 1;
     overflow: hidden;
@@ -128,18 +156,10 @@ const truncatedDescription =
     margin-bottom: 0.75rem;
   }
 
-  .gift-card__tag {
-    padding: 0.25rem 0.5rem;
-    background: #f3f4f6;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    color: #4b5563;
-  }
-
   .gift-card__price {
     margin: 0;
     font-size: 0.875rem;
     font-weight: 500;
-    color: #111827;
+    color: var(--color-gray-900);
   }
 </style>
