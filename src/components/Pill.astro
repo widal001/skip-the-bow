@@ -4,14 +4,16 @@ interface Props {
   color?: string;
   backgroundColor?: string;
   category?: string;
+  size?: "small" | "medium" | "large";
 }
 
-const { text, color, backgroundColor, category } = Astro.props;
+const { text, color, backgroundColor, category, size = "medium" } = Astro.props;
 ---
 
 <span
   class="pill"
   data-category={category}
+  data-size={size}
   style={`
     ${color ? `--pill-color: ${color};` : ""}
     ${backgroundColor ? `--pill-bg: ${backgroundColor};` : ""}
@@ -23,12 +25,25 @@ const { text, color, backgroundColor, category } = Astro.props;
 <style>
   .pill {
     display: inline-block;
-    padding: 0.5rem 1rem;
     background: var(--pill-bg, var(--category-secondary));
     color: var(--pill-color, var(--category-primary));
     border-radius: 9999px;
-    font-size: 0.875rem;
     font-weight: 500;
     text-transform: capitalize;
+  }
+
+  .pill[data-size="small"] {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .pill[data-size="medium"] {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+
+  .pill[data-size="large"] {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
   }
 </style>

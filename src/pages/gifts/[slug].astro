@@ -27,11 +27,13 @@ const { gift } = Astro.props;
       <div class="gift-detail__tags">
         {
           gift.tags.map((tag) => (
-            <Pill
-              text={tag}
-              color="var(--color-white)"
-              backgroundColor="var(--category-accent)"
-            />
+            <a href={`/gifts?tags=${tag}`}>
+              <Pill
+                text={tag}
+                color="var(--color-white)"
+                backgroundColor="var(--category-accent)"
+              />
+            </a>
           ))
         }
       </div>
