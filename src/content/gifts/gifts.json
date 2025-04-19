@@ -10,6 +10,56 @@
     "category": "giftcard"
   },
   {
+    "slug": "local-restaurant-gift-card",
+    "name": "Local Restaurant Gift Card",
+    "description": "Gift card to a curated selection of local restaurants. Support independent eateries while giving the gift of memorable dining experiences.",
+    "priceRange": { "min": 25, "max": 200 },
+    "link": "https://example-restaurants.org",
+    "tags": ["food", "local", "dining"],
+    "isHidden": false,
+    "category": "giftcard"
+  },
+  {
+    "slug": "farmers-market-gift-card",
+    "name": "Farmers Market Gift Card",
+    "description": "A gift card for local farmers markets. Perfect for food lovers who appreciate fresh, seasonal produce and artisanal products directly from local vendors.",
+    "priceRange": { "min": 20, "max": 100 },
+    "link": "https://example-farmersmarket.org",
+    "tags": ["food", "local", "sustainable"],
+    "isHidden": false,
+    "category": "giftcard"
+  },
+  {
+    "slug": "local-spa-gift-card",
+    "name": "Local Spa Gift Card",
+    "description": "Gift card for wellness services at local spas. Support independent wellness practitioners while giving the gift of relaxation and self-care.",
+    "priceRange": { "min": 50, "max": 200 },
+    "link": "https://example-spa.org",
+    "tags": ["wellness", "local", "experiences"],
+    "isHidden": false,
+    "category": "giftcard"
+  },
+  {
+    "slug": "local-brewery-gift-card",
+    "name": "Local Brewery Gift Card",
+    "description": "A gift card to a local brewery. Supports local craft beer while providing year-round access to new releases and events.",
+    "priceRange": { "min": 50, "max": 150 },
+    "link": "https://example-brewery.org",
+    "tags": ["memberships", "beverages", "local", "entertainment"],
+    "isHidden": false,
+    "category": "giftcard"
+  },
+  {
+    "slug": "local-artisan-gift-card",
+    "name": "Local Artisan Marketplace Gift Card",
+    "description": "Gift card for a marketplace featuring local artisans and craftspeople. Support independent creators while giving unique, handcrafted items.",
+    "priceRange": { "min": 25, "max": 200 },
+    "link": "https://example-artisans.org",
+    "tags": ["arts", "local", "handmade"],
+    "isHidden": false,
+    "category": "giftcard"
+  },
+  {
     "slug": "community-supported-agriculture",
     "name": "CSA Subscription",
     "description": "Weekly local produce from small farms. Community Supported Agriculture (CSA) connects consumers directly with local farmers, providing fresh, seasonal produce while supporting sustainable agriculture.",
@@ -28,16 +78,6 @@
     "tags": ["subscriptions", "food", "local", "beverages"],
     "isHidden": false,
     "category": "subscription"
-  },
-  {
-    "slug": "cooking-class",
-    "name": "Local Cooking Class",
-    "description": "Learn to cook with local chefs using seasonal ingredients. A fun experience that supports local culinary talent and teaches valuable skills.",
-    "priceRange": { "min": 75, "max": 150 },
-    "link": "https://example-cooking.org",
-    "tags": ["experiences", "food", "local", "learning"],
-    "isHidden": false,
-    "category": "experience"
   },
   {
     "slug": "museum-membership",
@@ -60,6 +100,36 @@
     "category": "subscription"
   },
   {
+    "slug": "local-art-gallery-membership",
+    "name": "Local Art Gallery Membership",
+    "description": "Annual membership to a local art gallery. Supports local artists while providing year-round access to exhibitions and events.",
+    "priceRange": { "min": 50, "max": 150 },
+    "link": "https://example-artgallery.org",
+    "tags": ["memberships", "arts", "local", "education"],
+    "isHidden": false,
+    "category": "subscription"
+  },
+  {
+    "slug": "craft-beer-subscription",
+    "name": "Local Craft Beer Club",
+    "description": "Monthly selection of craft beers from local breweries. Discover new favorites while supporting independent brewers in your community.",
+    "priceRange": { "min": 40, "max": 80 },
+    "link": "https://example-beerclub.org",
+    "tags": ["subscriptions", "beverages", "local"],
+    "isHidden": false,
+    "category": "subscription"
+  },
+  {
+    "slug": "cooking-class",
+    "name": "Local Cooking Class",
+    "description": "Learn to cook with local chefs using seasonal ingredients. A fun experience that supports local culinary talent and teaches valuable skills.",
+    "priceRange": { "min": 75, "max": 150 },
+    "link": "https://example-cooking.org",
+    "tags": ["experiences", "food", "local", "learning"],
+    "isHidden": false,
+    "category": "experience"
+  },
+  {
     "slug": "local-theater-tickets",
     "name": "Local Theater Tickets",
     "description": "Season tickets to a local theater company. Support performing arts in your community while enjoying live entertainment.",
@@ -70,12 +140,162 @@
     "category": "experience"
   },
   {
+    "slug": "pottery-workshop",
+    "name": "Pottery Workshop Series",
+    "description": "Hands-on pottery classes with local artists. Learn wheel throwing and hand-building techniques while supporting local ceramic artists.",
+    "priceRange": { "min": 200, "max": 400 },
+    "link": "https://example-pottery.org",
+    "tags": ["experiences", "arts", "local", "learning"],
+    "isHidden": false,
+    "category": "experience"
+  },
+  {
+    "slug": "wine-tasting-tour",
+    "name": "Local Winery Tour & Tasting",
+    "description": "Guided tour of local wineries with tastings. Learn about wine-making while supporting local vintners and enjoying regional varieties.",
+    "priceRange": { "min": 80, "max": 150 },
+    "link": "https://example-winetour.org",
+    "tags": ["experiences", "beverages", "local", "tours"],
+    "isHidden": false,
+    "category": "experience"
+  },
+  {
+    "slug": "photography-workshop",
+    "name": "Photography Workshop",
+    "description": "Learn photography from local professionals. Includes hands-on instruction and field trips to scenic local spots.",
+    "priceRange": { "min": 150, "max": 300 },
+    "link": "https://example-photo.org",
+    "tags": ["experiences", "arts", "local", "learning"],
+    "isHidden": false,
+    "category": "experience"
+  },
+  {
+    "slug": "kayak-adventure",
+    "name": "Guided Kayak Adventure",
+    "description": "Guided kayaking experience with local outdoor experts. Explore local waterways while learning about the ecosystem and proper paddling techniques.",
+    "priceRange": { "min": 60, "max": 120 },
+    "link": "https://example-kayak.org",
+    "tags": ["experiences", "outdoor", "local", "adventure"],
+    "isHidden": false,
+    "category": "experience"
+  },
+  {
+    "slug": "donation-to-local-charity",
+    "name": "Donation to Local Charity",
+    "description": "A donation to a local charity. Supports a cause close to your heart while making a difference in your community.",
+    "priceRange": { "min": 10, "max": 100 },
+    "link": "https://example-charity.org",
+    "tags": ["donations", "local", "charity"],
+    "isHidden": false,
+    "category": "donation"
+  },
+  {
+    "slug": "animal-shelter-donation",
+    "name": "Local Animal Shelter Support",
+    "description": "Support local animal welfare through a donation to a nearby shelter. Help provide care, food, and medical treatment for animals in need.",
+    "priceRange": { "min": 20, "max": 200 },
+    "link": "https://example-shelter.org",
+    "tags": ["donations", "animals", "local", "charity"],
+    "isHidden": false,
+    "category": "donation"
+  },
+  {
+    "slug": "food-bank-donation",
+    "name": "Local Food Bank Contribution",
+    "description": "Support food security in your community through a donation to a local food bank. Help provide meals to families in need.",
+    "priceRange": { "min": 25, "max": 500 },
+    "link": "https://example-foodbank.org",
+    "tags": ["donations", "food", "local", "charity"],
+    "isHidden": false,
+    "category": "donation"
+  },
+  {
+    "slug": "youth-programs-donation",
+    "name": "Youth Programs Support",
+    "description": "Contribute to local youth development programs. Support after-school activities, mentorship, and educational initiatives for young people.",
+    "priceRange": { "min": 50, "max": 250 },
+    "link": "https://example-youth.org",
+    "tags": ["donations", "education", "local", "youth"],
+    "isHidden": false,
+    "category": "donation"
+  },
+  {
+    "slug": "environmental-donation",
+    "name": "Local Environmental Initiative",
+    "description": "Support local environmental conservation efforts. Help protect natural areas, support wildlife, and promote sustainability in your community.",
+    "priceRange": { "min": 25, "max": 200 },
+    "link": "https://example-environment.org",
+    "tags": ["donations", "environment", "local", "sustainable"],
+    "isHidden": false,
+    "category": "donation"
+  },
+  {
+    "slug": "arts-education-donation",
+    "name": "Arts Education Support",
+    "description": "Contribute to local arts education programs. Help provide arts instruction and creative opportunities for students in your community.",
+    "priceRange": { "min": 30, "max": 300 },
+    "link": "https://example-artseducation.org",
+    "tags": ["donations", "arts", "education", "local"],
+    "isHidden": false,
+    "category": "donation"
+  },
+  {
     "slug": "zero-waste-kit",
     "name": "Zero Waste Starter Kit",
     "description": "A collection of reusable items to help reduce waste, including bamboo utensils, reusable bags, and stainless steel containers.",
     "priceRange": { "min": 30, "max": 60 },
     "link": "https://example-zerowaste.org",
     "tags": ["sustainable", "local", "kitchen", "eco-friendly"],
+    "isHidden": false,
+    "category": "other"
+  },
+  {
+    "slug": "local-art-print",
+    "name": "Local Artist Print Collection",
+    "description": "Curated collection of prints from local artists. Beautiful artwork that supports your local creative community.",
+    "priceRange": { "min": 40, "max": 200 },
+    "link": "https://example-prints.org",
+    "tags": ["arts", "local", "home-decor"],
+    "isHidden": false,
+    "category": "other"
+  },
+  {
+    "slug": "handmade-pottery-set",
+    "name": "Local Pottery Set",
+    "description": "Handcrafted pottery set made by local artisans. Each piece is unique and supports local craft traditions.",
+    "priceRange": { "min": 75, "max": 250 },
+    "link": "https://example-pottery-set.org",
+    "tags": ["handmade", "local", "home-decor", "kitchen"],
+    "isHidden": false,
+    "category": "other"
+  },
+  {
+    "slug": "local-honey-collection",
+    "name": "Local Honey Collection",
+    "description": "Curated set of honey varieties from local beekeepers. Support local pollinators and enjoy unique flavor profiles.",
+    "priceRange": { "min": 25, "max": 75 },
+    "link": "https://example-honey.org",
+    "tags": ["food", "local", "sustainable"],
+    "isHidden": false,
+    "category": "other"
+  },
+  {
+    "slug": "handmade-candle-set",
+    "name": "Artisan Candle Collection",
+    "description": "Set of handcrafted candles made by local artisans using natural ingredients. Each candle features unique scents inspired by local flora.",
+    "priceRange": { "min": 35, "max": 100 },
+    "link": "https://example-candles.org",
+    "tags": ["handmade", "local", "home-decor"],
+    "isHidden": false,
+    "category": "other"
+  },
+  {
+    "slug": "local-cookbook",
+    "name": "Local Chefs Cookbook",
+    "description": "Collection of recipes from local chefs featuring regional ingredients and traditions. Includes restaurant histories and chef profiles.",
+    "priceRange": { "min": 25, "max": 45 },
+    "link": "https://example-cookbook.org",
+    "tags": ["books", "food", "local", "kitchen"],
     "isHidden": false,
     "category": "other"
   }
