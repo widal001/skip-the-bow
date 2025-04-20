@@ -23,10 +23,9 @@ const { options = defaultOptions, value } = Astro.props;
     <select
       id="sort-select"
       name="sort"
-      value={value || ""}
+      value={value}
       onchange="this.form.requestSubmit()"
     >
-      <option value="">Default</option>
       {
         // Populate the select dropdown with the options
         // If the selected value is not in the options,

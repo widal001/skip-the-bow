@@ -4,6 +4,11 @@ import GiftIdeaCard from "../../components/GiftIdeaCard.astro";
 import { GiftCategory } from "../../content/types";
 import type { GiftSearchParams } from "../../content/types";
 import { searchGifts, toSentenceCase } from "../../lib/gift-service";
+import {
+  getSearchParamsFromUrl,
+  getSearchParamsFromForm,
+  buildUrl,
+} from "../../lib/url-utils";
 import SearchBar from "../../components/gift-search/SearchBar.astro";
 import CategoryFilter from "../../components/gift-search/CategoryFilter.astro";
 import TagFilter from "../../components/gift-search/TagFilter.astro";
@@ -17,72 +22,15 @@ const tags = [...new Set(allGifts.flatMap((gift) => gift.tags))].sort();
 
 // Handle form submission
 let searchParams: GiftSearchParams = {};
+const url = new URL(Astro.request.url);
+
 if (Astro.request.method === "POST") {
   const formData = await Astro.request.formData();
-  const url = new URL(Astro.request.url);
-  const queryParts = [];
-
-  // Handle search query
-  const searchQuery =
-    formData.get("search")?.toString() || url.searchParams.get("q");
-  if (searchQuery) {
-    queryParts.push(`q=${encodeURIComponent(searchQuery)}`);
-  }
-
-  // Handle price range
-  const minPrice =
-    formData.get("min-price")?.toString().trim() || url.searchParams.get("min");
-  const maxPrice =
-    formData.get("max-price")?.toString().trim() || url.searchParams.get("max");
-  if (minPrice) queryParts.push(`min=${minPrice}`);
-  if (maxPrice) queryParts.push(`max=${maxPrice}`);
-
-  // Handle categories
-  const categories =
-    formData.getAll("category").length > 0
-      ? formData.getAll("category")
-      : url.searchParams.get("categories")?.split(",").filter(Boolean) || [];
-  if (categories.length > 0) {
-    queryParts.push(`categories=${categories.join(",")}`);
-  }
-
-  // Handle tags
-  const tags =
-    formData.getAll("tag").length > 0
-      ? formData.getAll("tag")
-      : url.searchParams.get("tags")?.split(",").filter(Boolean) || [];
-  if (tags.length > 0) {
-    queryParts.push(`tags=${tags.join(",")}`);
-  }
-
-  // Handle sort
-  const sortBy =
-    formData.get("sort")?.toString() || url.searchParams.get("sort");
-  if (sortBy) {
-    queryParts.push(`sort=${sortBy}`);
-  }
-
-  // Redirect with query params
-  return Astro.redirect(`/gifts?${queryParts.join("&")}`);
+  const currentParams = getSearchParamsFromUrl(url);
+  searchParams = getSearchParamsFromForm(formData, currentParams);
+  return Astro.redirect(buildUrl("/gifts", searchParams));
 } else {
-  // Get search params from URL
-  const url = new URL(Astro.request.url);
-  searchParams = {
-    query: url.searchParams.get("q") || undefined,
-    categories:
-      url.searchParams.get("categories")?.split(",").filter(Boolean) ||
-      undefined,
-    tags: url.searchParams.get("tags")?.split(",").filter(Boolean) || undefined,
-    priceRange: {
-      min: url.searchParams.get("min")
-        ? Number(url.searchParams.get("min"))
-        : undefined,
-      max: url.searchParams.get("max")
-        ? Number(url.searchParams.get("max"))
-        : undefined,
-    },
-    sortBy: url.searchParams.get("sort") || undefined,
-  };
+  searchParams = getSearchParamsFromUrl(url);
 }
 
 // Get filtered gifts
