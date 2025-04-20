@@ -4,7 +4,7 @@
     "name": "Bookshop.org Gift Card",
     "description": "Support indie bookstores with a digital gift card. Bookshop.org is an online bookstore with a mission to financially support local, independent bookstores.",
     "priceRange": { "min": 10, "max": 100 },
-    "link": "https://bookshop.org",
+    "link": "https://github.com/widal001/skip-the-bow",
     "tags": ["subscriptions", "books", "local"],
     "isHidden": false,
     "category": "giftcard"
@@ -14,7 +14,7 @@
     "name": "Local Restaurant Gift Card",
     "description": "Gift card to a curated selection of local restaurants. Support independent eateries while giving the gift of memorable dining experiences.",
     "priceRange": { "min": 25, "max": 200 },
-    "link": "https://example-restaurants.org",
+    "link": "https://github.com/widal001/skip-the-bow",
     "tags": ["food", "local", "dining"],
     "isHidden": false,
     "category": "giftcard"
@@ -24,7 +24,7 @@
     "name": "Farmers Market Gift Card",
     "description": "A gift card for local farmers markets. Perfect for food lovers who appreciate fresh, seasonal produce and artisanal products directly from local vendors.",
     "priceRange": { "min": 20, "max": 100 },
-    "link": "https://example-farmersmarket.org",
+    "link": "https://github.com/widal001/skip-the-bow",
     "tags": ["food", "local", "sustainable"],
     "isHidden": false,
     "category": "giftcard"
@@ -34,7 +34,7 @@
     "name": "Local Spa Gift Card",
     "description": "Gift card for wellness services at local spas. Support independent wellness practitioners while giving the gift of relaxation and self-care.",
     "priceRange": { "min": 50, "max": 200 },
-    "link": "https://example-spa.org",
+    "link": "https://github.com/widal001/skip-the-bow",
     "tags": ["wellness", "local", "experiences"],
     "isHidden": false,
     "category": "giftcard"
@@ -44,7 +44,7 @@
     "name": "Local Brewery Gift Card",
     "description": "A gift card to a local brewery. Supports local craft beer while providing year-round access to new releases and events.",
     "priceRange": { "min": 50, "max": 150 },
-    "link": "https://example-brewery.org",
+    "link": "https://github.com/widal001/skip-the-bow",
     "tags": ["memberships", "beverages", "local", "entertainment"],
     "isHidden": false,
     "category": "giftcard"
@@ -54,7 +54,7 @@
     "name": "Local Artisan Marketplace Gift Card",
     "description": "Gift card for a marketplace featuring local artisans and craftspeople. Support independent creators while giving unique, handcrafted items.",
     "priceRange": { "min": 25, "max": 200 },
-    "link": "https://example-artisans.org",
+    "link": "https://github.com/widal001/skip-the-bow",
     "tags": ["arts", "local", "handmade"],
     "isHidden": false,
     "category": "giftcard"
@@ -64,7 +64,7 @@
     "name": "CSA Subscription",
     "description": "Weekly local produce from small farms. Community Supported Agriculture (CSA) connects consumers directly with local farmers, providing fresh, seasonal produce while supporting sustainable agriculture.",
     "priceRange": { "min": 25, "max": 50 },
-    "link": "https://example-csa.org",
+    "link": "https://github.com/widal001/skip-the-bow",
     "tags": ["subscriptions", "food", "local", "sustainable"],
     "isHidden": false,
     "category": "subscription"
@@ -74,7 +74,7 @@
     "name": "Local Coffee Subscription",
     "description": "Monthly delivery of freshly roasted coffee from local roasters. Support small coffee businesses while enjoying high-quality, ethically sourced beans.",
     "priceRange": { "min": 15, "max": 30 },
-    "link": "https://example-coffee.org",
+    "link": "https://github.com/widal001/skip-the-bow",
     "tags": ["subscriptions", "food", "local", "beverages"],
     "isHidden": false,
     "category": "subscription"
@@ -84,7 +84,7 @@
     "name": "Museum Membership",
     "description": "Annual membership to a local museum or cultural institution. Supports arts and education while providing year-round access to exhibitions and events.",
     "priceRange": { "min": 50, "max": 150 },
-    "link": "https://example-museum.org",
+    "link": "https://github.com/widal001/skip-the-bow",
     "tags": ["memberships", "arts", "local", "education"],
     "isHidden": false,
     "category": "subscription"
@@ -94,7 +94,7 @@
     "name": "Plant Subscription Box",
     "description": "Monthly delivery of a new houseplant with care instructions. A sustainable way to bring nature indoors and support local plant nurseries.",
     "priceRange": { "min": 20, "max": 40 },
-    "link": "https://example-plants.org",
+    "link": "https://github.com/widal001/skip-the-bow",
     "tags": ["subscriptions", "plants", "local", "sustainable"],
     "isHidden": false,
     "category": "subscription"
@@ -104,7 +104,7 @@
     "name": "Local Art Gallery Membership",
     "description": "Annual membership to a local art gallery. Supports local artists while providing year-round access to exhibitions and events.",
     "priceRange": { "min": 50, "max": 150 },
-    "link": "https://example-artgallery.org",
+    "link": "https://github.com/widal001/skip-the-bow",
     "tags": ["memberships", "arts", "local", "education"],
     "isHidden": false,
     "category": "subscription"
@@ -114,7 +114,7 @@
     "name": "Local Craft Beer Club",
     "description": "Monthly selection of craft beers from local breweries. Discover new favorites while supporting independent brewers in your community.",
     "priceRange": { "min": 40, "max": 80 },
-    "link": "https://example-beerclub.org",
+    "link": "https://github.com/widal001/skip-the-bow",
     "tags": ["subscriptions", "beverages", "local"],
     "isHidden": false,
     "category": "subscription"
@@ -124,7 +124,7 @@
     "name": "Local Cooking Class",
     "description": "Learn to cook with local chefs using seasonal ingredients. A fun experience that supports local culinary talent and teaches valuable skills.",
     "priceRange": { "min": 75, "max": 150 },
-    "link": "https://example-cooking.org",
+    "link": "https://github.com/widal001/skip-the-bow",
     "tags": ["experiences", "food", "local", "learning"],
     "isHidden": false,
     "category": "experience"
@@ -134,7 +134,7 @@
     "name": "Local Theater Tickets",
     "description": "Season tickets to a local theater company. Support performing arts in your community while enjoying live entertainment.",
     "priceRange": { "min": 100, "max": 300 },
-    "link": "https://example-theater.org",
+    "link": "https://github.com/widal001/skip-the-bow",
     "tags": ["experiences", "arts", "local", "entertainment"],
     "isHidden": false,
     "category": "experience"
@@ -144,7 +144,7 @@
     "name": "Pottery Workshop Series",
     "description": "Hands-on pottery classes with local artists. Learn wheel throwing and hand-building techniques while supporting local ceramic artists.",
     "priceRange": { "min": 200, "max": 400 },
-    "link": "https://example-pottery.org",
+    "link": "https://github.com/widal001/skip-the-bow",
     "tags": ["experiences", "arts", "local", "learning"],
     "isHidden": false,
     "category": "experience"
@@ -154,7 +154,7 @@
     "name": "Local Winery Tour & Tasting",
     "description": "Guided tour of local wineries with tastings. Learn about wine-making while supporting local vintners and enjoying regional varieties.",
     "priceRange": { "min": 80, "max": 150 },
-    "link": "https://example-winetour.org",
+    "link": "https://github.com/widal001/skip-the-bow",
     "tags": ["experiences", "beverages", "local", "tours"],
     "isHidden": false,
     "category": "experience"
@@ -164,7 +164,7 @@
     "name": "Photography Workshop",
     "description": "Learn photography from local professionals. Includes hands-on instruction and field trips to scenic local spots.",
     "priceRange": { "min": 150, "max": 300 },
-    "link": "https://example-photo.org",
+    "link": "https://github.com/widal001/skip-the-bow",
     "tags": ["experiences", "arts", "local", "learning"],
     "isHidden": false,
     "category": "experience"
@@ -174,7 +174,7 @@
     "name": "Guided Kayak Adventure",
     "description": "Guided kayaking experience with local outdoor experts. Explore local waterways while learning about the ecosystem and proper paddling techniques.",
     "priceRange": { "min": 60, "max": 120 },
-    "link": "https://example-kayak.org",
+    "link": "https://github.com/widal001/skip-the-bow",
     "tags": ["experiences", "outdoor", "local", "adventure"],
     "isHidden": false,
     "category": "experience"
@@ -184,7 +184,7 @@
     "name": "Donation to Local Charity",
     "description": "A donation to a local charity. Supports a cause close to your heart while making a difference in your community.",
     "priceRange": { "min": 10, "max": 100 },
-    "link": "https://example-charity.org",
+    "link": "https://github.com/widal001/skip-the-bow",
     "tags": ["donations", "local", "charity"],
     "isHidden": false,
     "category": "donation"
@@ -194,7 +194,7 @@
     "name": "Local Animal Shelter Support",
     "description": "Support local animal welfare through a donation to a nearby shelter. Help provide care, food, and medical treatment for animals in need.",
     "priceRange": { "min": 20, "max": 200 },
-    "link": "https://example-shelter.org",
+    "link": "https://github.com/widal001/skip-the-bow",
     "tags": ["donations", "animals", "local", "charity"],
     "isHidden": false,
     "category": "donation"
@@ -204,7 +204,7 @@
     "name": "Local Food Bank Contribution",
     "description": "Support food security in your community through a donation to a local food bank. Help provide meals to families in need.",
     "priceRange": { "min": 25, "max": 500 },
-    "link": "https://example-foodbank.org",
+    "link": "https://github.com/widal001/skip-the-bow",
     "tags": ["donations", "food", "local", "charity"],
     "isHidden": false,
     "category": "donation"
@@ -214,7 +214,7 @@
     "name": "Youth Programs Support",
     "description": "Contribute to local youth development programs. Support after-school activities, mentorship, and educational initiatives for young people.",
     "priceRange": { "min": 50, "max": 250 },
-    "link": "https://example-youth.org",
+    "link": "https://github.com/widal001/skip-the-bow",
     "tags": ["donations", "education", "local", "youth"],
     "isHidden": false,
     "category": "donation"
@@ -224,7 +224,7 @@
     "name": "Local Environmental Initiative",
     "description": "Support local environmental conservation efforts. Help protect natural areas, support wildlife, and promote sustainability in your community.",
     "priceRange": { "min": 25, "max": 200 },
-    "link": "https://example-environment.org",
+    "link": "https://github.com/widal001/skip-the-bow",
     "tags": ["donations", "environment", "local", "sustainable"],
     "isHidden": false,
     "category": "donation"
@@ -234,7 +234,7 @@
     "name": "Arts Education Support",
     "description": "Contribute to local arts education programs. Help provide arts instruction and creative opportunities for students in your community.",
     "priceRange": { "min": 30, "max": 300 },
-    "link": "https://example-artseducation.org",
+    "link": "https://github.com/widal001/skip-the-bow",
     "tags": ["donations", "arts", "education", "local"],
     "isHidden": false,
     "category": "donation"
@@ -244,7 +244,7 @@
     "name": "Zero Waste Starter Kit",
     "description": "A collection of reusable items to help reduce waste, including bamboo utensils, reusable bags, and stainless steel containers.",
     "priceRange": { "min": 30, "max": 60 },
-    "link": "https://example-zerowaste.org",
+    "link": "https://github.com/widal001/skip-the-bow",
     "tags": ["sustainable", "local", "kitchen", "eco-friendly"],
     "isHidden": false,
     "category": "other"
@@ -254,7 +254,7 @@
     "name": "Local Artist Print Collection",
     "description": "Curated collection of prints from local artists. Beautiful artwork that supports your local creative community.",
     "priceRange": { "min": 40, "max": 200 },
-    "link": "https://example-prints.org",
+    "link": "https://github.com/widal001/skip-the-bow",
     "tags": ["arts", "local", "home-decor"],
     "isHidden": false,
     "category": "other"
@@ -264,7 +264,7 @@
     "name": "Local Pottery Set",
     "description": "Handcrafted pottery set made by local artisans. Each piece is unique and supports local craft traditions.",
     "priceRange": { "min": 75, "max": 250 },
-    "link": "https://example-pottery-set.org",
+    "link": "https://github.com/widal001/skip-the-bow",
     "tags": ["handmade", "local", "home-decor", "kitchen"],
     "isHidden": false,
     "category": "other"
@@ -274,7 +274,7 @@
     "name": "Local Honey Collection",
     "description": "Curated set of honey varieties from local beekeepers. Support local pollinators and enjoy unique flavor profiles.",
     "priceRange": { "min": 25, "max": 75 },
-    "link": "https://example-honey.org",
+    "link": "https://github.com/widal001/skip-the-bow",
     "tags": ["food", "local", "sustainable"],
     "isHidden": false,
     "category": "other"
@@ -284,7 +284,7 @@
     "name": "Artisan Candle Collection",
     "description": "Set of handcrafted candles made by local artisans using natural ingredients. Each candle features unique scents inspired by local flora.",
     "priceRange": { "min": 35, "max": 100 },
-    "link": "https://example-candles.org",
+    "link": "https://github.com/widal001/skip-the-bow",
     "tags": ["handmade", "local", "home-decor"],
     "isHidden": false,
     "category": "other"
@@ -294,7 +294,7 @@
     "name": "Local Chefs Cookbook",
     "description": "Collection of recipes from local chefs featuring regional ingredients and traditions. Includes restaurant histories and chef profiles.",
     "priceRange": { "min": 25, "max": 45 },
-    "link": "https://example-cookbook.org",
+    "link": "https://github.com/widal001/skip-the-bow",
     "tags": ["books", "food", "local", "kitchen"],
     "isHidden": false,
     "category": "other"
