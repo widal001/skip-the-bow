@@ -19,34 +19,45 @@ const tags = [...new Set(allGifts.flatMap((gift) => gift.tags))].sort();
 let searchParams: GiftSearchParams = {};
 if (Astro.request.method === "POST") {
   const formData = await Astro.request.formData();
+  const url = new URL(Astro.request.url);
   const queryParts = [];
 
   // Handle search query
-  const searchQuery = formData.get("search")?.toString();
+  const searchQuery =
+    formData.get("search")?.toString() || url.searchParams.get("q");
   if (searchQuery) {
     queryParts.push(`q=${encodeURIComponent(searchQuery)}`);
   }
 
   // Handle price range
-  const minPrice = formData.get("min-price")?.toString().trim();
-  const maxPrice = formData.get("max-price")?.toString().trim();
+  const minPrice =
+    formData.get("min-price")?.toString().trim() || url.searchParams.get("min");
+  const maxPrice =
+    formData.get("max-price")?.toString().trim() || url.searchParams.get("max");
   if (minPrice) queryParts.push(`min=${minPrice}`);
   if (maxPrice) queryParts.push(`max=${maxPrice}`);
 
   // Handle categories
-  const categories = formData.getAll("category");
+  const categories =
+    formData.getAll("category").length > 0
+      ? formData.getAll("category")
+      : url.searchParams.get("categories")?.split(",").filter(Boolean) || [];
   if (categories.length > 0) {
     queryParts.push(`categories=${categories.join(",")}`);
   }
 
   // Handle tags
-  const tags = formData.getAll("tag");
+  const tags =
+    formData.getAll("tag").length > 0
+      ? formData.getAll("tag")
+      : url.searchParams.get("tags")?.split(",").filter(Boolean) || [];
   if (tags.length > 0) {
     queryParts.push(`tags=${tags.join(",")}`);
   }
 
   // Handle sort
-  const sortBy = formData.get("sort")?.toString();
+  const sortBy =
+    formData.get("sort")?.toString() || url.searchParams.get("sort");
   if (sortBy) {
     queryParts.push(`sort=${sortBy}`);
   }
