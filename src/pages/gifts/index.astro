@@ -28,8 +28,8 @@ if (Astro.request.method === "POST") {
   const formData = await Astro.request.formData();
   const currentParams = getSearchParamsFromUrl(url);
 
-  // Check if this is a sort menu submission
-  const isSortMenuSubmission = formData.has("sort") && !formData.has("search");
+  // Check if this is a sort menu submission by only looking for the sort parameter
+  const isSortMenuSubmission = formData.has("sort");
 
   // For filter form submissions, only preserve the sort parameter
   const preservedParams = isSortMenuSubmission
