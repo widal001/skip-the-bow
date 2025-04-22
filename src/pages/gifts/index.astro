@@ -27,7 +27,16 @@ const url = new URL(Astro.request.url);
 if (Astro.request.method === "POST") {
   const formData = await Astro.request.formData();
   const currentParams = getSearchParamsFromUrl(url);
-  searchParams = getSearchParamsFromForm(formData, currentParams);
+
+  // Check if this is a sort menu submission
+  const isSortMenuSubmission = formData.has("sort") && !formData.has("search");
+
+  // For filter form submissions, only preserve the sort parameter
+  const preservedParams = isSortMenuSubmission
+    ? currentParams
+    : { sortBy: currentParams.sortBy };
+
+  searchParams = getSearchParamsFromForm(formData, preservedParams);
   return Astro.redirect(buildUrl("/gifts", searchParams));
 } else {
   searchParams = getSearchParamsFromUrl(url);
