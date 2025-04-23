@@ -3,11 +3,19 @@ interface Props {
   text: string;
   color?: string;
   backgroundColor?: string;
+  borderColor?: string;
   category?: string;
   size?: "small" | "medium" | "large";
 }
 
-const { text, color, backgroundColor, category, size = "medium" } = Astro.props;
+const {
+  text,
+  color,
+  backgroundColor,
+  borderColor,
+  category,
+  size = "medium",
+} = Astro.props;
 ---
 
 <span
@@ -17,6 +25,7 @@ const { text, color, backgroundColor, category, size = "medium" } = Astro.props;
   style={`
     ${color ? `--pill-color: ${color};` : ""}
     ${backgroundColor ? `--pill-bg: ${backgroundColor};` : ""}
+    ${borderColor ? `--pill-border: ${borderColor};` : ""}
   `}
 >
   {text}
@@ -26,7 +35,8 @@ const { text, color, backgroundColor, category, size = "medium" } = Astro.props;
   .pill {
     display: inline-block;
     background: var(--pill-bg, var(--category-secondary));
-    color: var(--pill-color, var(--category-primary));
+    color: var(--pill-color, var(--color-gray-900));
+    border: 1px solid var(--pill-border, var(--category-accent));
     border-radius: 9999px;
     font-weight: 500;
     text-transform: capitalize;

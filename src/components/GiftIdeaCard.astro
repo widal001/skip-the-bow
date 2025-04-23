@@ -30,8 +30,9 @@ const truncatedDescription =
           gift.tags.map((tag) => (
             <Pill
               text={tag}
-              color="var(--color-white)"
-              backgroundColor="var(--category-accent)"
+              color="var(--color-gray-900)"
+              backgroundColor="var(--category-secondary)"
+              borderColor="var(--category-accent)"
               size="small"
             />
           ))
@@ -52,7 +53,7 @@ const truncatedDescription =
     color: inherit;
     background: var(--color-white);
     border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px var(--color-gray-200);
     transition:
       transform 0.2s ease,
       box-shadow 0.2s ease;
@@ -63,7 +64,7 @@ const truncatedDescription =
 
   .gift-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px var(--color-gray-200);
   }
 
   .gift-card__header {

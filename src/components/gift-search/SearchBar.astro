@@ -9,7 +9,7 @@ const { placeholder = "Search gifts...", value } = Astro.props;
 
 <div class="search-wrapper">
   <div class="search-bar">
-    <input type="text" name="q" placeholder={placeholder} value={value} />
+    <input type="text" name="query" placeholder={placeholder} value={value} />
     <button type="submit" class="search-button" aria-label="Search">
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -33,6 +33,9 @@ const { placeholder = "Search gifts...", value } = Astro.props;
   .search-wrapper {
     width: 100%;
     margin-bottom: 2rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .search-bar {
@@ -58,6 +61,7 @@ const { placeholder = "Search gifts...", value } = Astro.props;
     font-size: 1rem;
     background: transparent;
     color: var(--color-gray-900);
+    min-width: 0;
   }
 
   .search-bar input:focus {
@@ -91,5 +95,20 @@ const { placeholder = "Search gifts...", value } = Astro.props;
     box-shadow:
       0 0 0 2px var(--color-white),
       0 0 0 4px var(--color-primary);
+  }
+
+  @media (max-width: 480px) {
+    .search-wrapper {
+      margin-bottom: 1rem;
+    }
+
+    .search-bar input {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.9rem;
+    }
+
+    .search-button {
+      padding: 0 1rem;
+    }
   }
 </style>

@@ -30,7 +30,7 @@ export function getSearchParamsFromForm(
   currentParams: GiftSearchParams
 ): GiftSearchParams {
   return {
-    query: formData.get("search")?.toString() || currentParams.query,
+    query: formData.get("query")?.toString() || currentParams.query,
     categories:
       formData.getAll("category").length > 0
         ? formData.getAll("category").map((v) => v.toString())
