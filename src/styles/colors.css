@@ -13,42 +13,42 @@
   --color-gray-900: #111827;
 
   /* Theme colors */
-  --color-primary: #4F46E5;    /* Indigo - matches donation category */
+  --color-primary: #4338CA;    /* Indigo - matches donation category */
   --color-primary-light: #EEF2FF;
-  --color-primary-dark: #4338CA;
+  --color-primary-dark: #312E81;
   
-  --color-secondary: #10B981;  /* Emerald - matches subscription category */
+  --color-secondary: #059669;  /* Emerald - matches subscription category */
   --color-secondary-light: #ECFDF5;
-  --color-secondary-dark: #059669;
+  --color-secondary-dark: #065F46;
   
-  --color-accent: #F59E0B;     /* Amber - matches experience category */
+  --color-accent: #D97706;     /* Amber - matches experience category */
   --color-accent-light: #FFFBEB;
-  --color-accent-dark: #D97706;
+  --color-accent-dark: #92400E;
 
   /* Category colors - Donation */
-  --color-donation-primary: #4F46E5;
+  --color-donation-primary: #4338CA;
   --color-donation-secondary: #EEF2FF;
-  --color-donation-accent: #818CF8;
+  --color-donation-accent: #6366F1;
 
   /* Category colors - Subscription */
-  --color-subscription-primary: #10B981;
+  --color-subscription-primary: #059669;
   --color-subscription-secondary: #ECFDF5;
-  --color-subscription-accent: #34D399;
+  --color-subscription-accent: #10B981;
 
   /* Category colors - Experience */
-  --color-experience-primary: #F59E0B;
+  --color-experience-primary: #D97706;
   --color-experience-secondary: #FFFBEB;
-  --color-experience-accent: #FBBF24;
+  --color-experience-accent: #F59E0B;
 
   /* Category colors - Giftcard */
-  --color-giftcard-primary: #8B5CF6;
+  --color-giftcard-primary: #7C3AED;
   --color-giftcard-secondary: #F5F3FF;
-  --color-giftcard-accent: #A78BFA;
+  --color-giftcard-accent: #8B5CF6;
 
   /* Category colors - Other */
-  --color-other-primary: #EC4899;
+  --color-other-primary: #BE185D;
   --color-other-secondary: #FDF2F8;
-  --color-other-accent: #F472B6;
+  --color-other-accent: #EC4899;
 }
 
 /* Category color mapping */
