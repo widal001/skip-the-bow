@@ -10,7 +10,8 @@
     "test": "vitest",
     "db:generate": "drizzle-kit generate:sqlite",
     "db:studio": "drizzle-kit studio",
-    "db:migrate:local": "drizzle-kit migrate --config=drizzle.config.ts"
+    "db:migrate:local": "drizzle-kit migrate --config=drizzle.config.ts",
+    "db:seed": "tsx scripts/seed.ts"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.5.0",
@@ -23,9 +24,10 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
+    "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^22.15.2",
     "drizzle-kit": "^0.31.0",
-    "@types/better-sqlite3": "^7.6.13",
+    "tsx": "^4.19.3",
     "vitest": "^3.1.1",
     "wrangler": "^4.12.0"
   }
