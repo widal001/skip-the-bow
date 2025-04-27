@@ -9,22 +9,23 @@
     "astro": "astro",
     "test": "vitest",
     "db:generate": "drizzle-kit generate:sqlite",
-    "db:push:staging": "wrangler d1 execute skipthebow-staging --file=./migrations/schema.sql",
-    "db:push:prod": "wrangler d1 execute skipthebow-prod --file=./migrations/schema.sql",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "db:migrate:local": "drizzle-kit migrate --config=drizzle.config.ts"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.5.0",
     "@astrojs/node": "^9.2.0",
     "@cloudflare/workers-types": "^4.20240208.0",
     "astro": "^5.6.1",
-    "drizzle-orm": "^0.29.3",
+    "better-sqlite3": "^11.9.1",
+    "drizzle-orm": "^0.43.1",
     "typescript": "^5.8.3"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
     "@types/node": "^22.15.2",
-    "drizzle-kit": "^0.20.14",
+    "drizzle-kit": "^0.31.0",
+    "@types/better-sqlite3": "^7.6.13",
     "vitest": "^3.1.1",
     "wrangler": "^4.12.0"
   }
