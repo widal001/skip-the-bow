@@ -1,6 +1,6 @@
 import { db } from "../src/db";
 import { gifts, tags, giftTags } from "../src/db/schema";
-import giftsData from "../src/content/gifts/gifts.json";
+import giftsData from "../src/content/gifts.json";
 import config from "../drizzle.config";
 
 // Check if we're running in a local environment
@@ -55,7 +55,12 @@ async function seed() {
           maxPrice: gift.priceRange.max,
           link: gift.link,
           isHidden: gift.isHidden,
-          category: gift.category,
+          category: gift.category as
+            | "donation"
+            | "subscription"
+            | "experience"
+            | "giftcard"
+            | "other",
         })
         .returning();
 

@@ -16,7 +16,9 @@ export const gifts = sqliteTable("gifts", {
   maxPrice: real("max_price").notNull(),
   link: text("link").notNull(),
   isHidden: integer("is_hidden", { mode: "boolean" }).notNull().default(false),
-  category: text("category").notNull(),
+  category: text("category", {
+    enum: ["donation", "subscription", "experience", "giftcard", "other"],
+  }).notNull(),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
