@@ -24,7 +24,8 @@ export const gifts = sqliteTable("gifts", {
     .default(sql`CURRENT_TIMESTAMP`),
   updatedAt: integer("updated_at", { mode: "timestamp" })
     .notNull()
-    .default(sql`CURRENT_TIMESTAMP`),
+    .default(sql`CURRENT_TIMESTAMP`)
+    .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
 });
 
 export const tags = sqliteTable("tags", {
@@ -35,7 +36,8 @@ export const tags = sqliteTable("tags", {
     .default(sql`CURRENT_TIMESTAMP`),
   updatedAt: integer("updated_at", { mode: "timestamp" })
     .notNull()
-    .default(sql`CURRENT_TIMESTAMP`),
+    .default(sql`CURRENT_TIMESTAMP`)
+    .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
 });
 
 export const giftTags = sqliteTable(
@@ -50,8 +52,10 @@ export const giftTags = sqliteTable(
     createdAt: integer("created_at", { mode: "timestamp" })
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP`)
+      .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
   },
-  (table) => ({
-    pk: primaryKey({ columns: [table.giftId, table.tagId] }),
-  })
+  (table) => [primaryKey({ columns: [table.giftId, table.tagId] })]
 );

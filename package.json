@@ -8,7 +8,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "test": "vitest",
-    "db:generate": "drizzle-kit generate:sqlite",
+    "db:generate": "drizzle-kit generate",
     "db:studio": "drizzle-kit studio",
     "db:migrate:local": "drizzle-kit migrate --config=drizzle.config.ts",
     "db:seed": "tsx scripts/seed.ts"

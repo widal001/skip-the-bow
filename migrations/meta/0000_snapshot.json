@@ -1,6 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
+  "id": "03434281-d561-4ac6-8e0f-c8dbe9108591",
+  "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "gift_tags": {
       "name": "gift_tags",
@@ -26,6 +28,14 @@
           "notNull": true,
           "autoincrement": false,
           "default": "CURRENT_TIMESTAMP"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
         }
       },
       "indexes": {},
@@ -33,28 +43,28 @@
         "gift_tags_gift_id_gifts_id_fk": {
           "name": "gift_tags_gift_id_gifts_id_fk",
           "tableFrom": "gift_tags",
+          "tableTo": "gifts",
           "columnsFrom": [
             "gift_id"
           ],
-          "tableTo": "gifts",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "gift_tags_tag_id_tags_id_fk": {
           "name": "gift_tags_tag_id_tags_id_fk",
           "tableFrom": "gift_tags",
+          "tableTo": "tags",
           "columnsFrom": [
             "tag_id"
           ],
-          "tableTo": "tags",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
@@ -216,12 +226,14 @@
       "checkConstraints": {}
     }
   },
+  "views": {},
   "enums": {},
   "_meta": {
+    "schemas": {},
     "tables": {},
     "columns": {}
   },
-  "id": "d1193c9c-84c0-4613-b575-bead02341cef",
-  "prevId": "00000000-0000-0000-0000-000000000000",
-  "views": {}
+  "internal": {
+    "indexes": {}
+  }
 }

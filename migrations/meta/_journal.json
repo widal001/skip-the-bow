@@ -1,12 +1,12 @@
 {
-  "version": "5",
+  "version": "7",
   "dialect": "sqlite",
   "entries": [
     {
       "idx": 0,
-      "version": "5",
-      "when": 1745719015705,
-      "tag": "0000_natural_raza",
+      "version": "6",
+      "when": 1746136981073,
+      "tag": "0000_tired_luminals",
       "breakpoints": true
     }
   ]
