@@ -7,7 +7,9 @@ import { searchGifts, toSentenceCase } from "../../lib/gift-service";
 import {
   getSearchParamsFromUrl,
   getSearchParamsFromForm,
-  buildUrl,
+  // silences unused import warning for astro check
+  // see https://github.com/withastro/language-tools/issues/476 for more info
+  buildUrl as _buildUrl,
 } from "../../lib/url-utils";
 import SearchBar from "../../components/gift-search/SearchBar.astro";
 import CategoryFilter from "../../components/gift-search/CategoryFilter.astro";
@@ -37,7 +39,7 @@ if (Astro.request.method === "POST") {
     : { sortBy: currentParams.sortBy };
 
   searchParams = getSearchParamsFromForm(formData, preservedParams);
-  return Astro.redirect(buildUrl("/gifts", searchParams));
+  return Astro.redirect(_buildUrl("/gifts", searchParams));
 } else {
   searchParams = getSearchParamsFromUrl(url);
 }
