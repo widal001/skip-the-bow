@@ -3,6 +3,8 @@ import Database from "better-sqlite3";
 import * as schema from "./schema";
 import config from "../../drizzle.config";
 
+export type DrizzleDatabase = ReturnType<typeof drizzle<typeof schema>>;
+
 // Create a SQLite database instance using the same configuration as drizzle.config.ts
 const sqlite = new Database(config.dbCredentials.url);
 

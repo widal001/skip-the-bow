@@ -1,11 +1,11 @@
 import type { Gift, GiftCategory, GiftSearchParams } from "../content/types";
-import { db } from "../db";
 import { eq, and, sql } from "drizzle-orm";
 import { schema } from "../db";
+import type { DrizzleDatabase } from "../db";
 
 const { gifts, tags, giftTags } = schema;
 
-export async function getGiftIdeas(): Promise<Gift[]> {
+export async function getGiftIdeas(db: DrizzleDatabase): Promise<Gift[]> {
   const results = await db
     .select({
       slug: gifts.slug,
@@ -33,6 +33,7 @@ export async function getGiftIdeas(): Promise<Gift[]> {
 }
 
 export async function getGiftsByCategory(
+  db: DrizzleDatabase,
   category: GiftCategory
 ): Promise<Gift[]> {
   const results = await db
@@ -61,7 +62,10 @@ export async function getGiftsByCategory(
   }));
 }
 
-export async function getGiftBySlug(slug: string): Promise<Gift | undefined> {
+export async function getGiftBySlug(
+  db: DrizzleDatabase,
+  slug: string
+): Promise<Gift | undefined> {
   const results = await db
     .select({
       slug: gifts.slug,
@@ -95,8 +99,11 @@ export function toSentenceCase(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }
 
-export async function searchGifts(props: GiftSearchParams): Promise<Gift[]> {
-  let results = await getGiftIdeas();
+export async function searchGifts(
+  db: DrizzleDatabase,
+  props: GiftSearchParams
+): Promise<Gift[]> {
+  let results = await getGiftIdeas(db);
 
   // Apply text search if query exists
   if (props.query) {
