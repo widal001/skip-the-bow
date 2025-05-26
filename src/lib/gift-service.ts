@@ -134,7 +134,7 @@ export async function searchGifts(
     const min = props.priceRange?.min ?? 0;
     const max = props.priceRange?.max ?? Infinity;
     results = results.filter(
-      (gift) => gift.priceRange.min >= min && gift.priceRange.max <= max
+      (gift) => gift.priceRange.min <= max && gift.priceRange.max >= min
     );
   }
 
