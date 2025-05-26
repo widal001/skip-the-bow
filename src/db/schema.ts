@@ -8,17 +8,26 @@ import {
 } from "drizzle-orm/sqlite-core";
 import { relations } from "drizzle-orm";
 
+const toDate = (timestamp: number) => new Date(timestamp * 1000);
+const fromDate = (date: Date) => Math.floor(date.getTime() / 1000);
+
+const timestamp = {
+  createdAt: text("created_at")
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`)
+    .$type<Date>(),
+  updatedAt: text("updated_at")
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`)
+    .$onUpdate(() => sql`CURRENT_TIMESTAMP`)
+    .$type<Date>(),
+};
+
 export const users = sqliteTable("users", {
   id: text("id").primaryKey(),
   email: text("email").notNull().unique(),
   name: text("name"),
-  createdAt: integer("created_at", { mode: "timestamp" })
-    .notNull()
-    .default(sql`CURRENT_TIMESTAMP`),
-  updatedAt: integer("updated_at", { mode: "timestamp" })
-    .notNull()
-    .default(sql`CURRENT_TIMESTAMP`)
-    .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
+  ...timestamp,
 });
 
 export const gifts = sqliteTable("gifts", {
@@ -33,25 +42,13 @@ export const gifts = sqliteTable("gifts", {
   category: text("category", {
     enum: ["donation", "subscription", "experience", "giftcard", "other"],
   }).notNull(),
-  createdAt: integer("created_at", { mode: "timestamp" })
-    .notNull()
-    .default(sql`CURRENT_TIMESTAMP`),
-  updatedAt: integer("updated_at", { mode: "timestamp" })
-    .notNull()
-    .default(sql`CURRENT_TIMESTAMP`)
-    .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
+  ...timestamp,
 });
 
 export const tags = sqliteTable("tags", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   name: text("name").notNull().unique(),
-  createdAt: integer("created_at", { mode: "timestamp" })
-    .notNull()
-    .default(sql`CURRENT_TIMESTAMP`),
-  updatedAt: integer("updated_at", { mode: "timestamp" })
-    .notNull()
-    .default(sql`CURRENT_TIMESTAMP`)
-    .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
+  ...timestamp,
 });
 
 export const giftTags = sqliteTable(
@@ -63,13 +60,7 @@ export const giftTags = sqliteTable(
     tagId: integer("tag_id")
       .notNull()
       .references(() => tags.id, { onDelete: "cascade" }),
-    createdAt: integer("created_at", { mode: "timestamp" })
-      .notNull()
-      .default(sql`CURRENT_TIMESTAMP`),
-    updatedAt: integer("updated_at", { mode: "timestamp" })
-      .notNull()
-      .default(sql`CURRENT_TIMESTAMP`)
-      .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
+    ...timestamp,
   },
   (table) => [primaryKey({ columns: [table.giftId, table.tagId] })]
 );
@@ -81,13 +72,7 @@ export const wishlists = sqliteTable("wishlists", {
   userId: text("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
-  createdAt: integer("created_at", { mode: "timestamp" })
-    .notNull()
-    .default(sql`CURRENT_TIMESTAMP`),
-  updatedAt: integer("updated_at", { mode: "timestamp" })
-    .notNull()
-    .default(sql`CURRENT_TIMESTAMP`)
-    .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
+  ...timestamp,
 });
 
 export const wishlistsRelations = relations(wishlists, ({ many }) => ({
@@ -103,13 +88,7 @@ export const bookmarks = sqliteTable(
     giftId: integer("gift_id")
       .notNull()
       .references(() => gifts.id, { onDelete: "cascade" }),
-    createdAt: integer("created_at", { mode: "timestamp" })
-      .notNull()
-      .default(sql`CURRENT_TIMESTAMP`),
-    updatedAt: integer("updated_at", { mode: "timestamp" })
-      .notNull()
-      .default(sql`CURRENT_TIMESTAMP`)
-      .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
+    ...timestamp,
   },
   (table) => [primaryKey({ columns: [table.wishlistId, table.giftId] })]
 );
