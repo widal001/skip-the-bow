@@ -36,7 +36,6 @@ describe("User Service", () => {
       const rawUser = sqlite
         .prepare("SELECT * FROM users WHERE id = ?")
         .get(testUser.id);
-      console.log("Raw database values:", rawUser);
 
       expect(createdUser).toBeDefined();
       expect(createdUser.id).toBe(testUser.id);
@@ -49,14 +48,6 @@ describe("User Service", () => {
     it("should set timestamps correctly on creation", async () => {
       const now = new Date();
       const createdUser = await createUser(db, testUser);
-
-      // Log the actual values we're getting
-      console.log("Created user timestamps:", {
-        createdAt: createdUser.createdAt,
-        createdAtType: typeof createdUser.createdAt,
-        updatedAt: createdUser.updatedAt,
-        updatedAtType: typeof createdUser.updatedAt,
-      });
 
       // Verify timestamps are strings
       expect(typeof createdUser.createdAt).toBe("string");

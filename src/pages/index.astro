@@ -5,6 +5,7 @@ import HeroBanner from "../components/HeroBanner.astro";
 import GiftGallery from "../components/GiftGallery.astro";
 import { getGiftsByCategory } from "../lib/gift-service";
 import { GiftCategory } from "../content/types";
+import { db } from "../db";
 
 const categories = [
   { id: GiftCategory.enum.subscription, title: "Subscriptions" },
@@ -16,7 +17,7 @@ const categories = [
 const categoryGifts = await Promise.all(
   categories.map(async (category) => ({
     ...category,
-    gifts: await getGiftsByCategory(category.id),
+    gifts: await getGiftsByCategory(db, category.id),
   }))
 );
 ---
