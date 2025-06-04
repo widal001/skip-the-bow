@@ -64,3 +64,17 @@ export async function updateUser(
 export async function deleteUser(db: DrizzleDatabase, id: string) {
   await db.delete(users).where(eq(users.id, id));
 }
+
+export async function findOrCreateUser(
+  db: DrizzleDatabase,
+  email: string,
+  name: string
+) {
+  const user = await getUserByEmail(db, email);
+  if (!user) {
+    console.log(`[findOrCreateUser] User not found, creating new user`);
+    return createUser(db, { id: crypto.randomUUID(), email, name });
+  }
+  console.log(`[findOrCreateUser] Found existing user`);
+  return user;
+}
