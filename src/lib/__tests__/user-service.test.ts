@@ -6,6 +6,7 @@ import {
   getUserByEmail,
   updateUser,
   deleteUser,
+  findOrCreateUser,
 } from "../user-service";
 import { createTestDb } from "./test-db";
 import { eq } from "drizzle-orm";
@@ -149,6 +150,42 @@ describe("User Service", () => {
 
     it("should not throw error when deleting non-existent user", async () => {
       await expect(deleteUser(db, "non-existent-id")).resolves.not.toThrow();
+    });
+  });
+
+  describe("findOrCreateUser", () => {
+    it("should create a new user if one does not exist", async () => {
+      // arrange
+      const email = "test@example.com";
+      const name = "Test User";
+      const countBefore = await db.$count(users);
+      expect(countBefore).toBe(0);
+
+      // act
+      const user = await findOrCreateUser(db, email, name);
+      const countAfter = await db.$count(users);
+      expect(countAfter).toBe(1);
+
+      // assert
+      expect(user).toBeDefined();
+      expect(user?.email).toBe(email);
+      expect(user?.name).toBe(name);
+    });
+
+    it("should return existing user if one exists", async () => {
+      // arrange
+      const countBefore = await db.$count(users);
+      expect(countBefore).toBe(1);
+
+      // act
+      const user = await findOrCreateUser(db, testUser.email, testUser.name);
+      const countAfter = await db.$count(users);
+      expect(countAfter).toBe(1); // should still be one
+
+      // assert
+      expect(user).toBeDefined();
+      expect(user?.email).toBe(testUser.email);
+      expect(user?.name).toBe(testUser.name);
     });
   });
 });
