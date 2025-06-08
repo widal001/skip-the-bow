@@ -10,7 +10,7 @@ import {
 import { createTestDb } from "./test-db";
 
 describe("Wishlist Service", () => {
-  const { db, sqlite } = createTestDb();
+  const { db, client } = createTestDb();
   const testUser = {
     id: "test-user-1",
     email: "test@example.com",

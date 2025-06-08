@@ -12,7 +12,7 @@ import { createTestDb } from "./test-db";
 import { eq } from "drizzle-orm";
 
 describe("User Service", () => {
-  const { db, sqlite } = createTestDb();
+  const { db, client } = createTestDb();
   const testUser = {
     id: "test-user-1",
     email: "test@example.com",
@@ -33,11 +33,6 @@ describe("User Service", () => {
     it("should create a new user successfully", async () => {
       const createdUser = await createUser(db, testUser);
 
-      // Check raw database values
-      const rawUser = sqlite
-        .prepare("SELECT * FROM users WHERE id = ?")
-        .get(testUser.id);
-
       expect(createdUser).toBeDefined();
       expect(createdUser.id).toBe(testUser.id);
       expect(createdUser.email).toBe(testUser.email);
@@ -50,21 +45,23 @@ describe("User Service", () => {
       const now = new Date();
       const createdUser = await createUser(db, testUser);
 
-      // Verify timestamps are strings
-      expect(typeof createdUser.createdAt).toBe("string");
-      expect(typeof createdUser.updatedAt).toBe("string");
-
-      // Parse timestamps to Date objects for comparison
-      const createdAt = new Date(createdUser.createdAt);
-      const updatedAt = new Date(createdUser.updatedAt);
+      // Verify timestamps are Date objects
+      expect(createdUser.createdAt instanceof Date).toBe(true);
+      expect(createdUser.updatedAt instanceof Date).toBe(true);
 
       // Verify timestamps are recent (within last 5 seconds)
       const fiveSecondsAgo = new Date(now.getTime() - 5000);
-      expect(createdAt.getTime()).toBeGreaterThan(fiveSecondsAgo.getTime());
-      expect(updatedAt.getTime()).toBeGreaterThan(fiveSecondsAgo.getTime());
+      expect(createdUser.createdAt.getTime()).toBeGreaterThan(
+        fiveSecondsAgo.getTime()
+      );
+      expect(createdUser.updatedAt.getTime()).toBeGreaterThan(
+        fiveSecondsAgo.getTime()
+      );
 
       // Verify created_at and updated_at are the same on creation
-      expect(createdAt.getTime()).toBe(updatedAt.getTime());
+      expect(createdUser.createdAt.getTime()).toBe(
+        createdUser.updatedAt.getTime()
+      );
     });
 
     it("should throw error when creating user with duplicate email", async () => {
@@ -113,7 +110,7 @@ describe("User Service", () => {
   describe("updateUser", () => {
     it("should update user successfully", async () => {
       const user = await createUser(db, testUser);
-      const oldUpdatedAt = new Date(user.updatedAt);
+      const oldUpdatedAt = user.updatedAt;
       const updatedName = "Updated Name";
 
       // Wait a bit to ensure timestamp difference
@@ -158,13 +155,13 @@ describe("User Service", () => {
       // arrange
       const email = "test@example.com";
       const name = "Test User";
-      const countBefore = await db.$count(users);
-      expect(countBefore).toBe(0);
+      const countBefore = await db.select().from(users).execute();
+      expect(countBefore.length).toBe(0);
 
       // act
       const user = await findOrCreateUser(db, email, name);
-      const countAfter = await db.$count(users);
-      expect(countAfter).toBe(1);
+      const countAfter = await db.select().from(users).execute();
+      expect(countAfter.length).toBe(1);
 
       // assert
       expect(user).toBeDefined();
@@ -174,13 +171,14 @@ describe("User Service", () => {
 
     it("should return existing user if one exists", async () => {
       // arrange
-      const countBefore = await db.$count(users);
-      expect(countBefore).toBe(1);
+      await createUser(db, testUser);
+      const countBefore = await db.select().from(users).execute();
+      expect(countBefore.length).toBe(1);
 
       // act
       const user = await findOrCreateUser(db, testUser.email, testUser.name);
-      const countAfter = await db.$count(users);
-      expect(countAfter).toBe(1); // should still be one
+      const countAfter = await db.select().from(users).execute();
+      expect(countAfter.length).toBe(1); // should still be one
 
       // assert
       expect(user).toBeDefined();

@@ -1,14 +1,18 @@
-import { drizzle } from "drizzle-orm/better-sqlite3";
-import Database from "better-sqlite3";
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 import * as schema from "../../db/schema";
-import { migrate } from "drizzle-orm/better-sqlite3/migrator";
+import { migrate } from "drizzle-orm/postgres-js/migrator";
 
 export function createTestDb() {
-  const sqlite = new Database(":memory:");
-  const db = drizzle(sqlite, { schema });
+  if (!process.env.TEST_DATABASE_URL) {
+    throw new Error("TEST_DATABASE_URL environment variable is not set");
+  }
 
-  // Push the schema to the in-memory database
+  const client = postgres(process.env.TEST_DATABASE_URL);
+  const db = drizzle(client, { schema });
+
+  // Push the schema to the test database
   migrate(db, { migrationsFolder: "migrations" });
 
-  return { db, sqlite };
+  return { db, client };
 }

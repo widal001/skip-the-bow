@@ -9,7 +9,7 @@ import {
 import { createTestDb } from "./test-db";
 
 describe("Gift Service", () => {
-  const { db, sqlite } = createTestDb();
+  const { db, client } = createTestDb();
 
   beforeEach(async () => {
     // Clear the database before each test
