@@ -10,7 +10,7 @@
     "test": "vitest",
     "db:generate": "drizzle-kit generate",
     "db:studio": "drizzle-kit studio",
-    "db:migrate:local": "drizzle-kit migrate --config=drizzle.config.ts",
+    "db:migrate": "drizzle-kit migrate",
     "db:seed": "tsx scripts/seed.ts"
   },
   "dependencies": {
@@ -20,15 +20,17 @@
     "@cloudflare/workers-types": "^4.20240208.0",
     "astro": "^5.6.1",
     "auth-astro": "^4.2.0",
-    "better-sqlite3": "^11.9.1",
     "drizzle-orm": "^0.43.1",
+    "pg": "^8.11.3",
+    "postgres": "^3.4.3",
     "typescript": "^5.8.3"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
-    "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^22.15.2",
-    "drizzle-kit": "^0.31.0",
+    "@types/pg": "^8.11.2",
+    "dotenv": "^16.4.5",
+    "drizzle-kit": "^0.31.1",
     "tsx": "^4.19.3",
     "vitest": "^3.1.1",
     "wrangler": "^4.12.0"
