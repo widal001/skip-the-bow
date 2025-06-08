@@ -8,6 +8,8 @@ if (!connectionString) {
 }
 
 const url = new URL(connectionString);
+const isProduction = process.env.NODE_ENV === "production";
+const isStaging = process.env.NODE_ENV === "staging";
 
 export default {
   schema: "./src/db/schema.ts",
@@ -19,6 +21,6 @@ export default {
     user: url.username,
     password: url.password,
     database: url.pathname.slice(1),
-    ssl: true,
+    ssl: isProduction || isStaging,
   },
 } satisfies Config;

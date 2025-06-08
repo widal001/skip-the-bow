@@ -14,9 +14,14 @@ export async function getGiftIdeas(db: DrizzleDatabase): Promise<Gift[]> {
         max: gifts.maxPrice,
       },
       link: gifts.link,
-      tags: sql<string>`GROUP_CONCAT(${tags.name})`.mapWith(String).as("tags"),
       isHidden: gifts.isHidden,
       category: gifts.category,
+      tags: sql<string[]>`COALESCE(
+        JSON_ARRAYAGG(
+          NULLIF(${tags.name}, NULL)
+        ),
+        JSON_ARRAY()
+      )`.as("tags"),
     })
     .from(gifts)
     .leftJoin(giftTags, eq(gifts.id, giftTags.giftId))
@@ -24,10 +29,7 @@ export async function getGiftIdeas(db: DrizzleDatabase): Promise<Gift[]> {
     .where(eq(gifts.isHidden, false))
     .groupBy(gifts.id);
 
-  return results.map((result) => ({
-    ...result,
-    tags: result.tags ? result.tags.split(",") : [],
-  }));
+  return results as Gift[];
 }
 
 export async function getGiftsByCategory(
@@ -44,9 +46,14 @@ export async function getGiftsByCategory(
         max: gifts.maxPrice,
       },
       link: gifts.link,
-      tags: sql<string>`GROUP_CONCAT(${tags.name})`.mapWith(String).as("tags"),
       isHidden: gifts.isHidden,
       category: gifts.category,
+      tags: sql<string[]>`COALESCE(
+        JSON_ARRAYAGG(
+          NULLIF(${tags.name}, NULL)
+        ),
+        JSON_ARRAY()
+      )`.as("tags"),
     })
     .from(gifts)
     .leftJoin(giftTags, eq(gifts.id, giftTags.giftId))
@@ -54,10 +61,7 @@ export async function getGiftsByCategory(
     .where(and(eq(gifts.category, category), eq(gifts.isHidden, false)))
     .groupBy(gifts.id);
 
-  return results.map((result) => ({
-    ...result,
-    tags: result.tags ? result.tags.split(",") : [],
-  }));
+  return results as Gift[];
 }
 
 export async function getGiftBySlug(
@@ -74,9 +78,14 @@ export async function getGiftBySlug(
         max: gifts.maxPrice,
       },
       link: gifts.link,
-      tags: sql<string>`GROUP_CONCAT(${tags.name})`.mapWith(String).as("tags"),
       isHidden: gifts.isHidden,
       category: gifts.category,
+      tags: sql<string[]>`COALESCE(
+        JSON_ARRAYAGG(
+          NULLIF(${tags.name}, NULL)
+        ),
+        JSON_ARRAY()
+      )`.as("tags"),
     })
     .from(gifts)
     .leftJoin(giftTags, eq(gifts.id, giftTags.giftId))
@@ -85,12 +94,7 @@ export async function getGiftBySlug(
     .groupBy(gifts.id);
 
   if (results.length === 0) return undefined;
-
-  const result = results[0];
-  return {
-    ...result,
-    tags: result.tags ? result.tags.split(",") : [],
-  };
+  return results[0] as Gift;
 }
 
 export function toSentenceCase(str: string): string {

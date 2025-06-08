@@ -1,18 +1,6 @@
 import { db } from "../src/db";
 import { gifts, tags, giftTags } from "../src/db/schema";
 import giftsData from "../src/content/gifts.json";
-import config from "../drizzle.config";
-
-// Check if we're running in a local environment
-const isLocalEnvironment =
-  config.dbCredentials.url.startsWith("./") ||
-  config.dbCredentials.url.startsWith("file:");
-
-if (!isLocalEnvironment) {
-  console.error("This script can only be run in a local environment.");
-  console.error("Database URL must start with './' or 'file:'");
-  process.exit(1);
-}
 
 async function seed() {
   console.log("Starting database seeding...");
@@ -75,6 +63,7 @@ async function seed() {
   });
 
   console.log("Database seeding completed successfully!");
+  process.exit(0);
 }
 
 seed().catch((error) => {
