@@ -1,15 +1,11 @@
-import { drizzle } from "drizzle-orm/better-sqlite3";
-import Database from "better-sqlite3";
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 import * as schema from "./schema";
-import config from "../../drizzle.config";
 
 export type DrizzleDatabase = ReturnType<typeof drizzle<typeof schema>>;
 
-// Create a SQLite database instance using the same configuration as drizzle.config.ts
-const sqlite = new Database(config.dbCredentials.url);
+// Create a PostgreSQL client
+const client = postgres(process.env.DATABASE_URL!);
 
 // Create a Drizzle instance
-export const db = drizzle(sqlite, { schema });
-
-// Export the schema for use in other files
-export { schema };
+export const db = drizzle(client, { schema });
