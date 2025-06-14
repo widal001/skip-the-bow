@@ -6,7 +6,18 @@ interface Props {
   }>;
 }
 
+// Add type for auth locals
+interface AuthLocals {
+  auth?: {
+    session: () => Promise<{ user?: any } | null>;
+  };
+}
+
 const { links = [] } = Astro.props;
+
+// Check session on server side
+const session = await (Astro.locals as AuthLocals).auth?.session();
+const isLoggedIn = !!session?.user;
 ---
 
 <nav>
@@ -22,10 +33,77 @@ const { links = [] } = Astro.props;
           </a>
         ))
       }
-      <!-- <div class="nav-link login-placeholder">Login</div> -->
+      <button
+        class="nav-link"
+        id="login"
+        style={`display: ${isLoggedIn ? "none" : "block"}`}
+        aria-label="Login to your account"
+        type="button"
+      >
+        Login
+      </button>
+      <button
+        class="nav-link"
+        id="logout"
+        style={`display: ${isLoggedIn ? "block" : "none"}`}
+        aria-label="Logout from your account"
+        type="button"
+      >
+        Logout
+      </button>
     </div>
   </div>
 </nav>
+
+<script>
+  async function getSession() {
+    const res = await fetch("/api/auth/session");
+    if (!res.ok) return null;
+    return await res.json();
+  }
+
+  async function checkLoginStatus() {
+    const cachedLoginState = sessionStorage.getItem("isLoggedIn");
+    if (cachedLoginState !== null) {
+      return cachedLoginState === "true";
+    }
+
+    const session = await getSession();
+    const isLoggedIn = !!session?.user;
+    sessionStorage.setItem("isLoggedIn", isLoggedIn.toString());
+    return isLoggedIn;
+  }
+
+  // Function to update button visibility
+  function updateButtonVisibility(isLoggedIn: boolean) {
+    const loginButton = document.getElementById("login");
+    const logoutButton = document.getElementById("logout");
+
+    if (isLoggedIn) {
+      loginButton?.style.setProperty("display", "none");
+      logoutButton?.style.setProperty("display", "block");
+    } else {
+      loginButton?.style.setProperty("display", "block");
+      logoutButton?.style.setProperty("display", "none");
+    }
+  }
+
+  // Initial check and update
+  checkLoginStatus().then(updateButtonVisibility);
+
+  // Set up auth event listeners
+  const { signIn, signOut } = await import("auth-astro/client");
+
+  document.querySelector("#login")?.addEventListener("click", async () => {
+    sessionStorage.removeItem("isLoggedIn");
+    await signIn("github");
+  });
+
+  document.querySelector("#logout")?.addEventListener("click", async () => {
+    sessionStorage.removeItem("isLoggedIn");
+    await signOut();
+  });
+</script>
 
 <style>
   nav {
@@ -65,6 +143,11 @@ const { links = [] } = Astro.props;
     border-radius: 6px;
     transition: all 0.2s ease;
     position: relative;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: inherit;
   }
 
   .nav-link:hover {
@@ -99,17 +182,6 @@ const { links = [] } = Astro.props;
     color: var(--color-primary-dark);
   }
 
-  .login-placeholder {
-    color: var(--color-gray-500);
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-
-  .login-placeholder:hover {
-    color: var(--color-primary);
-    background-color: var(--color-primary-light);
-  }
-
   @media (max-width: 768px) {
     .nav-right {
       gap: 1rem;
@@ -118,5 +190,12 @@ const { links = [] } = Astro.props;
     .nav-link {
       padding: 0.5rem 0.75rem;
     }
+  }
+
+  /* Add fixed width for auth buttons */
+  #login,
+  #logout {
+    width: 90px;
+    text-align: center;
   }
 </style>

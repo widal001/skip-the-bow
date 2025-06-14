@@ -7,16 +7,19 @@ import { searchGifts, toSentenceCase } from "../../lib/gift-service";
 import {
   getSearchParamsFromUrl,
   getSearchParamsFromForm,
-  buildUrl,
+  // silences unused import warning for astro check
+  // see https://github.com/withastro/language-tools/issues/476 for more info
+  buildUrl as _buildUrl,
 } from "../../lib/url-utils";
 import SearchBar from "../../components/gift-search/SearchBar.astro";
 import CategoryFilter from "../../components/gift-search/CategoryFilter.astro";
 import TagFilter from "../../components/gift-search/TagFilter.astro";
 import PriceRangeFilter from "../../components/gift-search/PriceRangeFilter.astro";
 import SortMenu from "../../components/gift-search/SortMenu.astro";
+import { db } from "../../db";
 
 // Get all gifts to extract categories and tags
-const allGifts = await searchGifts({});
+const allGifts = await searchGifts(db, {});
 const categories = Object.values(GiftCategory.enum);
 const tags = [...new Set(allGifts.flatMap((gift) => gift.tags))].sort();
 
@@ -37,13 +40,13 @@ if (Astro.request.method === "POST") {
     : { sortBy: currentParams.sortBy };
 
   searchParams = getSearchParamsFromForm(formData, preservedParams);
-  return Astro.redirect(buildUrl("/gifts", searchParams));
+  return Astro.redirect(_buildUrl("/gifts", searchParams));
 } else {
   searchParams = getSearchParamsFromUrl(url);
 }
 
 // Get filtered gifts
-const gifts = await searchGifts(searchParams);
+const gifts = await searchGifts(db, searchParams);
 
 // Enable server-side rendering for this page
 export const prerender = false;

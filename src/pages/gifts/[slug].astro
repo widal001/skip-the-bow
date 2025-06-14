@@ -3,9 +3,10 @@ import Layout from "../../layouts/Layout.astro";
 import { getGiftIdeas } from "../../lib/gift-service";
 import Pill from "../../components/Pill.astro";
 import "../../styles/colors.css";
+import { db } from "../../db";
 
 export async function getStaticPaths() {
-  const ideas = await getGiftIdeas();
+  const ideas = await getGiftIdeas(db);
   return ideas.map((gift) => ({
     params: { slug: gift.slug },
     props: { gift },
