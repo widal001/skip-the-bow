@@ -7,7 +7,7 @@ import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 export type DrizzleDatabase = PostgresJsDatabase<typeof schema>;
 
 // Create a PostgreSQL client
-const client = postgres(process.env.DATABASE_URL!);
+const client = postgres(process.env.NETLIFY_DATABASE_URL!);
 
 // Create a Drizzle instance
 export const db = drizzle(client, { schema });
