@@ -2,9 +2,9 @@ import type { Config } from "drizzle-kit";
 import * as dotenv from "dotenv";
 dotenv.config();
 
-const connectionString = process.env.DATABASE_URL;
+const connectionString = process.env.NETLIFY_DATABASE_URL;
 if (!connectionString) {
-  throw new Error("DATABASE_URL is required");
+  throw new Error("NETLIFY_DATABASE_URL is required");
 }
 
 const url = new URL(connectionString);
