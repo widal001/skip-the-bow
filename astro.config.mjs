@@ -9,9 +9,5 @@ export default defineConfig({
   output: "static",
   adapter: netlify(),
 
-  experimental: {
-    session: true,
-  },
-
   integrations: [auth()],
 });
