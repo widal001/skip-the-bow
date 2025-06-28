@@ -2,11 +2,6 @@ import { bookmarks } from "../db/schema";
 import { eq, and, asc } from "drizzle-orm";
 import type { DrizzleDatabase } from "../db";
 
-export interface BookmarkGiftInput {
-  userId: string;
-  giftId: number;
-}
-
 export interface BookmarkInput {
   userId: string;
   giftId: number;
