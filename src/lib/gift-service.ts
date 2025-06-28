@@ -97,6 +97,19 @@ export async function getGiftBySlug(
   return results[0] as Gift;
 }
 
+export async function getGiftIdBySlug(
+  db: DrizzleDatabase,
+  slug: string
+): Promise<number | undefined> {
+  const result = await db
+    .select({ id: gifts.id })
+    .from(gifts)
+    .where(eq(gifts.slug, slug))
+    .then((rows) => rows[0]);
+
+  return result?.id;
+}
+
 export function toSentenceCase(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }
