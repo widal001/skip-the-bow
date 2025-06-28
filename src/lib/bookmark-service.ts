@@ -16,6 +16,11 @@ export async function addGiftToBookmarks(
   db: DrizzleDatabase,
   input: BookmarkInput
 ) {
+  const existingBookmark = await getBookmark(db, input.userId, input.giftId);
+
+  if (existingBookmark) {
+    return existingBookmark;
+  }
   const [bookmark] = await db
     .insert(bookmarks)
     .values({
@@ -35,6 +40,12 @@ export async function removeGiftFromBookmarks(
   db: DrizzleDatabase,
   input: BookmarkInput
 ) {
+  const existingBookmark = await getBookmark(db, input.userId, input.giftId);
+
+  if (!existingBookmark) {
+    return;
+  }
+
   await db
     .delete(bookmarks)
     .where(
@@ -56,11 +67,28 @@ export async function isGiftBookmarked(
   userId: string,
   giftId: number
 ) {
+  const bookmark = await getBookmark(db, userId, giftId);
+
+  return !!bookmark;
+}
+
+/**
+ * Retrieves a specific bookmark
+ * @param db - The database instance
+ * @param userId - The ID of the user
+ * @param giftId - The ID of the gift
+ * @returns The bookmark
+ */
+export async function getBookmark(
+  db: DrizzleDatabase,
+  userId: string,
+  giftId: number
+) {
   const bookmark = await db.query.bookmarks.findFirst({
     where: and(eq(bookmarks.userId, userId), eq(bookmarks.giftId, giftId)),
   });
 
-  return !!bookmark;
+  return bookmark;
 }
 
 /**

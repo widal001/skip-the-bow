@@ -99,7 +99,7 @@ describe("Bookmark Service", async () => {
       });
     });
 
-    it("should throw error when adding duplicate bookmark", async () => {
+    it("should be idempotent - should not throw on duplicate bookmark", async () => {
       await withTransaction(db, async (db) => {
         // Create test user and gift
         await db.insert(users).values(testUser);
@@ -113,11 +113,34 @@ describe("Bookmark Service", async () => {
           giftId: createdGift.id,
         };
 
-        // Add bookmark first time
-        await addGiftToBookmarks(db, bookmarkInput);
+        // First call should succeed
+        const firstBookmark = await addGiftToBookmarks(db, bookmarkInput);
+        expect(firstBookmark).toBeDefined();
+        expect(firstBookmark.userId).toBe(testUser.id);
+        expect(firstBookmark.giftId).toBe(createdGift.id);
 
-        // Try to add the same bookmark again
-        await expect(addGiftToBookmarks(db, bookmarkInput)).rejects.toThrow();
+        // Verify bookmark exists
+        const isBookmarked = await isGiftBookmarked(
+          db,
+          testUser.id,
+          createdGift.id
+        );
+        expect(isBookmarked).toBe(true);
+
+        // Second call should not throw error (idempotent)
+        await expect(
+          addGiftToBookmarks(db, bookmarkInput)
+        ).resolves.not.toThrow();
+
+        // Third call should not throw error (idempotent)
+        await expect(
+          addGiftToBookmarks(db, bookmarkInput)
+        ).resolves.not.toThrow();
+
+        // Verify only one bookmark exists
+        const userBookmarks = await getUserBookmarks(db, testUser.id);
+        expect(userBookmarks).toHaveLength(1);
+        expect(userBookmarks[0].giftId).toBe(createdGift.id);
       });
     });
   });
@@ -178,6 +201,106 @@ describe("Bookmark Service", async () => {
             giftId: createdGift.id,
           })
         ).resolves.not.toThrow();
+      });
+    });
+
+    it("should be idempotent - multiple calls should not throw errors", async () => {
+      await withTransaction(db, async (db) => {
+        // Create test user and gift
+        await db.insert(users).values(testUser);
+        const [createdGift] = await db
+          .insert(gifts)
+          .values(testGift)
+          .returning();
+
+        const removeInput = {
+          userId: testUser.id,
+          giftId: createdGift.id,
+        };
+
+        // First call should not throw error (no bookmark exists)
+        await expect(
+          removeGiftFromBookmarks(db, removeInput)
+        ).resolves.not.toThrow();
+
+        // Second call should not throw error
+        await expect(
+          removeGiftFromBookmarks(db, removeInput)
+        ).resolves.not.toThrow();
+
+        // Third call should not throw error
+        await expect(
+          removeGiftFromBookmarks(db, removeInput)
+        ).resolves.not.toThrow();
+
+        // Verify no bookmarks exist
+        const userBookmarks = await getUserBookmarks(db, testUser.id);
+        expect(userBookmarks).toHaveLength(0);
+      });
+    });
+
+    it("should be idempotent - removing existing bookmark multiple times", async () => {
+      await withTransaction(db, async (db) => {
+        // Create test user and gift
+        await db.insert(users).values(testUser);
+        const [createdGift] = await db
+          .insert(gifts)
+          .values(testGift)
+          .returning();
+
+        // Add bookmark first
+        await addGiftToBookmarks(db, {
+          userId: testUser.id,
+          giftId: createdGift.id,
+        });
+
+        // Verify bookmark exists
+        const isBookmarkedBefore = await isGiftBookmarked(
+          db,
+          testUser.id,
+          createdGift.id
+        );
+        expect(isBookmarkedBefore).toBe(true);
+
+        const removeInput = {
+          userId: testUser.id,
+          giftId: createdGift.id,
+        };
+
+        // First removal should succeed
+        await expect(
+          removeGiftFromBookmarks(db, removeInput)
+        ).resolves.not.toThrow();
+
+        // Verify bookmark is removed
+        const isBookmarkedAfterFirst = await isGiftBookmarked(
+          db,
+          testUser.id,
+          createdGift.id
+        );
+        expect(isBookmarkedAfterFirst).toBe(false);
+
+        // Second removal should not throw error
+        await expect(
+          removeGiftFromBookmarks(db, removeInput)
+        ).resolves.not.toThrow();
+
+        // Third removal should not throw error
+        await expect(
+          removeGiftFromBookmarks(db, removeInput)
+        ).resolves.not.toThrow();
+
+        // Verify bookmark is still removed
+        const isBookmarkedAfterMultiple = await isGiftBookmarked(
+          db,
+          testUser.id,
+          createdGift.id
+        );
+        expect(isBookmarkedAfterMultiple).toBe(false);
+
+        // Verify no bookmarks exist
+        const userBookmarks = await getUserBookmarks(db, testUser.id);
+        expect(userBookmarks).toHaveLength(0);
       });
     });
   });
