@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { $bookmarkStore, isBookmarked } from "../store";
+import { $bookmarkStore, isBookmarked } from "@/lib/stores/bookmark-store";
 
 // Mock fetch for testing
 global.fetch = vi.fn();

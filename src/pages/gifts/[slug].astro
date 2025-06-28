@@ -87,7 +87,7 @@ const { gift } = Astro.props;
     setBookmarked,
     setNotBookmarked,
     checkBookmarkStatus,
-  } from "@/lib/store";
+  } from "@/lib/stores/bookmark-store";
 
   // Get the current gift slug from the URL
   const pathSegments = window.location.pathname.split("/");
