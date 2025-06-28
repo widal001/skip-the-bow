@@ -10,6 +10,10 @@ import {
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
+// #########################################################
+// Users
+// #########################################################
+
 export const users = pgTable("users", {
   id: text("id").primaryKey(),
   email: text("email").notNull().unique(),
@@ -17,6 +21,10 @@ export const users = pgTable("users", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
+
+// #########################################################
+// Gifts
+// #########################################################
 
 export const gifts = pgTable("gifts", {
   id: serial("id").primaryKey(),
@@ -33,6 +41,10 @@ export const gifts = pgTable("gifts", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
+
+// #########################################################
+// Tags
+// #########################################################
 
 export const tags = pgTable("tags", {
   id: serial("id").primaryKey(),
@@ -56,6 +68,10 @@ export const giftTags = pgTable(
   (table) => [primaryKey({ columns: [table.giftId, table.tagId] })]
 );
 
+// #########################################################
+// Wishlists
+// #########################################################
+
 export const wishlists = pgTable("wishlists", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
@@ -68,11 +84,11 @@ export const wishlists = pgTable("wishlists", {
 });
 
 export const wishlistsRelations = relations(wishlists, ({ many }) => ({
-  bookmarks: many(bookmarks),
+  wishlistItems: many(wishlistItems),
 }));
 
-export const bookmarks = pgTable(
-  "bookmarks",
+export const wishlistItems = pgTable(
+  "wishlist_items",
   {
     wishlistId: integer("wishlist_id")
       .notNull()
@@ -86,16 +102,50 @@ export const bookmarks = pgTable(
   (table) => [primaryKey({ columns: [table.wishlistId, table.giftId] })]
 );
 
-export const bookmarksRelations = relations(bookmarks, ({ one }) => ({
+export const wishlistItemsRelations = relations(wishlistItems, ({ one }) => ({
   wishlist: one(wishlists, {
-    fields: [bookmarks.wishlistId],
+    fields: [wishlistItems.wishlistId],
     references: [wishlists.id],
+  }),
+  gift: one(gifts, {
+    fields: [wishlistItems.giftId],
+    references: [gifts.id],
+  }),
+}));
+
+// #########################################################
+// Bookmarks
+// #########################################################
+
+export const bookmarks = pgTable(
+  "bookmarks",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    giftId: integer("gift_id")
+      .notNull()
+      .references(() => gifts.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  },
+  (table) => [primaryKey({ columns: [table.userId, table.giftId] })]
+);
+
+export const bookmarksRelations = relations(bookmarks, ({ one }) => ({
+  user: one(users, {
+    fields: [bookmarks.userId],
+    references: [users.id],
   }),
   gift: one(gifts, {
     fields: [bookmarks.giftId],
     references: [gifts.id],
   }),
 }));
+
+// #########################################################
+// Inferred types
+// #########################################################
 
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
@@ -107,5 +157,7 @@ export type GiftTag = typeof giftTags.$inferSelect;
 export type NewGiftTag = typeof giftTags.$inferInsert;
 export type Wishlist = typeof wishlists.$inferSelect;
 export type NewWishlist = typeof wishlists.$inferInsert;
+export type WishlistItem = typeof wishlistItems.$inferSelect;
+export type NewWishlistItem = typeof wishlistItems.$inferInsert;
 export type Bookmark = typeof bookmarks.$inferSelect;
 export type NewBookmark = typeof bookmarks.$inferInsert;

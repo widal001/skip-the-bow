@@ -132,7 +132,7 @@ describe("Wishlist Service", async () => {
 
         // Verify the gift was removed
         const wishlistAfter = await getWishlist(db, wishlist.id);
-        expect(wishlistAfter?.bookmarks).toHaveLength(0);
+        expect(wishlistAfter?.wishlistItems).toHaveLength(0);
       });
     });
   });
@@ -176,8 +176,8 @@ describe("Wishlist Service", async () => {
         const result = await getWishlist(db, wishlist.id);
         expect(result).toBeDefined();
         expect(result?.name).toBe("Test Wishlist");
-        expect(result?.bookmarks).toHaveLength(1);
-        expect(result?.bookmarks[0].gift.name).toBe("Test Gift");
+        expect(result?.wishlistItems).toHaveLength(1);
+        expect(result?.wishlistItems[0].gift.name).toBe("Test Gift");
       });
     });
   });
