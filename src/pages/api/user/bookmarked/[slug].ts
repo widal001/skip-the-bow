@@ -4,6 +4,8 @@ import { isGiftBookmarked } from "@/lib/bookmark-service";
 import { getGiftIdBySlug } from "@/lib/gift-service";
 import { requireAuth } from "@/lib/auth-utils";
 
+export const prerender = false;
+
 export const GET: APIRoute = async ({ params, locals }) => {
   const { slug } = params;
   if (!slug) {

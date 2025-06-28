@@ -3,6 +3,8 @@ import { db } from "@/db";
 import { getUserBookmarks } from "@/lib/bookmark-service";
 import { requireAuth } from "@/lib/auth-utils";
 
+export const prerender = false;
+
 export const GET: APIRoute = async ({ locals }) => {
   try {
     const user = await requireAuth(locals);

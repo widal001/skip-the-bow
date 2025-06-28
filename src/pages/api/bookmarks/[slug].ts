@@ -5,6 +5,8 @@ import {
   removeGiftFromBookmarks,
 } from "@/lib/bookmark-service";
 
+export const prerender = false;
+
 export const PUT: APIRoute = async ({ request }) => {
   const { userId, giftId } = await request.json();
   if (!userId || !giftId) {
