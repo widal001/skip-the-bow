@@ -1,5 +1,5 @@
 import { describe, it, expect, afterAll } from "vitest";
-import { users } from "../../db/schema";
+import { users } from "@/db/schema";
 import {
   createUser,
   getUserById,
@@ -7,7 +7,7 @@ import {
   updateUser,
   deleteUser,
   findOrCreateUser,
-} from "../user-service";
+} from "@/lib/services/user-service";
 import { createTestDb, cleanupTestDb, withTransaction } from "./test-db";
 
 describe("User Service", async () => {

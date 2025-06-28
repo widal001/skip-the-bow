@@ -1,7 +1,7 @@
-import type { Gift, GiftCategory, GiftSearchParams } from "../content/types";
+import type { Gift, GiftCategory, GiftSearchParams } from "@/content/types";
 import { eq, and, sql } from "drizzle-orm";
-import { gifts, tags, giftTags } from "../db/schema";
-import type { DrizzleDatabase } from "../db";
+import { gifts, tags, giftTags } from "@/db/schema";
+import type { DrizzleDatabase } from "@/db";
 
 export async function getGiftIdeas(db: DrizzleDatabase): Promise<Gift[]> {
   const results = await db

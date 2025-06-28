@@ -3,13 +3,22 @@ import { db } from "@/db";
 import {
   addGiftToBookmarks,
   removeGiftFromBookmarks,
-} from "@/lib/bookmark-service";
-import { getGiftIdBySlug } from "@/lib/gift-service";
-import { getSession } from "auth-astro/server";
-import { getCurrentUser } from "@/lib/user-service";
+} from "@/lib/services/bookmark-service";
+import { getGiftIdBySlug } from "@/lib/services/gift-service";
+import { getCurrentUser } from "@/lib/services/user-service";
 
 export const prerender = false;
 
+// ############################################################################
+// PUT /api/user/bookmarks/[slug]
+// ############################################################################
+
+/**
+ * Add a gift to the user's bookmarks
+ * @param params - The parameters from the URL
+ * @param request - The request object
+ * @returns A response object
+ */
 export const PUT: APIRoute = async ({ params, request }) => {
   const user = await getCurrentUser(db, request);
   if (!user) {
@@ -44,6 +53,16 @@ export const PUT: APIRoute = async ({ params, request }) => {
   });
 };
 
+// ############################################################################
+// DELETE /api/user/bookmarks/[slug]
+// ############################################################################
+
+/**
+ * Remove a gift from the user's bookmarks
+ * @param params - The parameters from the URL
+ * @param request - The request object
+ * @returns A response object
+ */
 export const DELETE: APIRoute = async ({ params, request }) => {
   const user = await getCurrentUser(db, request);
   if (!user) {

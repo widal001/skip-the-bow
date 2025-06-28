@@ -1,12 +1,12 @@
 import { describe, it, expect, afterAll } from "vitest";
-import { wishlists, gifts, users } from "../../db/schema";
+import { wishlists, gifts, users } from "@/db/schema";
 import {
   createWishlist,
   addToWishlist,
   removeFromWishlist,
   getWishlist,
   getUserWishlists,
-} from "../wishlist-service";
+} from "@/lib/services/wishlist-service";
 import { createTestDb, cleanupTestDb, withTransaction } from "./test-db";
 
 describe("Wishlist Service", async () => {

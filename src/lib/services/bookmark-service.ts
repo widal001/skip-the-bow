@@ -1,6 +1,6 @@
-import { bookmarks } from "../db/schema";
+import { bookmarks } from "@/db/schema";
 import { eq, and, asc } from "drizzle-orm";
-import type { DrizzleDatabase } from "../db";
+import type { DrizzleDatabase } from "@/db";
 
 export interface BookmarkInput {
   userId: string;

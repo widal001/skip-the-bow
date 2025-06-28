@@ -1,12 +1,12 @@
 import { describe, it, expect, afterAll } from "vitest";
-import { gifts, tags, giftTags } from "../../db/schema";
+import { gifts, tags, giftTags } from "@/db/schema";
 import {
   getGiftIdeas,
   getGiftsByCategory,
   getGiftBySlug,
   searchGifts,
   upsertGift,
-} from "../gift-service";
+} from "@/lib/services/gift-service";
 import { createTestDb, cleanupTestDb, withTransaction } from "./test-db";
 
 describe("Gift Service", async () => {

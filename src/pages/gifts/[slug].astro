@@ -1,6 +1,6 @@
 ---
 import Layout from "@/layouts/Layout.astro";
-import { getGiftIdeas } from "@/lib/gift-service";
+import { getGiftIdeas } from "@/lib/services/gift-service";
 import Pill from "@/components/Pill.astro";
 import "@/styles/colors.css";
 import { db } from "@/db";
@@ -47,7 +47,7 @@ const { gift } = Astro.props;
     <div class="gift-detail__content">
       <div class="gift-detail__tags">
         {
-          gift.tags.map((tag) => (
+          gift.tags.map((tag: string) => (
             <a href={`/gifts?tags=${tag}`}>
               <Pill
                 text={tag}

@@ -1,10 +1,15 @@
 import type { APIRoute } from "astro";
 import { db } from "@/db";
-import { getUserBookmarks } from "@/lib/bookmark-service";
-import { getCurrentUser } from "@/lib/user-service";
+import { getUserBookmarks } from "@/lib/services/bookmark-service";
+import { getCurrentUser } from "@/lib/services/user-service";
 
 export const prerender = false;
 
+/**
+ * Get all bookmarks for the current user
+ * @param request - The request object
+ * @returns A response object
+ */
 export const GET: APIRoute = async ({ request }) => {
   const user = await getCurrentUser(db, request);
   if (!user) {

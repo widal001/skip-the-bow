@@ -1,7 +1,7 @@
 import GitHub from "@auth/core/providers/github";
 import { defineConfig } from "auth-astro";
-import { db } from "./src/db";
-import * as userService from "./src/lib/user-service";
+import { db } from "@/db";
+import * as userService from "@/lib/services/user-service";
 
 export default defineConfig({
   providers: [

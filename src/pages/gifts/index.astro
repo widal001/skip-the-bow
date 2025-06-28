@@ -1,9 +1,9 @@
 ---
-import Layout from "../../layouts/Layout.astro";
-import GiftIdeaCard from "../../components/GiftIdeaCard.astro";
-import { GiftCategory } from "../../content/types";
-import type { GiftSearchParams } from "../../content/types";
-import { searchGifts, toSentenceCase } from "../../lib/gift-service";
+import Layout from "@/layouts/Layout.astro";
+import GiftIdeaCard from "@/components/GiftIdeaCard.astro";
+import { GiftCategory } from "@/content/types";
+import type { GiftSearchParams } from "@/content/types";
+import { searchGifts, toSentenceCase } from "@/lib/services/gift-service";
 import {
   getSearchParamsFromUrl,
   getSearchParamsFromForm,

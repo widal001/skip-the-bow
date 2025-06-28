@@ -1,6 +1,6 @@
-import { users } from "../db/schema";
+import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import type { DrizzleDatabase } from "../db";
+import type { DrizzleDatabase } from "@/db";
 import { getSession } from "auth-astro/server";
 
 export interface CreateUserInput {

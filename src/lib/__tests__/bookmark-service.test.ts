@@ -1,11 +1,11 @@
-import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import { users, gifts, bookmarks } from "../../db/schema";
+import { describe, it, expect, afterAll } from "vitest";
+import { users, gifts } from "@/db/schema";
 import {
   addGiftToBookmarks,
   removeGiftFromBookmarks,
   isGiftBookmarked,
   getUserBookmarks,
-} from "../bookmark-service";
+} from "@/lib/services/bookmark-service";
 import { createTestDb, cleanupTestDb, withTransaction } from "./test-db";
 
 describe("Bookmark Service", async () => {
