@@ -6,13 +6,13 @@ import {
 } from "@/lib/bookmark-service";
 import { getGiftIdBySlug } from "@/lib/gift-service";
 import { getSession } from "auth-astro/server";
+import { getCurrentUser } from "@/lib/user-service";
 
 export const prerender = false;
 
 export const PUT: APIRoute = async ({ params, request }) => {
-  // Check if user is authenticated
-  const session = await getSession(request);
-  if (!session?.user?.email) {
+  const user = await getCurrentUser(db, request);
+  if (!user) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
       status: 401,
     });
@@ -36,7 +36,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
 
   // Add gift to bookmarks
   const bookmark = await addGiftToBookmarks(db, {
-    userId: session.user.email,
+    userId: user.id,
     giftId,
   });
   return new Response(JSON.stringify({ success: true, bookmark }), {
@@ -45,9 +45,8 @@ export const PUT: APIRoute = async ({ params, request }) => {
 };
 
 export const DELETE: APIRoute = async ({ params, request }) => {
-  // Check if user is authenticated
-  const session = await getSession(request);
-  if (!session?.user?.email) {
+  const user = await getCurrentUser(db, request);
+  if (!user) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
       status: 401,
     });
@@ -70,6 +69,6 @@ export const DELETE: APIRoute = async ({ params, request }) => {
   }
 
   // Remove gift from bookmarks
-  await removeGiftFromBookmarks(db, { userId: session.user.email, giftId });
+  await removeGiftFromBookmarks(db, { userId: user.id, giftId });
   return new Response(JSON.stringify({ success: true }), { status: 200 });
 };

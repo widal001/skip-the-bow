@@ -1,6 +1,7 @@
 import { users } from "../db/schema";
 import { eq } from "drizzle-orm";
 import type { DrizzleDatabase } from "../db";
+import { getSession } from "auth-astro/server";
 
 export interface CreateUserInput {
   id: string;
@@ -77,4 +78,12 @@ export async function findOrCreateUser(
   }
   console.log(`[findOrCreateUser] Found existing user`);
   return user;
+}
+
+export async function getCurrentUser(db: DrizzleDatabase, request: Request) {
+  const session = await getSession(request);
+  if (!session?.user?.email) {
+    return null;
+  }
+  return getUserByEmail(db, session.user.email);
 }

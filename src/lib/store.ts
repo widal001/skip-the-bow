@@ -105,11 +105,17 @@ async function removeBookmark(slug: string): Promise<boolean> {
 }
 
 async function setBookmarked(slug: string) {
-  $bookmarkStore.setKey(slug, true);
+  const success = await addBookmark(slug);
+  if (success) {
+    $bookmarkStore.setKey(slug, true);
+  }
 }
 
 async function setNotBookmarked(slug: string) {
-  $bookmarkStore.setKey(slug, false);
+  const success = await removeBookmark(slug);
+  if (success) {
+    $bookmarkStore.setKey(slug, false);
+  }
 }
 
 export {

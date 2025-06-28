@@ -2,15 +2,15 @@ import type { APIRoute } from "astro";
 import { db } from "@/db";
 import { isGiftBookmarked } from "@/lib/bookmark-service";
 import { getGiftIdBySlug } from "@/lib/gift-service";
-import { getSession } from "auth-astro/server";
+import { getCurrentUser } from "@/lib/user-service";
 
 export const prerender = false;
 
 export const GET: APIRoute = async ({ params, request }) => {
-  const session = await getSession(request);
-  if (!session?.user?.email) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), {
-      status: 401,
+  const user = await getCurrentUser(db, request);
+  if (!user) {
+    return new Response(JSON.stringify({ error: "User not found" }), {
+      status: 404,
     });
   }
 
@@ -28,6 +28,6 @@ export const GET: APIRoute = async ({ params, request }) => {
     });
   }
 
-  const isBookmarked = await isGiftBookmarked(db, session.user.email, giftId);
+  const isBookmarked = await isGiftBookmarked(db, user.id, giftId);
   return new Response(JSON.stringify({ isBookmarked }), { status: 200 });
 };
