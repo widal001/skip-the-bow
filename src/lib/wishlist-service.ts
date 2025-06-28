@@ -1,4 +1,4 @@
-import { wishlists, wishlistItems, bookmarks } from "../db/schema";
+import { wishlists, wishlistItems } from "../db/schema";
 import { eq, and } from "drizzle-orm";
 import type { DrizzleDatabase } from "../db";
 
