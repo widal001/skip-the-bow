@@ -1,9 +1,9 @@
 ---
-import Layout from "../../layouts/Layout.astro";
-import { getGiftIdeas } from "../../lib/gift-service";
-import Pill from "../../components/Pill.astro";
-import "../../styles/colors.css";
-import { db } from "../../db";
+import Layout from "@/layouts/Layout.astro";
+import { getGiftIdeas } from "@/lib/gift-service";
+import Pill from "@/components/Pill.astro";
+import "@/styles/colors.css";
+import { db } from "@/db";
 
 export async function getStaticPaths() {
   const ideas = await getGiftIdeas(db);
@@ -78,6 +78,59 @@ const { gift } = Astro.props;
     </div>
   </article>
 </Layout>
+
+<script>
+  import {
+    $bookmarkStore,
+    isBookmarked,
+    setBookmarked,
+    setNotBookmarked,
+  } from "@/lib/store";
+
+  // Get the current gift slug from the URL
+  const pathSegments = window.location.pathname.split("/");
+  const currentSlug = pathSegments[pathSegments.length - 1];
+
+  // Get the save button element
+  const saveButton = document.querySelector(
+    ".save-button"
+  ) as HTMLButtonElement;
+  const heartPath = saveButton?.querySelector("path") as SVGPathElement;
+
+  if (saveButton && heartPath) {
+    // Function to update button appearance based on bookmark status
+    function updateButtonAppearance(isBookmarked: boolean) {
+      if (isBookmarked) {
+        saveButton.setAttribute("aria-pressed", "true");
+        heartPath.setAttribute("fill", "currentColor");
+      } else {
+        saveButton.setAttribute("aria-pressed", "false");
+        heartPath.setAttribute("fill", "none");
+      }
+    }
+
+    // Initialize button appearance
+    const bookmarked = isBookmarked(currentSlug);
+    updateButtonAppearance(bookmarked);
+
+    // Subscribe to store changes
+    $bookmarkStore.subscribe((store) => {
+      const isCurrentlyBookmarked = store[currentSlug] || false;
+      updateButtonAppearance(isCurrentlyBookmarked);
+    });
+
+    // Handle button click
+    saveButton.addEventListener("click", () => {
+      const currentlyBookmarked = isBookmarked(currentSlug);
+
+      if (currentlyBookmarked) {
+        setNotBookmarked(currentSlug);
+      } else {
+        setBookmarked(currentSlug);
+      }
+    });
+  }
+</script>
 
 <style>
   .gift-detail {
