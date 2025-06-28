@@ -83,8 +83,10 @@ const { gift } = Astro.props;
   import {
     $bookmarkStore,
     isBookmarked,
+    hasBookmarkKey,
     setBookmarked,
     setNotBookmarked,
+    checkBookmarkStatus,
   } from "@/lib/store";
 
   // Get the current gift slug from the URL
@@ -109,9 +111,63 @@ const { gift } = Astro.props;
       }
     }
 
-    // Initialize button appearance
-    const bookmarked = isBookmarked(currentSlug);
-    updateButtonAppearance(bookmarked);
+    // Function to handle button click with loading state
+    async function handleBookmarkClick() {
+      if (!saveButton || saveButton.disabled) return;
+
+      // Disable button during API call
+      saveButton.disabled = true;
+
+      try {
+        const currentlyBookmarked = isBookmarked(currentSlug);
+
+        if (currentlyBookmarked) {
+          await setNotBookmarked(currentSlug);
+        } else {
+          await setBookmarked(currentSlug);
+        }
+      } catch (error) {
+        console.error("Failed to toggle bookmark:", error);
+        // Optionally show an error message to the user
+      } finally {
+        // Re-enable button
+        saveButton.disabled = false;
+      }
+    }
+
+    // Initialize button appearance and check bookmark status from API
+    async function initializeBookmarkStatus() {
+      try {
+        // First check if we have the bookmark status in local store
+        if (hasBookmarkKey(currentSlug)) {
+          const localBookmarkStatus = isBookmarked(currentSlug);
+          updateButtonAppearance(localBookmarkStatus);
+          return;
+        }
+
+        // Only call API if we don't have the status in local store
+        const apiBookmarkStatus = await checkBookmarkStatus(currentSlug);
+        console.log("apiBookmarkStatus", apiBookmarkStatus);
+
+        // Update local store to match API status
+        if (apiBookmarkStatus) {
+          $bookmarkStore.setKey(currentSlug, true);
+        } else {
+          $bookmarkStore.setKey(currentSlug, false);
+        }
+
+        // Update button appearance
+        updateButtonAppearance(apiBookmarkStatus);
+      } catch (error) {
+        console.error("Failed to initialize bookmark status:", error);
+        // Fall back to local state
+        const bookmarked = isBookmarked(currentSlug);
+        updateButtonAppearance(bookmarked);
+      }
+    }
+
+    // Initialize bookmark status
+    initializeBookmarkStatus();
 
     // Subscribe to store changes
     $bookmarkStore.subscribe((store) => {
@@ -120,15 +176,7 @@ const { gift } = Astro.props;
     });
 
     // Handle button click
-    saveButton.addEventListener("click", () => {
-      const currentlyBookmarked = isBookmarked(currentSlug);
-
-      if (currentlyBookmarked) {
-        setNotBookmarked(currentSlug);
-      } else {
-        setBookmarked(currentSlug);
-      }
-    });
+    saveButton.addEventListener("click", handleBookmarkClick);
   }
 </script>
 
@@ -312,6 +360,17 @@ const { gift } = Astro.props;
 
   .save-button[aria-pressed="true"] {
     color: var(--category-primary);
+  }
+
+  .save-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .save-button:disabled:hover {
+    color: var(--color-gray-400);
+    background: transparent;
   }
 
   .gift-detail__link:hover {
