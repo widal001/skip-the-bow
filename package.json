@@ -3,7 +3,7 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "dev": "astro dev",
+    "dev": "npm run db:migrate && npm run db:seed && astro dev",
     "build": "npm run db:migrate && npm run db:seed && astro build",
     "preview": "netlify build && netlify serve",
     "astro": "astro",

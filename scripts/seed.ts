@@ -1,6 +1,6 @@
-import { db } from "../src/db";
-import giftsData from "../src/content/gifts.json";
-import { upsertGift } from "../src/lib/gift-service";
+import { db } from "@/db";
+import giftsData from "@/content/gifts.json";
+import { upsertGift } from "@/lib/services/gift-service";
 
 async function seed() {
   console.log("Starting database seeding...");
