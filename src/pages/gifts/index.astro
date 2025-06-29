@@ -1,9 +1,9 @@
 ---
 import Layout from "@/layouts/Layout.astro";
-import GiftIdeaCard from "@/components/GiftIdeaCard.astro";
+import GiftGrid from "@/components/gift/GiftGrid.astro";
 import { GiftCategory } from "@/content/types";
 import type { GiftSearchParams } from "@/content/types";
-import { searchGifts, toSentenceCase } from "@/lib/services/gift-service";
+import { searchGifts } from "@/lib/services/gift-service";
 import {
   getSearchParamsFromUrl,
   getSearchParamsFromForm,
@@ -11,19 +11,20 @@ import {
   // see https://github.com/withastro/language-tools/issues/476 for more info
   buildUrl as _buildUrl,
 } from "../../lib/url-utils";
-import SearchBar from "../../components/gift-search/SearchBar.astro";
-import CategoryFilter from "../../components/gift-search/CategoryFilter.astro";
-import TagFilter from "../../components/gift-search/TagFilter.astro";
-import PriceRangeFilter from "../../components/gift-search/PriceRangeFilter.astro";
 import SortMenu from "../../components/gift-search/SortMenu.astro";
+import FiltersSection from "../../components/gift-search/FiltersSection.astro";
 import { db } from "../../db";
 
-// Get all gifts to extract categories and tags
+// ############################################################################
+// Get default data if no search params are provided
+// ############################################################################
 const allGifts = await searchGifts(db, {});
 const categories = Object.values(GiftCategory.enum);
 const tags = [...new Set(allGifts.flatMap((gift) => gift.tags))].sort();
 
+// ############################################################################
 // Handle form submission
+// ############################################################################
 let searchParams: GiftSearchParams = {};
 const url = new URL(Astro.request.url);
 
@@ -45,10 +46,14 @@ if (Astro.request.method === "POST") {
   searchParams = getSearchParamsFromUrl(url);
 }
 
+// ############################################################################
 // Get filtered gifts
+// ############################################################################
 const gifts = await searchGifts(db, searchParams);
 
+// ############################################################################
 // Enable server-side rendering for this page
+// ############################################################################
 export const prerender = false;
 ---
 
@@ -58,24 +63,11 @@ export const prerender = false;
 >
   <div class="container">
     <div class="search-page">
-      <aside class="filters-container">
-        <form id="filter-form" method="POST" class="filters">
-          <SearchBar value={searchParams.query} />
-          <PriceRangeFilter
-            min={searchParams.priceRange?.min}
-            max={searchParams.priceRange?.max}
-          />
-          <CategoryFilter
-            categories={categories.map((category) => toSentenceCase(category))}
-            selected={searchParams.categories}
-          />
-          <TagFilter
-            tags={tags.map((tag) => toSentenceCase(tag))}
-            selected={searchParams.tags}
-          />
-          <button type="submit" class="submit-button">View results</button>
-        </form>
-      </aside>
+      <FiltersSection
+        searchParams={searchParams}
+        categories={categories}
+        tags={tags}
+      />
 
       <main class="results">
         <div class="results-header">
@@ -83,9 +75,7 @@ export const prerender = false;
           <SortMenu value={searchParams.sortBy} />
         </div>
 
-        <div class="gift-grid">
-          {gifts.map((gift) => <GiftIdeaCard gift={gift} />)}
-        </div>
+        <GiftGrid gifts={gifts} />
       </main>
     </div>
   </div>
@@ -107,18 +97,6 @@ export const prerender = false;
     padding: 1rem;
   }
 
-  .filters-container {
-    grid-column: 1 / -1;
-  }
-
-  .filters {
-    background: var(--color-white);
-    padding: 1.5rem;
-    border-radius: 0.5rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    height: fit-content;
-  }
-
   .results {
     grid-column: 1 / -1;
   }
@@ -135,37 +113,6 @@ export const prerender = false;
     font-weight: 600;
     color: var(--color-gray-900);
     margin: 0;
-  }
-
-  .gift-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 1rem;
-  }
-
-  .submit-button {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    margin-top: 1rem;
-    background: var(--color-primary);
-    color: var(--color-white);
-    border: none;
-    border-radius: 0.5rem;
-    font-weight: 500;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-
-  .submit-button:hover {
-    background: var(--color-primary-dark);
-  }
-
-  .submit-button:focus {
-    outline: none;
-    box-shadow:
-      0 0 0 2px var(--color-white),
-      0 0 0 4px var(--color-primary);
   }
 
   /* Tablet and up (md: 768px) */
@@ -185,11 +132,6 @@ export const prerender = false;
     .results-header h1 {
       font-size: 1.875rem;
     }
-
-    .gift-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 1.5rem;
-    }
   }
 
   /* Desktop (lg: 1024px) */
@@ -199,21 +141,8 @@ export const prerender = false;
       padding: 2rem;
     }
 
-    .filters-container {
-      grid-column: 1 / 2;
-    }
-
-    .filters {
-      position: sticky;
-      top: 2rem;
-    }
-
     .results {
       grid-column: 2 / -1;
-    }
-
-    .gift-grid {
-      gap: 2rem;
     }
   }
 </style>

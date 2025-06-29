@@ -1,0 +1,76 @@
+---
+import SearchBar from "@/components/gift-search/SearchBar.astro";
+import PriceRangeFilter from "@/components/gift-search/PriceRangeFilter.astro";
+import CategoryFilter from "@/components/gift-search/CategoryFilter.astro";
+import TagFilter from "@/components/gift-search/TagFilter.astro";
+import Button from "@/components/Button.astro";
+import type { GiftSearchParams, GiftCategory } from "@/content/types";
+import { toSentenceCase } from "@/lib/services/gift-service";
+
+interface Props {
+  searchParams: GiftSearchParams;
+  categories: GiftCategory[];
+  tags: string[];
+}
+
+const { searchParams, categories, tags } = Astro.props;
+---
+
+<aside class="filters-container">
+  <form id="filter-form" method="POST" class="filters">
+    <SearchBar value={searchParams.query} />
+    <PriceRangeFilter
+      min={searchParams.priceRange?.min}
+      max={searchParams.priceRange?.max}
+    />
+    <CategoryFilter
+      categories={categories.map((category) => toSentenceCase(category))}
+      selected={searchParams.categories}
+    />
+    <TagFilter
+      tags={tags.map((tag) => toSentenceCase(tag))}
+      selected={searchParams.tags}
+    />
+    <Button type="submit" variant="primary">View results</Button>
+  </form>
+</aside>
+
+<style>
+  .filters-container {
+    grid-column: 1 / -1;
+  }
+
+  .filters {
+    background: var(--color-white);
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    height: fit-content;
+  }
+
+  /* Tablet and up (md: 768px) */
+  @media (min-width: 768px) {
+    .results-header {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .results-header h1 {
+      font-size: 1.875rem;
+    }
+  }
+
+  /* Desktop (lg: 1024px) */
+  @media (min-width: 1024px) {
+    .filters-container {
+      grid-column: 1 / 2;
+    }
+
+    .filters {
+      position: sticky;
+      top: 2rem;
+    }
+  }
+</style>
