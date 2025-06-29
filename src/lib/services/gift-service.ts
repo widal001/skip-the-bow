@@ -1,7 +1,7 @@
-import type { Gift, GiftCategory, GiftSearchParams } from "../content/types";
+import type { Gift, GiftCategory, GiftSearchParams } from "@/content/types";
 import { eq, and, sql } from "drizzle-orm";
-import { gifts, tags, giftTags } from "../db/schema";
-import type { DrizzleDatabase } from "../db";
+import { gifts, tags, giftTags } from "@/db/schema";
+import type { DrizzleDatabase } from "@/db";
 
 export async function getGiftIdeas(db: DrizzleDatabase): Promise<Gift[]> {
   const results = await db
@@ -95,6 +95,19 @@ export async function getGiftBySlug(
 
   if (results.length === 0) return undefined;
   return results[0] as Gift;
+}
+
+export async function getGiftIdBySlug(
+  db: DrizzleDatabase,
+  slug: string
+): Promise<number | undefined> {
+  const result = await db
+    .select({ id: gifts.id })
+    .from(gifts)
+    .where(eq(gifts.slug, slug))
+    .then((rows) => rows[0]);
+
+  return result?.id;
 }
 
 export function toSentenceCase(str: string): string {

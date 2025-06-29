@@ -1,6 +1,6 @@
 ---
-import type { Gift } from "../content/types";
-import GiftIdeaCard from "./GiftIdeaCard.astro";
+import type { Gift } from "@/content/types";
+import GiftCard from "@/components/gift/GiftCard.astro";
 
 interface Props {
   title: string;
@@ -40,7 +40,7 @@ const displayedGifts = gifts.slice(0, 5);
       {
         displayedGifts.map((gift) => (
           <div class="gallery-item">
-            <GiftIdeaCard gift={gift} />
+            <GiftCard gift={gift} />
           </div>
         ))
       }

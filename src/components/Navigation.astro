@@ -1,4 +1,6 @@
 ---
+import { getSession } from "auth-astro/server";
+
 interface Props {
   links?: Array<{
     href: string;
@@ -6,18 +8,12 @@ interface Props {
   }>;
 }
 
-// Add type for auth locals
-interface AuthLocals {
-  auth?: {
-    session: () => Promise<{ user?: any } | null>;
-  };
-}
-
 const { links = [] } = Astro.props;
 
 // Check session on server side
-const session = await (Astro.locals as AuthLocals).auth?.session();
+const session = await getSession(Astro.request);
 const isLoggedIn = !!session?.user;
+const user = session?.user;
 ---
 
 <nav>
@@ -42,20 +38,47 @@ const isLoggedIn = !!session?.user;
       >
         Login
       </button>
-      <button
-        class="nav-link"
-        id="logout"
+      <div
+        class="user-dropdown"
+        id="user-dropdown"
         style={`display: ${isLoggedIn ? "block" : "none"}`}
-        aria-label="Logout from your account"
-        type="button"
       >
-        Logout
-      </button>
+        <button
+          class="user-button"
+          id="user-button"
+          aria-label="User menu"
+          type="button"
+        >
+          <span class="user-info">
+            {user?.name || user?.email || "User"}
+          </span>
+          <svg
+            class="dropdown-arrow"
+            width="12"
+            height="12"
+            viewBox="0 0 12 12"
+            fill="none"
+          >
+            <path
+              d="M2 4L6 8L10 4"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"></path>
+          </svg>
+        </button>
+        <div class="dropdown-menu" id="dropdown-menu">
+          <a href="/profile/" class="dropdown-item"> Profile </a>
+          <button class="dropdown-item" id="logout"> Logout </button>
+        </div>
+      </div>
     </div>
   </div>
 </nav>
 
 <script>
+  import { $bookmarkStore } from "@/lib/stores/bookmark-store";
+
   async function getSession() {
     const res = await fetch("/api/auth/session");
     if (!res.ok) return null;
@@ -64,32 +87,62 @@ const isLoggedIn = !!session?.user;
 
   async function checkLoginStatus() {
     const cachedLoginState = sessionStorage.getItem("isLoggedIn");
+    const cachedUserEmail = sessionStorage.getItem("userEmail");
+    const cachedUserName = sessionStorage.getItem("userName");
     if (cachedLoginState !== null) {
-      return cachedLoginState === "true";
+      return {
+        isLoggedIn: cachedLoginState === "true",
+        userEmail: cachedUserEmail ?? undefined,
+        userName: cachedUserName ?? undefined,
+      };
     }
 
     const session = await getSession();
     const isLoggedIn = !!session?.user;
+    const userEmail = session?.user?.email;
+    const userName = session?.user?.name;
     sessionStorage.setItem("isLoggedIn", isLoggedIn.toString());
-    return isLoggedIn;
+    sessionStorage.setItem("userEmail", userEmail);
+    sessionStorage.setItem("userName", userName);
+    return { isLoggedIn, userEmail, userName };
   }
 
   // Function to update button visibility
-  function updateButtonVisibility(isLoggedIn: boolean) {
+  function updateButtonVisibility(
+    isLoggedIn: boolean,
+    userEmail?: string,
+    userName?: string
+  ) {
     const loginButton = document.getElementById("login");
-    const logoutButton = document.getElementById("logout");
+    const userDropdown = document.getElementById("user-dropdown");
+    const userButton = document.getElementById("user-button");
+    const userInfoRow = document.getElementById("user-info-row");
 
     if (isLoggedIn) {
       loginButton?.style.setProperty("display", "none");
-      logoutButton?.style.setProperty("display", "block");
+      userDropdown?.style.setProperty("display", "block");
+
+      // Update user button text
+      const userDisplayName = userName || userEmail || "User";
+      const userButtonText = userButton?.querySelector(".user-info");
+      if (userButtonText) {
+        userButtonText.textContent = userDisplayName;
+      }
+
+      // Update dropdown user info row
+      if (userInfoRow) {
+        userInfoRow.textContent = userDisplayName;
+      }
     } else {
       loginButton?.style.setProperty("display", "block");
-      logoutButton?.style.setProperty("display", "none");
+      userDropdown?.style.setProperty("display", "none");
     }
   }
 
   // Initial check and update
-  checkLoginStatus().then(updateButtonVisibility);
+  checkLoginStatus().then(({ isLoggedIn, userEmail, userName }) =>
+    updateButtonVisibility(isLoggedIn, userEmail, userName)
+  );
 
   // Set up auth event listeners
   const { signIn, signOut } = await import("auth-astro/client");
@@ -101,7 +154,24 @@ const isLoggedIn = !!session?.user;
 
   document.querySelector("#logout")?.addEventListener("click", async () => {
     sessionStorage.removeItem("isLoggedIn");
+    $bookmarkStore.set({});
     await signOut();
+  });
+
+  // Dropdown functionality
+  const userButton = document.getElementById("user-button");
+  const dropdownMenu = document.getElementById("dropdown-menu");
+
+  userButton?.addEventListener("click", () => {
+    dropdownMenu?.classList.toggle("show");
+  });
+
+  // Close dropdown when clicking outside
+  document.addEventListener("click", (event) => {
+    const target = event.target as Element;
+    if (!userButton?.contains(target) && !dropdownMenu?.contains(target)) {
+      dropdownMenu?.classList.remove("show");
+    }
   });
 </script>
 
@@ -182,6 +252,119 @@ const isLoggedIn = !!session?.user;
     color: var(--color-primary-dark);
   }
 
+  /* User dropdown styles */
+  .user-dropdown {
+    position: relative;
+  }
+
+  .user-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    color: var(--color-gray-900);
+    font-weight: 500;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    font-size: inherit;
+    min-width: 140px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .user-button:hover {
+    background-color: var(--color-primary-light);
+    color: var(--color-primary-dark);
+  }
+
+  .user-info {
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .dropdown-arrow {
+    transition: transform 0.2s ease;
+  }
+
+  .user-button:hover .dropdown-arrow {
+    transform: rotate(180deg);
+  }
+
+  .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-200);
+    border-radius: 6px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    min-width: 140px;
+    max-width: 140px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.2s ease;
+    z-index: 1000;
+  }
+
+  .dropdown-menu.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .dropdown-item {
+    display: block;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    text-decoration: none;
+    color: var(--color-gray-900);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: inherit;
+    text-align: left;
+    transition: background-color 0.2s ease;
+    width: 100%;
+    box-sizing: border-box;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .dropdown-item:hover {
+    background-color: var(--color-gray-100);
+  }
+
+  .dropdown-item:first-child {
+    border-radius: 6px 6px 0 0;
+  }
+
+  .dropdown-item:last-child {
+    border-radius: 0 0 6px 6px;
+  }
+
+  .user-info-row {
+    background-color: var(--color-gray-50);
+    color: var(--color-gray-700);
+    font-weight: 600;
+    border-bottom: 1px solid var(--color-gray-200);
+    cursor: default;
+  }
+
+  .user-info-row:hover {
+    background-color: var(--color-gray-50);
+  }
+
   @media (max-width: 768px) {
     .nav-right {
       gap: 1rem;
@@ -190,12 +373,15 @@ const isLoggedIn = !!session?.user;
     .nav-link {
       padding: 0.5rem 0.75rem;
     }
+
+    .user-info {
+      max-width: 100px;
+    }
   }
 
   /* Add fixed width for auth buttons */
-  #login,
-  #logout {
-    width: 90px;
+  #login {
+    width: 140px;
     text-align: center;
   }
 </style>

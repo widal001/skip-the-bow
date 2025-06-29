@@ -1,9 +1,9 @@
 ---
-import Layout from "../../layouts/Layout.astro";
-import { getGiftIdeas } from "../../lib/gift-service";
-import Pill from "../../components/Pill.astro";
-import "../../styles/colors.css";
-import { db } from "../../db";
+import Layout from "@/layouts/Layout.astro";
+import { getGiftIdeas } from "@/lib/services/gift-service";
+import Pill from "@/components/Pill.astro";
+import "@/styles/colors.css";
+import { db } from "@/db";
 
 export async function getStaticPaths() {
   const ideas = await getGiftIdeas(db);
@@ -47,7 +47,7 @@ const { gift } = Astro.props;
     <div class="gift-detail__content">
       <div class="gift-detail__tags">
         {
-          gift.tags.map((tag) => (
+          gift.tags.map((tag: string) => (
             <a href={`/gifts?tags=${tag}`}>
               <Pill
                 text={tag}
@@ -78,6 +78,72 @@ const { gift } = Astro.props;
     </div>
   </article>
 </Layout>
+
+<script>
+  import {
+    $bookmarkStore,
+    addBookmarkStatusToStore,
+    toggleBookmark,
+  } from "@/lib/stores/bookmark-store";
+
+  // Get the current gift slug from the URL
+  const pathSegments = window.location.pathname.split("/");
+  const currentSlug = pathSegments[pathSegments.length - 1];
+
+  // Get the save button element
+  const saveButton = document.querySelector(
+    ".save-button"
+  ) as HTMLButtonElement;
+  const heartPath = saveButton?.querySelector("path") as SVGPathElement;
+
+  if (saveButton && heartPath) {
+    // Function to update button appearance based on bookmark status
+    function updateButtonAppearance(isBookmarked: boolean) {
+      if (isBookmarked) {
+        saveButton.setAttribute("aria-pressed", "true");
+        heartPath.setAttribute("fill", "currentColor");
+      } else {
+        saveButton.setAttribute("aria-pressed", "false");
+        heartPath.setAttribute("fill", "none");
+      }
+    }
+
+    // Function to handle button click with loading state
+    async function handleBookmarkClick() {
+      if (saveButton.disabled) return;
+
+      // Disable button during API call
+      saveButton.disabled = true;
+
+      try {
+        await toggleBookmark(currentSlug);
+      } catch (error) {
+        console.error("Failed to toggle bookmark:", error);
+      } finally {
+        // Re-enable button
+        saveButton.disabled = false;
+      }
+    }
+
+    // Initialize bookmark status and button
+    async function initializeBookmarkButton() {
+      // Add bookmark status to store, if not already in store
+      await addBookmarkStatusToStore(currentSlug);
+
+      // Subscribe to store changes to update button appearance
+      $bookmarkStore.subscribe((store) => {
+        const isCurrentlyBookmarked = store[currentSlug] || false;
+        updateButtonAppearance(isCurrentlyBookmarked);
+      });
+
+      // Handle button click
+      saveButton.addEventListener("click", handleBookmarkClick);
+    }
+
+    // Initialize the bookmark button
+    initializeBookmarkButton();
+  }
+</script>
 
 <style>
   .gift-detail {
@@ -259,6 +325,17 @@ const { gift } = Astro.props;
 
   .save-button[aria-pressed="true"] {
     color: var(--category-primary);
+  }
+
+  .save-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .save-button:disabled:hover {
+    color: var(--color-gray-400);
+    background: transparent;
   }
 
   .gift-detail__link:hover {

@@ -1,0 +1,43 @@
+---
+import type { Gift } from "@/content/types";
+import GiftCard from "@/components/gift/GiftCard.astro";
+
+interface Props {
+  gifts: Gift[];
+  tabletColumns?: number;
+  desktopColumns?: number;
+}
+
+const { gifts, tabletColumns = 2, desktopColumns = 3 } = Astro.props;
+---
+
+<div
+  class="gift-grid"
+  style={`--tablet-columns: ${tabletColumns}; --desktop-columns: ${desktopColumns};`}
+>
+  {gifts.map((gift) => <GiftCard gift={gift} />)}
+</div>
+
+<style>
+  .gift-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+  }
+
+  /* Tablet and up (md: 768px) */
+  @media (min-width: 768px) {
+    .gift-grid {
+      grid-template-columns: repeat(var(--tablet-columns), minmax(0, 1fr));
+      gap: 1.5rem;
+    }
+  }
+
+  /* Desktop (lg: 1024px) */
+  @media (min-width: 1024px) {
+    .gift-grid {
+      grid-template-columns: repeat(var(--desktop-columns), minmax(0, 1fr));
+      gap: 2rem;
+    }
+  }
+</style>

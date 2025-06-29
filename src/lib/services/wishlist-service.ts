@@ -1,6 +1,6 @@
-import { wishlists, bookmarks } from "../db/schema";
+import { wishlists, wishlistItems } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
-import type { DrizzleDatabase } from "../db";
+import type { DrizzleDatabase } from "@/db";
 
 export interface CreateWishlistInput {
   name: string;
@@ -44,7 +44,7 @@ export async function addToWishlist(
   input: AddToWishlistInput
 ) {
   const [bookmark] = await db
-    .insert(bookmarks)
+    .insert(wishlistItems)
     .values({
       wishlistId: input.wishlistId,
       giftId: input.giftId,
@@ -63,11 +63,11 @@ export async function removeFromWishlist(
   input: AddToWishlistInput
 ) {
   await db
-    .delete(bookmarks)
+    .delete(wishlistItems)
     .where(
       and(
-        eq(bookmarks.wishlistId, input.wishlistId),
-        eq(bookmarks.giftId, input.giftId)
+        eq(wishlistItems.wishlistId, input.wishlistId),
+        eq(wishlistItems.giftId, input.giftId)
       )
     );
 }
@@ -81,7 +81,7 @@ export async function getWishlist(db: DrizzleDatabase, wishlistId: number) {
   const wishlist = await db.query.wishlists.findFirst({
     where: eq(wishlists.id, wishlistId),
     with: {
-      bookmarks: {
+      wishlistItems: {
         with: {
           gift: true,
         },
@@ -101,7 +101,7 @@ export async function getUserWishlists(db: DrizzleDatabase, userId: string) {
   const userWishlists = await db.query.wishlists.findMany({
     where: eq(wishlists.userId, userId),
     with: {
-      bookmarks: {
+      wishlistItems: {
         with: {
           gift: true,
         },
