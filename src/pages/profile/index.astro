@@ -1,0 +1,46 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import GiftGrid from "@/components/gift/GiftGrid.astro";
+import { getUserBookmarks } from "@/lib/services/bookmark-service";
+import { getCurrentUser } from "@/lib/services/user-service";
+import { db } from "@/db";
+
+const user = await getCurrentUser(db, Astro.request);
+if (!user) {
+  return Astro.redirect("/");
+}
+
+const bookmarks = await getUserBookmarks(db, user.id);
+const gifts = bookmarks.map((bookmark) => ({
+  slug: bookmark.gift.slug,
+  name: bookmark.gift.name,
+  description: bookmark.gift.description,
+  priceRange: {
+    min: bookmark.gift.minPrice,
+    max: bookmark.gift.maxPrice,
+  },
+  link: bookmark.gift.link,
+  isHidden: bookmark.gift.isHidden,
+  category: bookmark.gift.category,
+  tags: bookmark.gift.tags || [],
+}));
+
+export const prerender = false;
+---
+
+<Layout title="My bookmarks">
+  <div class="container">
+    <h1>Profile</h1>
+    <h2>Bookmarked gifts</h2>
+    <GiftGrid gifts={gifts} tabletColumns={2} desktopColumns={3} />
+  </div>
+</Layout>
+
+<style>
+  /* Container to center content and provide consistent padding */
+  .container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 1rem;
+  }
+</style>
