@@ -15,8 +15,8 @@ export const prerender = false;
 export const GET: APIRoute = async ({ params, request }) => {
   const user = await getCurrentUser(db, request);
   if (!user) {
-    return new Response(JSON.stringify({ error: "User not found" }), {
-      status: 404,
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401,
     });
   }
 

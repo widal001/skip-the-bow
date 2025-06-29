@@ -77,6 +77,8 @@ const user = session?.user;
 </nav>
 
 <script>
+  import { $bookmarkStore } from "@/lib/stores/bookmark-store";
+
   async function getSession() {
     const res = await fetch("/api/auth/session");
     if (!res.ok) return null;
@@ -152,6 +154,7 @@ const user = session?.user;
 
   document.querySelector("#logout")?.addEventListener("click", async () => {
     sessionStorage.removeItem("isLoggedIn");
+    $bookmarkStore.set({});
     await signOut();
   });
 

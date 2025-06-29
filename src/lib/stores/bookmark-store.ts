@@ -132,6 +132,7 @@ export async function checkBookmarkStatusViaAPI(
     if (!response.ok) {
       if (response.status === 401) {
         // User not authenticated, return false
+        console.log("User not authenticated");
         return false;
       }
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -161,6 +162,7 @@ async function addBookmarkViaAPI(giftSlug: string): Promise<boolean> {
     if (!response.ok) {
       if (response.status === 401) {
         // User not authenticated, redirect to login
+        console.log("User not authenticated, redirecting to login");
         await signIn("github");
         return false;
       }
@@ -191,6 +193,7 @@ async function removeBookmarkViaAPI(giftSlug: string): Promise<boolean> {
     if (!response.ok) {
       if (response.status === 401) {
         // User not authenticated, redirect to login
+        console.log("User not authenticated, redirecting to login");
         await signIn("github");
         return false;
       }
