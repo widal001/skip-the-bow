@@ -87,8 +87,13 @@ const { gift } = Astro.props;
   } from "@/lib/stores/bookmark-store";
 
   // Get the current gift slug from the URL
-  const pathSegments = window.location.pathname.split("/");
-  const currentSlug = pathSegments[pathSegments.length - 1];
+  const match = window.location.pathname.match(/^\/gifts\/([A-z0-9-]+)\/?$/);
+  const currentSlug = match ? match[1] : "";
+  console.log("currentSlug", currentSlug);
+
+  if (currentSlug === "") {
+    console.error("No slug found in URL");
+  }
 
   // Get the save button element
   const saveButton = document.querySelector(
