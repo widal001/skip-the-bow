@@ -6,8 +6,8 @@ import * as userService from "@/lib/services/user-service";
 export default defineConfig({
   providers: [
     GitHub({
-      clientId: import.meta.env.GITHUB_CLIENT_ID,
-      clientSecret: import.meta.env.GITHUB_CLIENT_SECRET,
+      clientId: process.env.GITHUB_CLIENT_ID,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET,
     }),
   ],
   callbacks: {
