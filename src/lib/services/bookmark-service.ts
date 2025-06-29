@@ -100,7 +100,15 @@ export async function getUserBookmarks(db: DrizzleDatabase, userId: string) {
   const userBookmarks = await db.query.bookmarks.findMany({
     where: eq(bookmarks.userId, userId),
     with: {
-      gift: true,
+      gift: {
+        with: {
+          giftTags: {
+            with: {
+              tag: true,
+            },
+          },
+        },
+      },
     },
     orderBy: [asc(bookmarks.createdAt)],
   });

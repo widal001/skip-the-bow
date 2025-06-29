@@ -83,7 +83,7 @@ export async function toggleBookmark(giftSlug: string): Promise<void> {
  * @param giftSlug - The giftSlug of the gift to check
  * @returns True if the gift is bookmarked, false otherwise
  */
-function isBookmarked(giftSlug: string): boolean {
+export function isBookmarked(giftSlug: string): boolean {
   return $bookmarkStore.get()[giftSlug] || false;
 }
 

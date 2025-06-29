@@ -69,6 +69,25 @@ export const giftTags = pgTable(
   (table) => [primaryKey({ columns: [table.giftId, table.tagId] })]
 );
 
+export const giftsRelations = relations(gifts, ({ many }) => ({
+  giftTags: many(giftTags),
+}));
+
+export const tagsRelations = relations(tags, ({ many }) => ({
+  giftTags: many(giftTags),
+}));
+
+export const giftTagsRelations = relations(giftTags, ({ one }) => ({
+  gift: one(gifts, {
+    fields: [giftTags.giftId],
+    references: [gifts.id],
+  }),
+  tag: one(tags, {
+    fields: [giftTags.tagId],
+    references: [tags.id],
+  }),
+}));
+
 // #########################################################
 // Wishlists
 // #########################################################

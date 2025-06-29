@@ -22,7 +22,7 @@ const gifts = bookmarks.map((bookmark) => ({
   link: bookmark.gift.link,
   isHidden: bookmark.gift.isHidden,
   category: bookmark.gift.category,
-  tags: bookmark.gift.tags || [],
+  tags: bookmark.gift.giftTags.map((giftTag) => giftTag.tag.name),
 }));
 
 export const prerender = false;
