@@ -7,8 +7,75 @@ import { signIn } from "auth-astro/client";
 
 export const $bookmarkStore = map<Record<string, boolean>>(getInitialState());
 
+// Fetch bookmark data from localStorage if available
+function getInitialState(): Record<string, boolean> {
+  if (typeof window === "undefined") return {};
+
+  try {
+    const stored = localStorage.getItem("gift-bookmarks");
+    const initialState = stored ? JSON.parse(stored) : {};
+
+    return initialState;
+  } catch (error) {
+    console.error("Failed to load bookmarks from localStorage:", error);
+    return {};
+  }
+}
+
+// Set up localStorage subscription only once during initialization
+$bookmarkStore.subscribe((state) => {
+  try {
+    localStorage.setItem("gift-bookmarks", JSON.stringify(state));
+  } catch (error) {
+    console.error("Failed to save bookmarks to localStorage:", error);
+  }
+});
+
 // ############################################################################
-// Store operations
+// Public store operations
+// ############################################################################
+
+/**
+ * Initialize bookmark status for a gift, checking API if not in local store
+ * @param giftSlug - The slug of the gift to initialize
+ * @returns Promise that resolves when initialization is complete
+ */
+export async function addBookmarkStatusToStore(
+  giftSlug: string
+): Promise<void> {
+  // If we already have the status in the store, no need to check the API
+  if (giftSlug in $bookmarkStore.get()) {
+    return;
+  }
+
+  // Otherwise, check the API for the bookmark status
+  try {
+    const apiBookmarkStatus = await checkBookmarkStatusViaAPI(giftSlug);
+    $bookmarkStore.setKey(giftSlug, apiBookmarkStatus);
+  } catch (error) {
+    console.error("Failed to initialize bookmark status:", error);
+    // Set to false as fallback
+    $bookmarkStore.setKey(giftSlug, false);
+  }
+}
+
+/**
+ * Toggle bookmark status for a gift
+ * @param giftSlug - The slug of the gift to toggle
+ * @returns Promise that resolves when toggle is complete
+ */
+export async function toggleBookmark(giftSlug: string): Promise<void> {
+  const currentlyBookmarked = isBookmarked(giftSlug);
+
+  if (currentlyBookmarked) {
+    await setNotBookmarked(giftSlug);
+  } else {
+    await setBookmarked(giftSlug);
+  }
+}
+
+// ############################################################################
+// Private store operations
 // ############################################################################
 
 /**
@@ -16,18 +83,37 @@ export const $bookmarkStore = map<Record<string, boolean>>(getInitialState());
  * @param giftSlug - The giftSlug of the gift to check
  * @returns True if the gift is bookmarked, false otherwise
  */
-export function isBookmarked(giftSlug: string): boolean {
+function isBookmarked(giftSlug: string): boolean {
   return $bookmarkStore.get()[giftSlug] || false;
 }
 
 /**
- * Check if a gift has a bookmark key in the store
- * @param giftSlug - The giftSlug of the gift to check
- * @returns True if the gift has a bookmark key, false otherwise
+ * Add a bookmark to the user's bookmarks and update the store
+ * @param giftSlug - The slug of the gift to add to the bookmarks
+ * @returns True if the bookmark was added, false otherwise
  */
-export function hasBookmarkKey(giftSlug: string): boolean {
-  return giftSlug in $bookmarkStore.get();
+async function setBookmarked(giftSlug: string) {
+  const success = await addBookmarkViaAPI(giftSlug);
+  if (success) {
+    $bookmarkStore.setKey(giftSlug, true);
+  }
 }
+
+/**
+ * Remove a bookmark from the user's bookmarks and update the store
+ * @param giftSlug - The slug of the gift to remove from the bookmarks
+ * @returns True if the bookmark was removed, false otherwise
+ */
+async function setNotBookmarked(giftSlug: string) {
+  const success = await removeBookmarkViaAPI(giftSlug);
+  if (success) {
+    $bookmarkStore.setKey(giftSlug, false);
+  }
+}
+
+// ############################################################################
+// Helper functions
+// ############################################################################
 
 /**
  * Check if a gift is bookmarked by the current user using the API
@@ -38,7 +124,9 @@ export function hasBookmarkKey(giftSlug: string): boolean {
  * @param giftSlug - The giftSlug of the gift to check
  * @returns True if the gift is bookmarked, false otherwise
  */
-export async function checkBookmarkStatus(giftSlug: string): Promise<boolean> {
+export async function checkBookmarkStatusViaAPI(
+  giftSlug: string
+): Promise<boolean> {
   try {
     const response = await fetch(`/api/user/bookmarked/${giftSlug}`);
     if (!response.ok) {
@@ -57,67 +145,11 @@ export async function checkBookmarkStatus(giftSlug: string): Promise<boolean> {
 }
 
 /**
- * Add a bookmark to the user's bookmarks and update the store
- * @param giftSlug - The slug of the gift to add to the bookmarks
- * @returns True if the bookmark was added, false otherwise
- */
-export async function setBookmarked(giftSlug: string) {
-  const success = await addBookmark(giftSlug);
-  if (success) {
-    $bookmarkStore.setKey(giftSlug, true);
-  }
-}
-
-/**
- * Remove a bookmark from the user's bookmarks and update the store
- * @param giftSlug - The slug of the gift to remove from the bookmarks
- * @returns True if the bookmark was removed, false otherwise
- */
-export async function setNotBookmarked(giftSlug: string) {
-  const success = await removeBookmark(giftSlug);
-  if (success) {
-    $bookmarkStore.setKey(giftSlug, false);
-  }
-}
-
-// ############################################################################
-// Store initialization
-// ############################################################################
-
-// Initialize store from localStorage if available
-function getInitialState(): Record<string, boolean> {
-  if (typeof window === "undefined") return {};
-
-  try {
-    const stored = localStorage.getItem("gift-bookmarks");
-    return stored ? JSON.parse(stored) : {};
-  } catch (error) {
-    console.error("Failed to load bookmarks from localStorage:", error);
-    return {};
-  }
-}
-
-// Subscribe to store changes and persist to localStorage
-if (typeof window !== "undefined") {
-  $bookmarkStore.subscribe((state) => {
-    try {
-      localStorage.setItem("gift-bookmarks", JSON.stringify(state));
-    } catch (error) {
-      console.error("Failed to save bookmarks to localStorage:", error);
-    }
-  });
-}
-
-// ############################################################################
-// Helper functions
-// ############################################################################
-
-/**
  * Add a bookmark to the user's bookmarks using the API
  * @param giftSlug - The giftSlug of the gift to add to the bookmarks
  * @returns True if the bookmark was added, false otherwise
  */
-async function addBookmark(giftSlug: string): Promise<boolean> {
+async function addBookmarkViaAPI(giftSlug: string): Promise<boolean> {
   try {
     const response = await fetch(`/api/user/bookmarks/${giftSlug}`, {
       method: "PUT",
@@ -147,7 +179,7 @@ async function addBookmark(giftSlug: string): Promise<boolean> {
  * @param giftSlug - The giftSlug of the gift to remove from the bookmarks
  * @returns True if the bookmark was removed, false otherwise
  */
-async function removeBookmark(giftSlug: string): Promise<boolean> {
+async function removeBookmarkViaAPI(giftSlug: string): Promise<boolean> {
   try {
     const response = await fetch(`/api/user/bookmarks/${giftSlug}`, {
       method: "DELETE",

@@ -82,11 +82,8 @@ const { gift } = Astro.props;
 <script>
   import {
     $bookmarkStore,
-    isBookmarked,
-    hasBookmarkKey,
-    setBookmarked,
-    setNotBookmarked,
-    checkBookmarkStatus,
+    addBookmarkStatusToStore,
+    toggleBookmark,
   } from "@/lib/stores/bookmark-store";
 
   // Get the current gift slug from the URL
@@ -113,70 +110,38 @@ const { gift } = Astro.props;
 
     // Function to handle button click with loading state
     async function handleBookmarkClick() {
-      if (!saveButton || saveButton.disabled) return;
+      if (saveButton.disabled) return;
 
       // Disable button during API call
       saveButton.disabled = true;
 
       try {
-        const currentlyBookmarked = isBookmarked(currentSlug);
-
-        if (currentlyBookmarked) {
-          await setNotBookmarked(currentSlug);
-        } else {
-          await setBookmarked(currentSlug);
-        }
+        await toggleBookmark(currentSlug);
       } catch (error) {
         console.error("Failed to toggle bookmark:", error);
-        // Optionally show an error message to the user
       } finally {
         // Re-enable button
         saveButton.disabled = false;
       }
     }
 
-    // Initialize button appearance and check bookmark status from API
-    async function initializeBookmarkStatus() {
-      try {
-        // First check if we have the bookmark status in local store
-        if (hasBookmarkKey(currentSlug)) {
-          const localBookmarkStatus = isBookmarked(currentSlug);
-          updateButtonAppearance(localBookmarkStatus);
-          return;
-        }
+    // Initialize bookmark status and button
+    async function initializeBookmarkButton() {
+      // Add bookmark status to store, if not already in store
+      await addBookmarkStatusToStore(currentSlug);
 
-        // Only call API if we don't have the status in local store
-        const apiBookmarkStatus = await checkBookmarkStatus(currentSlug);
-        console.log("apiBookmarkStatus", apiBookmarkStatus);
+      // Subscribe to store changes to update button appearance
+      $bookmarkStore.subscribe((store) => {
+        const isCurrentlyBookmarked = store[currentSlug] || false;
+        updateButtonAppearance(isCurrentlyBookmarked);
+      });
 
-        // Update local store to match API status
-        if (apiBookmarkStatus) {
-          $bookmarkStore.setKey(currentSlug, true);
-        } else {
-          $bookmarkStore.setKey(currentSlug, false);
-        }
-
-        // Update button appearance
-        updateButtonAppearance(apiBookmarkStatus);
-      } catch (error) {
-        console.error("Failed to initialize bookmark status:", error);
-        // Fall back to local state
-        const bookmarked = isBookmarked(currentSlug);
-        updateButtonAppearance(bookmarked);
-      }
+      // Handle button click
+      saveButton.addEventListener("click", handleBookmarkClick);
     }
 
-    // Initialize bookmark status
-    initializeBookmarkStatus();
-
-    // Subscribe to store changes
-    $bookmarkStore.subscribe((store) => {
-      const isCurrentlyBookmarked = store[currentSlug] || false;
-      updateButtonAppearance(isCurrentlyBookmarked);
-    });
-
-    // Handle button click
-    saveButton.addEventListener("click", handleBookmarkClick);
+    // Initialize the bookmark button
+    initializeBookmarkButton();
   }
 </script>
 

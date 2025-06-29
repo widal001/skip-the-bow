@@ -8,13 +8,6 @@ interface Props {
   }>;
 }
 
-// Add type for auth locals
-interface AuthLocals {
-  auth?: {
-    session: () => Promise<{ user?: any } | null>;
-  };
-}
-
 const { links = [] } = Astro.props;
 
 // Check session on server side
