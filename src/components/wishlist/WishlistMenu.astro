@@ -1,0 +1,371 @@
+---
+interface Props {
+  isOpen: boolean;
+  giftSlug?: string;
+  giftName?: string;
+}
+
+const { isOpen, giftSlug, giftName } = Astro.props;
+---
+
+<div
+  class={`wishlist-menu ${isOpen ? "wishlist-menu--open" : ""}`}
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="wishlist-menu-title"
+  aria-describedby="wishlist-menu-description"
+>
+  <div class="wishlist-menu__overlay" id="wishlist-menu-overlay"></div>
+
+  <div class="wishlist-menu__container">
+    <div class="wishlist-menu__header">
+      <h2 id="wishlist-menu-title" class="wishlist-menu__title">
+        Add to Wishlist
+      </h2>
+      <button
+        class="wishlist-menu__close-button"
+        aria-label="Close wishlist menu"
+        id="wishlist-menu-close"
+      >
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <div class="wishlist-menu__content">
+      <p id="wishlist-menu-description" class="wishlist-menu__description">
+        {
+          giftName
+            ? `Add "${giftName}" to your wishlist`
+            : "Add this gift to your wishlist"
+        }
+      </p>
+
+      <div class="wishlist-menu__body">
+        <slot name="selector" />
+        <slot name="creator" />
+      </div>
+
+      <div class="wishlist-menu__actions">
+        <button
+          type="button"
+          class="wishlist-menu__cancel-button"
+          id="wishlist-menu-cancel"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="wishlist-menu__save-button"
+          id="wishlist-menu-save"
+          disabled
+        >
+          Save
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Handle modal/drawer functionality
+  function initializeWishlistMenu() {
+    const menu = document.querySelector(".wishlist-menu") as HTMLElement;
+    const overlay = document.getElementById(
+      "wishlist-menu-overlay"
+    ) as HTMLElement;
+    const closeButton = document.getElementById(
+      "wishlist-menu-close"
+    ) as HTMLButtonElement;
+    const cancelButton = document.getElementById(
+      "wishlist-menu-cancel"
+    ) as HTMLButtonElement;
+    const saveButton = document.getElementById(
+      "wishlist-menu-save"
+    ) as HTMLButtonElement;
+
+    if (!menu || !overlay || !closeButton || !cancelButton || !saveButton) {
+      console.error("Wishlist menu elements not found");
+      return;
+    }
+
+    // Close menu function
+    function closeMenu() {
+      menu.classList.remove("wishlist-menu--open");
+      document.body.style.overflow = "";
+
+      // Dispatch custom event for parent components
+      window.dispatchEvent(new CustomEvent("wishlist-menu-closed"));
+    }
+
+    // Open menu function
+    function openMenu() {
+      menu.classList.add("wishlist-menu--open");
+      document.body.style.overflow = "hidden";
+
+      // Focus management
+      setTimeout(() => {
+        closeButton.focus();
+      }, 100);
+    }
+
+    // Event listeners
+    closeButton.addEventListener("click", closeMenu);
+    cancelButton.addEventListener("click", closeMenu);
+    overlay.addEventListener("click", closeMenu);
+
+    // Keyboard navigation
+    menu.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        closeMenu();
+      }
+    });
+
+    // Trap focus within modal
+    const focusableElements = menu.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    const firstFocusable = focusableElements[0] as HTMLElement;
+    const lastFocusable = focusableElements[
+      focusableElements.length - 1
+    ] as HTMLElement;
+
+    menu.addEventListener("keydown", (e) => {
+      if (e.key === "Tab") {
+        if (e.shiftKey) {
+          if (document.activeElement === firstFocusable) {
+            e.preventDefault();
+            lastFocusable.focus();
+          }
+        } else {
+          if (document.activeElement === lastFocusable) {
+            e.preventDefault();
+            firstFocusable.focus();
+          }
+        }
+      }
+    });
+
+    // Expose open/close functions globally
+    (window as any).wishlistMenu = {
+      open: openMenu,
+      close: closeMenu,
+    };
+  }
+
+  // Initialize when DOM is ready
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initializeWishlistMenu);
+  } else {
+    initializeWishlistMenu();
+  }
+</script>
+
+<style>
+  .wishlist-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .wishlist-menu--open {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .wishlist-menu__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+  }
+
+  .wishlist-menu__container {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    margin: 1rem;
+    background: var(--color-white);
+    border-radius: 12px;
+    box-shadow:
+      0 20px 25px -5px rgba(0, 0, 0, 0.1),
+      0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    transform: scale(0.95) translateY(20px);
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .wishlist-menu--open .wishlist-menu__container {
+    transform: scale(1) translateY(0);
+  }
+
+  .wishlist-menu__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--color-gray-200);
+    flex-shrink: 0;
+  }
+
+  .wishlist-menu__title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-gray-900);
+  }
+
+  .wishlist-menu__close-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--color-gray-500);
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+  }
+
+  .wishlist-menu__close-button:hover {
+    background: var(--color-gray-100);
+    color: var(--color-gray-700);
+  }
+
+  .wishlist-menu__close-button:focus {
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--color-white),
+      0 0 0 4px var(--color-primary);
+  }
+
+  .wishlist-menu__content {
+    padding: 1.5rem;
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .wishlist-menu__description {
+    margin: 0 0 1.5rem 0;
+    color: var(--color-gray-600);
+    font-size: 0.875rem;
+  }
+
+  .wishlist-menu__body {
+    margin-bottom: 2rem;
+  }
+
+  .wishlist-menu__actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    padding: 1.5rem;
+    border-top: 1px solid var(--color-gray-200);
+    flex-shrink: 0;
+  }
+
+  .wishlist-menu__cancel-button {
+    padding: 0.75rem 1.5rem;
+    border: 1px solid var(--color-gray-300);
+    background: var(--color-white);
+    color: var(--color-gray-700);
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .wishlist-menu__cancel-button:hover {
+    background: var(--color-gray-50);
+    border-color: var(--color-gray-400);
+  }
+
+  .wishlist-menu__cancel-button:focus {
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--color-white),
+      0 0 0 4px var(--color-primary);
+  }
+
+  .wishlist-menu__save-button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    background: var(--color-primary);
+    color: var(--color-white);
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .wishlist-menu__save-button:hover:not(:disabled) {
+    background: var(--color-primary-dark);
+  }
+
+  .wishlist-menu__save-button:focus {
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--color-white),
+      0 0 0 4px var(--color-primary);
+  }
+
+  .wishlist-menu__save-button:disabled {
+    background: var(--color-gray-300);
+    color: var(--color-gray-500);
+    cursor: not-allowed;
+  }
+
+  /* Mobile drawer behavior */
+  @media (max-width: 640px) {
+    .wishlist-menu {
+      align-items: flex-end;
+    }
+
+    .wishlist-menu__container {
+      width: 100%;
+      max-width: none;
+      margin: 0;
+      border-radius: 12px 12px 0 0;
+      max-height: 80vh;
+    }
+
+    .wishlist-menu__container::before {
+      content: "";
+      position: absolute;
+      top: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 4px;
+      background: var(--color-gray-300);
+      border-radius: 2px;
+    }
+  }
+</style>
