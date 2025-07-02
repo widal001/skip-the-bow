@@ -23,132 +23,94 @@ export interface WishlistStoreState {
   data: WishlistDataState;
 }
 
-// Computed values
-export const getWishlists = () => $wishlistDataStore.get().wishlists;
-export const getSelectedWishlistIds = () =>
-  $wishlistDataStore.get().selectedWishlistIds;
-export const getWishlistMenuOpen = () => $wishlistMenuStore.get().isOpen;
-export const getCreatorFormOpen = () => $wishlistCreatorStore.get().isFormOpen;
-export const getFormData = () => $wishlistCreatorStore.get().formData;
-export const getIsLoading = () => $wishlistMenuStore.get().isLoading;
-export const getError = () =>
-  $wishlistMenuStore.get().error || $wishlistCreatorStore.get().error;
+// API functions (to be implemented based on your backend)
+const fetchWishlistsFromAPI = async (): Promise<Wishlist[]> => {
+  // TODO: Implement actual API call
+  // Example: return await api.get('/wishlists');
 
-export const getSelectedWishlists = () => {
-  const state = $wishlistDataStore.get();
-  return state.wishlists.filter((wishlist) =>
-    state.selectedWishlistIds.includes(wishlist.id)
-  );
+  // Simulate API call for now
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve([
+        {
+          id: "1",
+          name: "Birthday Wishlist",
+          description: "Things I want for my birthday",
+        },
+        { id: "2", name: "Christmas List", description: "Holiday wishes" },
+      ]);
+    }, 500);
+  });
 };
 
-export const getHasSelectedWishlists = () => {
-  return $wishlistDataStore.get().selectedWishlistIds.length > 0;
+const createWishlistViaAPI = async (
+  wishlistData: Omit<Wishlist, "id">
+): Promise<Wishlist> => {
+  // TODO: Implement actual API call
+  // Example: return await api.post('/wishlists', wishlistData);
+
+  // Simulate API call for now
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({
+        id: `wishlist-${Date.now()}`,
+        ...wishlistData,
+      });
+    }, 300);
+  });
 };
 
-export const getHasWishlists = () => {
-  return $wishlistDataStore.get().wishlists.length > 0;
+const createWishlistItemsViaAPI = async (
+  wishlistIds: string[],
+  giftData: { slug?: string; name?: string }
+): Promise<void> => {
+  // TODO: Implement actual API call
+  // Example: await api.post('/wishlist-items', { wishlistIds, giftData });
+
+  // Simulate API call for now
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      console.log("Adding gift to wishlists:", { wishlistIds, giftData });
+      resolve();
+    }, 500);
+  });
 };
 
-// Combined actions
+// Compound actions focused on UX flows
 export const wishlistActions = {
-  // Menu actions
-  openMenu: () => {
+  // Start wishlist selection flow
+  startWishlistSelection: async () => {
     wishlistMenuActions.open();
-  },
-
-  closeMenu: () => {
-    wishlistMenuActions.close();
-    // Reset form when closing menu
-    wishlistCreatorActions.resetForm();
-  },
-
-  // Creator form actions
-  openCreatorForm: () => {
-    wishlistCreatorActions.openForm();
-  },
-
-  closeCreatorForm: () => {
-    wishlistCreatorActions.closeForm();
-  },
-
-  toggleCreatorForm: () => {
-    wishlistCreatorActions.toggleForm();
-  },
-
-  // Form data actions
-  updateFormData: (updates: Partial<WishlistFormData>) => {
-    wishlistCreatorActions.updateFormData(updates);
-  },
-
-  resetForm: () => {
-    wishlistCreatorActions.resetForm();
-  },
-
-  // Wishlist data actions
-  setWishlists: (wishlists: Wishlist[]) => {
-    wishlistDataActions.setWishlists(wishlists);
-  },
-
-  addWishlist: (wishlist: Wishlist) => {
-    wishlistDataActions.addWishlist(wishlist);
-  },
-
-  removeWishlist: (wishlistId: string) => {
-    wishlistDataActions.removeWishlist(wishlistId);
-  },
-
-  updateWishlist: (wishlistId: string, updates: Partial<Wishlist>) => {
-    wishlistDataActions.updateWishlist(wishlistId, updates);
-  },
-
-  // Selection actions
-  selectWishlist: (wishlistId: string) => {
-    wishlistDataActions.selectWishlist(wishlistId);
-  },
-
-  deselectWishlist: (wishlistId: string) => {
-    wishlistDataActions.deselectWishlist(wishlistId);
-  },
-
-  toggleWishlistSelection: (wishlistId: string) => {
-    wishlistDataActions.toggleWishlistSelection(wishlistId);
-  },
-
-  selectAllWishlists: () => {
-    wishlistDataActions.selectAllWishlists();
-  },
-
-  deselectAllWishlists: () => {
-    wishlistDataActions.deselectAllWishlists();
-  },
-
-  // Loading and error actions
-  setLoading: (isLoading: boolean) => {
-    wishlistMenuActions.setLoading(isLoading);
-  },
-
-  setError: (error: string | null) => {
-    wishlistMenuActions.setError(error);
-    wishlistCreatorActions.setError(error);
-  },
-
-  clearError: () => {
+    wishlistMenuActions.setLoading(true);
     wishlistMenuActions.clearError();
+
+    try {
+      const wishlists = await fetchWishlistsFromAPI();
+      wishlistDataActions.setWishlists(wishlists);
+    } catch (error) {
+      wishlistMenuActions.setError("Failed to load wishlists");
+      console.error("Error fetching wishlists:", error);
+    } finally {
+      wishlistMenuActions.setLoading(false);
+    }
+  },
+
+  // Start create form flow
+  startCreateForm: () => {
+    wishlistCreatorActions.openForm();
+    wishlistCreatorActions.resetForm();
     wishlistCreatorActions.clearError();
   },
 
-  // Utility actions
-  reset: () => {
-    wishlistMenuActions.reset();
-    wishlistCreatorActions.reset();
-    wishlistDataActions.reset();
+  // Cancel create form flow
+  cancelCreateForm: () => {
+    wishlistCreatorActions.closeForm();
+    wishlistCreatorActions.resetForm();
+    wishlistCreatorActions.clearError();
   },
-};
 
-// Event handlers for DOM integration
-export const wishlistEventHandlers = {
-  // Handle wishlist creation from form
-  handleCreateWishlist: () => {
+  // Submit create form flow
+  submitCreateForm: async () => {
     const formData = $wishlistCreatorStore.get().formData;
 
     if (!formData.name.trim()) {
@@ -156,30 +118,60 @@ export const wishlistEventHandlers = {
       return false;
     }
 
-    const newWishlist: Wishlist = {
-      id: `wishlist-${Date.now()}`, // Temporary ID - would be replaced by server
-      name: formData.name.trim(),
-      description: formData.description.trim() || undefined,
-    };
-
-    wishlistDataActions.addWishlist(newWishlist);
-    wishlistCreatorActions.closeForm();
+    wishlistCreatorActions.setLoading(true);
     wishlistCreatorActions.clearError();
 
-    // Dispatch custom event for backward compatibility
-    if (typeof window !== "undefined") {
-      window.dispatchEvent(
-        new CustomEvent("wishlist-created", {
-          detail: newWishlist,
-        })
-      );
-    }
+    try {
+      const newWishlist = await createWishlistViaAPI({
+        name: formData.name.trim(),
+        description: formData.description.trim() || undefined,
+      });
 
-    return true;
+      wishlistDataActions.addWishlist(newWishlist);
+      wishlistCreatorActions.closeForm();
+      wishlistCreatorActions.resetForm();
+
+      // Dispatch custom event for backward compatibility
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(
+          new CustomEvent("wishlist-created", {
+            detail: newWishlist,
+          })
+        );
+      }
+
+      return true;
+    } catch (error) {
+      wishlistCreatorActions.setError("Failed to create wishlist");
+      console.error("Error creating wishlist:", error);
+      return false;
+    } finally {
+      wishlistCreatorActions.setLoading(false);
+    }
   },
 
-  // Handle save action (add gift to selected wishlists)
-  handleSave: (giftData?: { slug?: string; name?: string }) => {
+  // Update form data (for real-time form updates)
+  updateFormData: (updates: Partial<WishlistFormData>) => {
+    wishlistCreatorActions.updateFormData(updates);
+  },
+
+  // Select a specific wishlist
+  selectWishlist: (wishlistId: string) => {
+    wishlistDataActions.toggleWishlistSelection(wishlistId);
+  },
+
+  // Cancel wishlist selection flow
+  cancelWishlistSelections: () => {
+    wishlistDataActions.deselectAllWishlists();
+    wishlistMenuActions.close();
+    wishlistMenuActions.clearError();
+  },
+
+  // Save selected wishlists flow
+  saveSelectedWishlists: async (giftData?: {
+    slug?: string;
+    name?: string;
+  }) => {
     const selectedIds = $wishlistDataStore.get().selectedWishlistIds;
 
     if (selectedIds.length === 0) {
@@ -187,13 +179,13 @@ export const wishlistEventHandlers = {
       return false;
     }
 
-    // Here you would typically make an API call to add the gift to wishlists
     wishlistMenuActions.setLoading(true);
+    wishlistMenuActions.clearError();
 
-    // Simulate API call
-    setTimeout(() => {
-      wishlistMenuActions.setLoading(false);
+    try {
+      await createWishlistItemsViaAPI(selectedIds, giftData || {});
       wishlistMenuActions.close();
+      wishlistDataActions.deselectAllWishlists();
 
       // Dispatch custom event for backward compatibility
       if (typeof window !== "undefined") {
@@ -203,9 +195,42 @@ export const wishlistEventHandlers = {
           })
         );
       }
-    }, 500);
 
-    return true;
+      return true;
+    } catch (error) {
+      wishlistMenuActions.setError("Failed to save to wishlists");
+      console.error("Error saving to wishlists:", error);
+      return false;
+    } finally {
+      wishlistMenuActions.setLoading(false);
+    }
+  },
+
+  // Utility actions for edge cases
+  reset: () => {
+    wishlistMenuActions.reset();
+    wishlistCreatorActions.reset();
+    wishlistDataActions.reset();
+  },
+
+  // Direct access to individual actions for advanced use cases
+  _actions: {
+    menu: wishlistMenuActions,
+    creator: wishlistCreatorActions,
+    data: wishlistDataActions,
+  },
+};
+
+// Event handlers for DOM integration
+export const wishlistEventHandlers = {
+  // Handle wishlist creation from form
+  handleCreateWishlist: () => {
+    return wishlistActions.submitCreateForm();
+  },
+
+  // Handle save action (add gift to selected wishlists)
+  handleSave: (giftData?: { slug?: string; name?: string }) => {
+    return wishlistActions.saveSelectedWishlists(giftData);
   },
 };
 
@@ -269,5 +294,5 @@ export { $wishlistMenuStore, $wishlistCreatorStore, $wishlistDataStore };
 export { wishlistMenuActions, wishlistCreatorActions, wishlistDataActions };
 
 // Export aliases for backward compatibility
-export const $wishlists = { get: getWishlists };
-export const $wishlistMenuOpen = { get: getWishlistMenuOpen };
+export const $wishlists = { get: () => $wishlistDataStore.get().wishlists };
+export const $wishlistMenuOpen = { get: () => $wishlistMenuStore.get().isOpen };

@@ -9,6 +9,7 @@ export interface WishlistCreatorState {
   isFormOpen: boolean;
   formData: WishlistFormData;
   error: string | null;
+  isLoading: boolean;
 }
 
 const initialState: WishlistCreatorState = {
@@ -18,6 +19,7 @@ const initialState: WishlistCreatorState = {
     description: "",
   },
   error: null,
+  isLoading: false,
 };
 
 export const $wishlistCreatorStore = map<WishlistCreatorState>(initialState);
@@ -58,6 +60,10 @@ export const wishlistCreatorActions = {
 
   clearError: () => {
     $wishlistCreatorStore.setKey("error", null);
+  },
+
+  setLoading: (isLoading: boolean) => {
+    $wishlistCreatorStore.setKey("isLoading", isLoading);
   },
 
   reset: () => {
