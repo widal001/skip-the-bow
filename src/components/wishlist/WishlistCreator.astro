@@ -87,6 +87,11 @@ const { showCreateForm = false } = Astro.props;
 </div>
 
 <script>
+  import {
+    wishlistActions,
+    $wishlistCreatorStore,
+  } from "@/lib/stores/wishlist/useWishlistStore";
+
   function initializeWishlistCreator() {
     const toggleButton = document.getElementById(
       "wishlist-creator-toggle"
@@ -112,15 +117,14 @@ const { showCreateForm = false } = Astro.props;
       return;
     }
 
-    // Toggle form visibility
-    function toggleForm() {
-      const isExpanded = toggleButton.getAttribute("aria-expanded") === "true";
-      const newExpandedState = !isExpanded;
+    // Subscribe to store changes to update UI
+    $wishlistCreatorStore.subscribe((state) => {
+      // Update form visibility
+      const isFormOpen = state.isFormOpen;
+      toggleButton.setAttribute("aria-expanded", isFormOpen.toString());
+      formContainer.setAttribute("aria-hidden", (!isFormOpen).toString());
 
-      toggleButton.setAttribute("aria-expanded", newExpandedState.toString());
-      formContainer.setAttribute("aria-hidden", (!newExpandedState).toString());
-
-      if (newExpandedState) {
+      if (isFormOpen) {
         formContainer.classList.add("wishlist-creator__form-container--open");
         // Focus the name input when opening
         setTimeout(() => {
@@ -132,93 +136,71 @@ const { showCreateForm = false } = Astro.props;
         );
         // Reset form when closing
         form.reset();
+        // Move focus back to toggle button to avoid accessibility issues
+        toggleButton.focus();
+      }
+
+      // Show/hide error state
+      if (state.error) {
+        // You could add error display logic here
+        console.error("Form error:", state.error);
+      }
+
+      // Handle loading state
+      if (state.isLoading) {
+        const submitButton = document.getElementById(
+          "wishlist-creator-submit"
+        ) as HTMLButtonElement;
+        if (submitButton) {
+          submitButton.disabled = true;
+          submitButton.textContent = "Creating...";
+        }
+      } else {
+        const submitButton = document.getElementById(
+          "wishlist-creator-submit"
+        ) as HTMLButtonElement;
+        if (submitButton) {
+          submitButton.disabled = false;
+          submitButton.textContent = "Create Wishlist";
+        }
+      }
+    });
+
+    // Toggle form visibility
+    function toggleForm() {
+      const currentState = $wishlistCreatorStore.get();
+      if (currentState.isFormOpen) {
+        wishlistActions.cancelCreateForm();
+      } else {
+        wishlistActions.startCreateForm();
       }
     }
 
     // Close form
     function closeForm() {
-      toggleButton.setAttribute("aria-expanded", "false");
-      formContainer.setAttribute("aria-hidden", "true");
-      formContainer.classList.remove("wishlist-creator__form-container--open");
-      form.reset();
+      wishlistActions.cancelCreateForm();
     }
 
     // Handle form submission
-    function handleFormSubmit(e: Event) {
+    async function handleFormSubmit(e: Event) {
       e.preventDefault();
 
       const formData = new FormData(form);
       const name = formData.get("wishlistName") as string;
       const description = formData.get("wishlistDescription") as string;
 
-      if (!name.trim()) {
-        nameInput?.focus();
-        return;
-      }
-
-      // Create new wishlist object
-      const newWishlist = {
-        id: `wishlist-${Date.now()}`, // Temporary ID
+      // Update form data in store and submit
+      wishlistActions.updateFormData({
         name: name.trim(),
-        description: description.trim() || undefined,
-      };
+        description: description.trim(),
+      });
 
-      // Add to wishlist selector
-      addWishlistToSelector(newWishlist);
+      // Submit the form
+      const success = await wishlistActions.submitCreateForm();
 
-      // Close form
-      closeForm();
-
-      // Dispatch custom event
-      window.dispatchEvent(
-        new CustomEvent("wishlist-created", {
-          detail: newWishlist,
-        })
-      );
-    }
-
-    // Add new wishlist to the selector
-    function addWishlistToSelector(wishlist: {
-      id: string;
-      name: string;
-      description?: string;
-    }) {
-      const selectorList = document.querySelector(".wishlist-selector__list");
-      const emptyState = document.querySelector(".wishlist-selector__empty");
-
-      // Remove empty state if it exists
-      if (emptyState) {
-        emptyState.remove();
-      }
-
-      if (selectorList) {
-        const newItem = document.createElement("label");
-        newItem.className = "wishlist-selector__item";
-        newItem.setAttribute("for", `wishlist-${wishlist.id}`);
-
-        newItem.innerHTML = `
-          <input
-            type="checkbox"
-            id="wishlist-${wishlist.id}"
-            name="wishlists"
-            value="${wishlist.id}"
-            class="wishlist-selector__checkbox"
-            data-wishlist-id="${wishlist.id}"
-            checked
-          />
-          <div class="wishlist-selector__content">
-            <span class="wishlist-selector__name">${wishlist.name}</span>
-            ${wishlist.description ? `<span class="wishlist-selector__description">${wishlist.description}</span>` : ""}
-          </div>
-        `;
-
-        // Insert at the beginning of the list
-        selectorList.insertBefore(newItem, selectorList.firstChild);
-
-        // Re-initialize the selector to add event listeners
-        if ((window as any).wishlistSelector?.updateSaveButtonState) {
-          (window as any).wishlistSelector.updateSaveButtonState();
-        }
+      if (success) {
+        // Form will be closed automatically on success
+        console.log("Wishlist created successfully");
       }
     }
 
@@ -238,7 +220,7 @@ const { showCreateForm = false } = Astro.props;
     // Character counter for textarea
     if (descriptionInput) {
       descriptionInput.addEventListener("input", () => {
-        const maxLength = 200;
+        const maxLength = 255;
         const currentLength = descriptionInput.value.length;
         const helpText = descriptionInput.parentElement?.querySelector(
           ".wishlist-creator__help-text"
