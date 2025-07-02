@@ -63,7 +63,7 @@
 }
 
 .required {
-  color: var(--color-red-500);
+  color: var(--color-red-600);
 }
 
 .optional {
