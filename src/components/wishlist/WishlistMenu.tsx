@@ -1,4 +1,6 @@
 import React, { useEffect, useRef } from "react";
+import { useStore } from "@nanostores/react";
+import { $wishlistDataStore } from "../../lib/stores/wishlist/useWishlistStore";
 import styles from "./WishlistMenu.module.css";
 
 type WishlistMenuProps = {
@@ -20,6 +22,10 @@ const WishlistMenu: React.FC<WishlistMenuProps> = ({
 }) => {
   const menuRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  // Subscribe to wishlist data to determine save button state
+  const wishlistData = useStore($wishlistDataStore);
+  const hasSelectedWishlists = wishlistData.selectedWishlistIds.length > 0;
 
   // Focus management: focus close button when menu opens
   useEffect(() => {
@@ -136,6 +142,7 @@ const WishlistMenu: React.FC<WishlistMenuProps> = ({
               className="button-primary"
               id="wishlist-menu-save"
               onClick={onSave}
+              disabled={!hasSelectedWishlists}
             >
               Save
             </button>
