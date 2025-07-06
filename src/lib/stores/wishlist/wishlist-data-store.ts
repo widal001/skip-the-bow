@@ -98,11 +98,6 @@ export const wishlistDataActions = {
     $wishlistDataStore.setKey("selectedWishlistIds", new Set());
   },
 
-  // Get selected wishlist IDs as array (for API calls)
-  getSelectedWishlistIds: (): string[] => {
-    return Array.from($wishlistDataStore.get().selectedWishlistIds);
-  },
-
   // Get newly selected wishlist IDs (current - original)
   getNewlySelectedWishlistIds: (): string[] => {
     const currentState = $wishlistDataStore.get();

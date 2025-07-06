@@ -23,11 +23,8 @@ describe("WishlistDataStore", () => {
 
       const state = $wishlistDataStore.get();
       expect(state.wishlists).toEqual(wishlists);
-      expect(Array.from(state.selectedWishlistIds)).toEqual(["1", "3"]);
-      expect(Array.from(state.originallySelectedWishlistIds)).toEqual([
-        "1",
-        "3",
-      ]);
+      expect(state.selectedWishlistIds).toEqual(new Set(["1", "3"]));
+      expect(state.originallySelectedWishlistIds).toEqual(new Set(["1", "3"]));
     });
 
     it("should initialize with empty sets when no originally selected IDs", () => {
@@ -40,8 +37,8 @@ describe("WishlistDataStore", () => {
 
       const state = $wishlistDataStore.get();
       expect(state.wishlists).toEqual(wishlists);
-      expect(Array.from(state.selectedWishlistIds)).toEqual([]);
-      expect(Array.from(state.originallySelectedWishlistIds)).toEqual([]);
+      expect(state.selectedWishlistIds).toEqual(new Set());
+      expect(state.originallySelectedWishlistIds).toEqual(new Set());
     });
   });
 
@@ -59,14 +56,14 @@ describe("WishlistDataStore", () => {
       wishlistDataActions.selectWishlist("3");
 
       const state = $wishlistDataStore.get();
-      expect(Array.from(state.selectedWishlistIds)).toEqual(["1", "2", "3"]);
+      expect(state.selectedWishlistIds).toEqual(new Set(["1", "2", "3"]));
     });
 
     it("should deselect a wishlist", () => {
       wishlistDataActions.deselectWishlist("1");
 
       const state = $wishlistDataStore.get();
-      expect(Array.from(state.selectedWishlistIds)).toEqual(["2"]);
+      expect(state.selectedWishlistIds).toEqual(new Set(["2"]));
     });
 
     it("should toggle wishlist selection", () => {
@@ -127,7 +124,9 @@ describe("WishlistDataStore", () => {
 
       expect(wishlistDataActions.getNewlySelectedWishlistIds()).toEqual(["3"]);
       expect(wishlistDataActions.getDeselectedWishlistIds()).toEqual(["1"]);
-      expect(wishlistDataActions.getSelectedWishlistIds()).toEqual(["2", "3"]);
+      expect($wishlistDataStore.get().selectedWishlistIds).toEqual(
+        new Set(["2", "3"])
+      );
     });
 
     it("should handle complex selection scenarios", () => {
@@ -140,11 +139,9 @@ describe("WishlistDataStore", () => {
       // Now we have 1, 2, 3 selected, but only 3 is newly selected
       expect(wishlistDataActions.getNewlySelectedWishlistIds()).toEqual(["3"]);
       expect(wishlistDataActions.getDeselectedWishlistIds()).toEqual([]);
-      expect(wishlistDataActions.getSelectedWishlistIds()).toEqual([
-        "1",
-        "2",
-        "3",
-      ]);
+      expect($wishlistDataStore.get().selectedWishlistIds).toEqual(
+        new Set(["1", "2", "3"])
+      );
     });
   });
 
@@ -162,7 +159,7 @@ describe("WishlistDataStore", () => {
       wishlistDataActions.selectAllWishlists();
 
       const state = $wishlistDataStore.get();
-      expect(Array.from(state.selectedWishlistIds)).toEqual(["1", "2", "3"]);
+      expect(state.selectedWishlistIds).toEqual(new Set(["1", "2", "3"]));
       expect(wishlistDataActions.getNewlySelectedWishlistIds()).toEqual([
         "2",
         "3",
@@ -174,7 +171,7 @@ describe("WishlistDataStore", () => {
       wishlistDataActions.deselectAllWishlists();
 
       const state = $wishlistDataStore.get();
-      expect(Array.from(state.selectedWishlistIds)).toEqual([]);
+      expect(state.selectedWishlistIds).toEqual(new Set());
       expect(wishlistDataActions.getNewlySelectedWishlistIds()).toEqual([]);
       expect(wishlistDataActions.getDeselectedWishlistIds()).toEqual(["1"]);
     });

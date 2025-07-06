@@ -335,10 +335,3 @@ export { $wishlistMenuStore, $wishlistCreatorStore, $wishlistDataStore };
 
 // Export individual actions for granular control
 export { wishlistMenuActions, wishlistCreatorActions, wishlistDataActions };
-
-// Export aliases for backward compatibility
-export const $wishlists = { get: () => $wishlistDataStore.get().wishlists };
-export const $wishlistMenuOpen = { get: () => $wishlistMenuStore.get().isOpen };
-export const $selectedWishlistIds = {
-  get: () => wishlistDataActions.getSelectedWishlistIds(),
-};
