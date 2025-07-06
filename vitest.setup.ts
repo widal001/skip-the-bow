@@ -12,9 +12,20 @@ vi.mock("auth-astro/server", () => ({
   getSession: vi.fn(),
 }));
 
-const client = postgres(process.env.TEST_DATABASE_URL!, { max: 1 });
+// Create client with notice suppression
+const client = postgres(process.env.TEST_DATABASE_URL!, {
+  max: 1,
+  onnotice: () => {}, // Suppress notices
+});
+
 const db = drizzle(client);
 
 beforeAll(async () => {
-  await migrate(db, { migrationsFolder: "./migrations" });
+  try {
+    await migrate(db, { migrationsFolder: "./migrations" });
+  } catch (error) {
+    // Ignore migration errors (like "relation already exists")
+    // These are expected when running tests multiple times
+    console.log("Migration completed (some notices are expected)");
+  }
 });

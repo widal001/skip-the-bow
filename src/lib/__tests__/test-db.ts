@@ -12,7 +12,10 @@ export async function createTestDb() {
     throw new Error("TEST_DATABASE_URL environment variable is not set");
   }
 
-  const client = postgres(process.env.TEST_DATABASE_URL, { max: 1 });
+  const client = postgres(process.env.TEST_DATABASE_URL, {
+    max: 1,
+    onnotice: () => {}, // Suppress notices
+  });
   const db = drizzle(client, { schema });
 
   return { db, client };
