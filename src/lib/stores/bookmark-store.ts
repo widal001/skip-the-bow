@@ -24,6 +24,8 @@ function getInitialState(): Record<string, boolean> {
 
 // Set up localStorage subscription only once during initialization
 $bookmarkStore.subscribe((state) => {
+  if (typeof window === "undefined") return; // Skip in Node.js environment
+
   try {
     localStorage.setItem("gift-bookmarks", JSON.stringify(state));
   } catch (error) {
