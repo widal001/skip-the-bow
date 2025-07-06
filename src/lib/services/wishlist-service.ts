@@ -9,7 +9,7 @@ export interface CreateWishlistInput {
 }
 
 export interface AddToWishlistInput {
-  wishlistId: number;
+  wishlistId: string;
   giftId: number;
 }
 
@@ -77,7 +77,7 @@ export async function removeFromWishlist(
  * @param wishlistId - The ID of the wishlist to retrieve
  * @returns The wishlist with its bookmarked gifts
  */
-export async function getWishlist(db: DrizzleDatabase, wishlistId: number) {
+export async function getWishlist(db: DrizzleDatabase, wishlistId: string) {
   const wishlist = await db.query.wishlists.findFirst({
     where: eq(wishlists.id, wishlistId),
     with: {

@@ -93,7 +93,7 @@ export const giftTagsRelations = relations(giftTags, ({ one }) => ({
 // #########################################################
 
 export const wishlists = pgTable("wishlists", {
-  id: serial("id").primaryKey(),
+  id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
   description: text("description"),
   userId: text("user_id")
@@ -110,7 +110,7 @@ export const wishlistsRelations = relations(wishlists, ({ many }) => ({
 export const wishlistItems = pgTable(
   "wishlist_items",
   {
-    wishlistId: integer("wishlist_id")
+    wishlistId: uuid("wishlist_id")
       .notNull()
       .references(() => wishlists.id, { onDelete: "cascade" }),
     giftId: integer("gift_id")

@@ -42,6 +42,7 @@ describe("Wishlist Service", async () => {
         expect(wishlist.name).toBe("Test Wishlist");
         expect(wishlist.description).toBe("A test wishlist");
         expect(wishlist.userId).toBe(testUser.id);
+        expect(typeof wishlist.id).toBe("string"); // UUID should be a string
       });
     });
   });
