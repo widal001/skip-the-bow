@@ -24,21 +24,27 @@ export interface WishlistStoreState {
 }
 
 // API functions (to be implemented based on your backend)
-const fetchWishlistsFromAPI = async (): Promise<Wishlist[]> => {
+const fetchWishlistsFromAPI = async (): Promise<{
+  wishlists: Wishlist[];
+  originallySelectedIds: string[];
+}> => {
   // TODO: Implement actual API call
   // Example: return await api.get('/wishlists');
 
   // Simulate API call for now
   return new Promise((resolve) => {
     setTimeout(() => {
-      resolve([
-        {
-          id: "1",
-          name: "Birthday Wishlist",
-          description: "Things I want for my birthday",
-        },
-        { id: "2", name: "Christmas List", description: "Holiday wishes" },
-      ]);
+      resolve({
+        wishlists: [
+          {
+            id: "1",
+            name: "Birthday Wishlist",
+            description: "Things I want for my birthday",
+          },
+          { id: "2", name: "Christmas List", description: "Holiday wishes" },
+        ],
+        originallySelectedIds: ["1"], // Simulate that wishlist "1" was originally selected
+      });
     }, 500);
   });
 };
@@ -76,6 +82,22 @@ const createWishlistItemsViaAPI = async (
   });
 };
 
+const removeWishlistItemsViaAPI = async (
+  wishlistIds: string[],
+  giftData: { slug?: string; name?: string }
+): Promise<void> => {
+  // TODO: Implement actual API call
+  // Example: await api.delete('/wishlist-items', { wishlistIds, giftData });
+
+  // Simulate API call for now
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      console.log("Removing gift from wishlists:", { wishlistIds, giftData });
+      resolve();
+    }, 500);
+  });
+};
+
 // Compound actions focused on UX flows
 export const wishlistActions = {
   // Start wishlist selection flow
@@ -85,8 +107,9 @@ export const wishlistActions = {
     wishlistMenuActions.clearError();
 
     try {
-      const wishlists = await fetchWishlistsFromAPI();
-      wishlistDataActions.setWishlists(wishlists);
+      const { wishlists, originallySelectedIds } =
+        await fetchWishlistsFromAPI();
+      wishlistDataActions.setWishlists(wishlists, originallySelectedIds);
     } catch (error) {
       wishlistMenuActions.setError("Failed to load wishlists");
       console.error("Error fetching wishlists:", error);
@@ -172,10 +195,12 @@ export const wishlistActions = {
     slug?: string;
     name?: string;
   }) => {
-    const selectedIds = $wishlistDataStore.get().selectedWishlistIds;
+    const currentState = $wishlistDataStore.get();
+    const newlySelectedIds = wishlistDataActions.getNewlySelectedWishlistIds();
+    const deselectedIds = wishlistDataActions.getDeselectedWishlistIds();
 
-    if (selectedIds.length === 0) {
-      wishlistMenuActions.setError("Please select at least one wishlist");
+    if (!wishlistDataActions.hasChanges()) {
+      wishlistMenuActions.setError("No changes to save");
       return false;
     }
 
@@ -183,23 +208,44 @@ export const wishlistActions = {
     wishlistMenuActions.clearError();
 
     try {
-      await createWishlistItemsViaAPI(selectedIds, giftData || {});
+      // Add to newly selected wishlists
+      if (newlySelectedIds.length > 0) {
+        await createWishlistItemsViaAPI(newlySelectedIds, giftData || {});
+      }
+
+      // Remove from deselected wishlists
+      if (deselectedIds.length > 0) {
+        await removeWishlistItemsViaAPI(deselectedIds, giftData || {});
+      }
+
       wishlistMenuActions.close();
-      wishlistDataActions.deselectAllWishlists();
+
+      // Reset the state after successful save
+      const originallySelected = Array.from(
+        currentState.originallySelectedWishlistIds
+      );
+      wishlistDataActions.setWishlists(
+        currentState.wishlists,
+        originallySelected
+      );
 
       // Dispatch custom event for backward compatibility
       if (typeof window !== "undefined") {
         window.dispatchEvent(
           new CustomEvent("wishlist-saved", {
-            detail: { wishlistIds: selectedIds, giftData },
+            detail: {
+              newlySelectedWishlistIds: newlySelectedIds,
+              deselectedWishlistIds: deselectedIds,
+              giftData,
+            },
           })
         );
       }
 
       return true;
     } catch (error) {
-      wishlistMenuActions.setError("Failed to save to wishlists");
-      console.error("Error saving to wishlists:", error);
+      wishlistMenuActions.setError("Failed to save wishlist changes");
+      console.error("Error saving wishlist changes:", error);
       return false;
     } finally {
       wishlistMenuActions.setLoading(false);
@@ -248,9 +294,7 @@ export const wishlistDOMHelpers = {
       const wishlistId = checkbox.value;
 
       // Set initial state
-      checkbox.checked = $wishlistDataStore
-        .get()
-        .selectedWishlistIds.includes(wishlistId);
+      checkbox.checked = wishlistDataActions.isWishlistSelected(wishlistId);
 
       // Add event listener
       checkbox.addEventListener("change", () => {
@@ -267,9 +311,8 @@ export const wishlistDOMHelpers = {
       "wishlist-menu-save"
     ) as HTMLButtonElement;
     if (saveButton) {
-      const hasSelected =
-        $wishlistDataStore.get().selectedWishlistIds.length > 0;
-      saveButton.disabled = !hasSelected;
+      const hasChanges = wishlistDataActions.hasChanges();
+      saveButton.disabled = !hasChanges;
     }
   },
 
@@ -296,3 +339,6 @@ export { wishlistMenuActions, wishlistCreatorActions, wishlistDataActions };
 // Export aliases for backward compatibility
 export const $wishlists = { get: () => $wishlistDataStore.get().wishlists };
 export const $wishlistMenuOpen = { get: () => $wishlistMenuStore.get().isOpen };
+export const $selectedWishlistIds = {
+  get: () => wishlistDataActions.getSelectedWishlistIds(),
+};

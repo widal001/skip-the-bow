@@ -25,7 +25,7 @@ const WishlistMenu: React.FC<WishlistMenuProps> = ({
 
   // Subscribe to wishlist data to determine save button state
   const wishlistData = useStore($wishlistDataStore);
-  const hasSelectedWishlists = wishlistData.selectedWishlistIds.length > 0;
+  const hasSelectedWishlists = wishlistData.selectedWishlistIds.size > 0;
 
   // Focus management: focus close button when menu opens
   useEffect(() => {

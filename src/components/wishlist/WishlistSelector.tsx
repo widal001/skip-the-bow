@@ -42,7 +42,7 @@ export const WishlistSelector: React.FC = () => {
             value={wishlist.id}
             className={styles.checkbox}
             data-wishlist-id={wishlist.id}
-            checked={state.selectedWishlistIds.includes(wishlist.id)}
+            checked={state.selectedWishlistIds.has(wishlist.id)}
             onChange={() => handleChange(wishlist.id)}
           />
           <div className={styles.content}>
