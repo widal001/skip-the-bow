@@ -19,7 +19,12 @@ const {
 
 {
   type === "link" ? (
-    <a href={href} class={`button-${variant} ${className}`} id={Astro.props.id}>
+    <a
+      href={href}
+      class={`button-${variant} ${className}`}
+      id={Astro.props.id}
+      style={`text-decoration: none; text-align: center; justify-content: center;`}
+    >
       <slot />
     </a>
   ) : (
