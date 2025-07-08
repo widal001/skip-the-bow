@@ -1,12 +1,14 @@
 import React, { useEffect, useRef } from "react";
 import { useStore } from "@nanostores/react";
-import { $wishlistDataStore } from "../../lib/stores/wishlist/useWishlistStore";
+import {
+  $wishlistDataStore,
+  wishlistDataActions,
+} from "@/lib/stores/wishlist/useWishlistStore";
 import styles from "./WishlistMenu.module.css";
 
 type WishlistMenuProps = {
   isOpen: boolean;
   giftSlug?: string;
-  giftName?: string;
   onCancel: () => void; // Called when menu is closed/canceled
   onSave?: () => void; // Called when Save is clicked
   creatorSlot?: React.ReactNode;
@@ -25,7 +27,10 @@ const WishlistMenu: React.FC<WishlistMenuProps> = ({
 
   // Subscribe to wishlist data to determine save button state
   const wishlistData = useStore($wishlistDataStore);
-  const hasSelectedWishlists = wishlistData.selectedWishlistIds.size > 0;
+
+  // Reactive state calculations
+  const hasChanges = wishlistDataActions.hasChanges();
+  const canSave = hasChanges;
 
   // Focus management: focus close button when menu opens
   useEffect(() => {
@@ -85,6 +90,13 @@ const WishlistMenu: React.FC<WishlistMenuProps> = ({
     }
   };
 
+  // Handle save button click
+  const handleSaveClick = () => {
+    if (canSave && onSave) {
+      onSave();
+    }
+  };
+
   return (
     <div
       className={`${styles.menu} ${isOpen ? styles.menuOpen : ""}`}
@@ -141,8 +153,9 @@ const WishlistMenu: React.FC<WishlistMenuProps> = ({
             <button
               className="button-primary"
               id="wishlist-menu-save"
-              onClick={onSave}
-              disabled={!hasSelectedWishlists}
+              onClick={handleSaveClick}
+              disabled={!canSave}
+              title={!hasChanges ? "No changes to save" : "Save changes"}
             >
               Save
             </button>

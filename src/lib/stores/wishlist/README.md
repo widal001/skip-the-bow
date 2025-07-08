@@ -33,19 +33,15 @@ Import the unified hook for most use cases:
 ```typescript
 import { 
   wishlistActions, 
-  wishlistEventHandlers,
   getWishlists,
   getWishlistMenuOpen 
 } from "@/lib/stores/useWishlistStore";
 
 // Open menu
-wishlistActions.openMenu();
+wishlistActions.startWishlistSelection();
 
 // Add wishlist
-wishlistActions.addWishlist({ id: "1", name: "My Wishlist" });
-
-// Handle form submission
-wishlistEventHandlers.handleCreateWishlist();
+wishlistActions.submitCreateForm();
 
 // Get current state
 const wishlists = getWishlists();
@@ -79,20 +75,28 @@ wishlistDataActions.selectWishlist("wishlist-1");
 
 ### Component Integration
 
-Replace DOM state management with store actions:
+Use store actions directly in React components:
 
 ```typescript
-// OLD: Direct DOM manipulation
-function toggleForm() {
-  const isExpanded = toggleButton.getAttribute("aria-expanded") === "true";
-  // ... DOM manipulation
-}
-
-// NEW: Use store actions
 import { wishlistActions } from "@/lib/stores/useWishlistStore";
 
-function toggleForm() {
-  wishlistActions.toggleCreatorForm();
+function MyComponent() {
+  const handleWishlistClick = () => {
+    wishlistActions.startWishlistSelection();
+  };
+
+  const handleCreateWishlist = async () => {
+    const success = await wishlistActions.submitCreateForm();
+    if (success) {
+      // Handle successful creation
+    }
+  };
+
+  return (
+    <button onClick={handleWishlistClick}>
+      Add to Wishlist
+    </button>
+  );
 }
 ```
 

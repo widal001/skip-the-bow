@@ -23,92 +23,115 @@ export interface WishlistStoreState {
   data: WishlistDataState;
 }
 
-// API functions (to be implemented based on your backend)
+// API functions using actual endpoints
 const fetchWishlistsFromAPI = async (): Promise<{
   wishlists: Wishlist[];
   originallySelectedIds: string[];
 }> => {
-  // TODO: Implement actual API call
-  // Example: return await api.get('/wishlists');
+  const response = await fetch("/api/user/wishlists");
 
-  // Simulate API call for now
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({
-        wishlists: [
-          {
-            id: "1",
-            name: "Birthday Wishlist",
-            description: "Things I want for my birthday",
-          },
-          { id: "2", name: "Christmas List", description: "Holiday wishes" },
-        ],
-        originallySelectedIds: ["1"], // Simulate that wishlist "1" was originally selected
-      });
-    }, 500);
-  });
+  if (!response.ok) {
+    throw new Error(`Failed to fetch wishlists: ${response.statusText}`);
+  }
+
+  const { wishlists } = await response.json();
+
+  // For now, return empty originallySelectedIds since we don't have gift context
+  // This will be updated when we have gift-specific wishlist fetching
+  return {
+    wishlists: wishlists.map((wishlist: any) => ({
+      id: wishlist.id,
+      name: wishlist.name,
+      description: wishlist.description,
+    })),
+    originallySelectedIds: [],
+  };
 };
 
 const createWishlistViaAPI = async (
   wishlistData: Omit<Wishlist, "id">
 ): Promise<Wishlist> => {
-  // TODO: Implement actual API call
-  // Example: return await api.post('/wishlists', wishlistData);
-
-  // Simulate API call for now
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({
-        id: `wishlist-${Date.now()}`,
-        ...wishlistData,
-      });
-    }, 300);
+  const response = await fetch("/api/user/wishlists", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(wishlistData),
   });
+
+  if (!response.ok) {
+    throw new Error(`Failed to create wishlist: ${response.statusText}`);
+  }
+
+  const { wishlist } = await response.json();
+  return {
+    id: wishlist.id,
+    name: wishlist.name,
+    description: wishlist.description,
+  };
 };
 
-const createWishlistItemsViaAPI = async (
-  wishlistIds: string[],
-  giftData: { slug?: string; name?: string }
-): Promise<void> => {
-  // TODO: Implement actual API call
-  // Example: await api.post('/wishlist-items', { wishlistIds, giftData });
+const fetchGiftWishlistsFromAPI = async (
+  giftSlug: string
+): Promise<string[]> => {
+  const response = await fetch(`/api/user/gifts/${giftSlug}/wishlists`);
 
-  // Simulate API call for now
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      console.log("Adding gift to wishlists:", { wishlistIds, giftData });
-      resolve();
-    }, 500);
-  });
+  if (!response.ok) {
+    throw new Error(`Failed to fetch gift wishlists: ${response.statusText}`);
+  }
+
+  const { wishlistIds } = await response.json();
+  return wishlistIds;
 };
 
-const removeWishlistItemsViaAPI = async (
-  wishlistIds: string[],
-  giftData: { slug?: string; name?: string }
-): Promise<void> => {
-  // TODO: Implement actual API call
-  // Example: await api.delete('/wishlist-items', { wishlistIds, giftData });
-
-  // Simulate API call for now
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      console.log("Removing gift from wishlists:", { wishlistIds, giftData });
-      resolve();
-    }, 500);
+const updateGiftWishlistsViaAPI = async (
+  giftSlug: string,
+  wishlistIds: string[]
+): Promise<{ wishlistIds: string[]; added: string[]; removed: string[] }> => {
+  const response = await fetch(`/api/user/gifts/${giftSlug}/wishlists`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ wishlistIds }),
   });
+
+  if (!response.ok) {
+    throw new Error(`Failed to update gift wishlists: ${response.statusText}`);
+  }
+
+  const result = await response.json();
+  return {
+    wishlistIds: result.wishlistIds,
+    added: result.added,
+    removed: result.removed,
+  };
 };
 
 // Compound actions focused on UX flows
 export const wishlistActions = {
   // Start wishlist selection flow
-  startWishlistSelection: async () => {
+  startWishlistSelection: async (giftSlug?: string) => {
     wishlistMenuActions.open();
     wishlistMenuActions.setLoading(true);
     wishlistMenuActions.clearError();
 
     try {
-      const { wishlists, originallySelectedIds } =
-        await fetchWishlistsFromAPI();
+      const { wishlists } = await fetchWishlistsFromAPI();
+
+      // If we have a gift slug, fetch the current wishlist state for this gift
+      let originallySelectedIds: string[] = [];
+      if (giftSlug) {
+        try {
+          originallySelectedIds = await fetchGiftWishlistsFromAPI(giftSlug);
+        } catch (error) {
+          console.warn(
+            "Could not fetch gift wishlists, using empty selection:",
+            error
+          );
+        }
+      }
+
       wishlistDataActions.setWishlists(wishlists, originallySelectedIds);
     } catch (error) {
       wishlistMenuActions.setError("Failed to load wishlists");
@@ -154,15 +177,6 @@ export const wishlistActions = {
       wishlistCreatorActions.closeForm();
       wishlistCreatorActions.resetForm();
 
-      // Dispatch custom event for backward compatibility
-      if (typeof window !== "undefined") {
-        window.dispatchEvent(
-          new CustomEvent("wishlist-created", {
-            detail: newWishlist,
-          })
-        );
-      }
-
       return true;
     } catch (error) {
       wishlistCreatorActions.setError("Failed to create wishlist");
@@ -195,9 +209,15 @@ export const wishlistActions = {
     slug?: string;
     name?: string;
   }) => {
+    if (!giftData?.slug) {
+      wishlistMenuActions.setError(
+        "Gift slug is required to save wishlist changes"
+      );
+      return false;
+    }
+
     const currentState = $wishlistDataStore.get();
-    const newlySelectedIds = wishlistDataActions.getNewlySelectedWishlistIds();
-    const deselectedIds = wishlistDataActions.getDeselectedWishlistIds();
+    const selectedWishlistIds = Array.from(currentState.selectedWishlistIds);
 
     if (!wishlistDataActions.hasChanges()) {
       wishlistMenuActions.setError("No changes to save");
@@ -208,39 +228,19 @@ export const wishlistActions = {
     wishlistMenuActions.clearError();
 
     try {
-      // Add to newly selected wishlists
-      if (newlySelectedIds.length > 0) {
-        await createWishlistItemsViaAPI(newlySelectedIds, giftData || {});
-      }
-
-      // Remove from deselected wishlists
-      if (deselectedIds.length > 0) {
-        await removeWishlistItemsViaAPI(deselectedIds, giftData || {});
-      }
+      // Update the gift's wishlists using the API
+      const result = await updateGiftWishlistsViaAPI(
+        giftData.slug,
+        selectedWishlistIds
+      );
 
       wishlistMenuActions.close();
 
       // Reset the state after successful save
-      const originallySelected = Array.from(
-        currentState.originallySelectedWishlistIds
-      );
       wishlistDataActions.setWishlists(
         currentState.wishlists,
-        originallySelected
+        selectedWishlistIds
       );
-
-      // Dispatch custom event for backward compatibility
-      if (typeof window !== "undefined") {
-        window.dispatchEvent(
-          new CustomEvent("wishlist-saved", {
-            detail: {
-              newlySelectedWishlistIds: newlySelectedIds,
-              deselectedWishlistIds: deselectedIds,
-              giftData,
-            },
-          })
-        );
-      }
 
       return true;
     } catch (error) {
@@ -266,69 +266,6 @@ export const wishlistActions = {
     data: wishlistDataActions,
   },
 };
-
-// Event handlers for DOM integration
-export const wishlistEventHandlers = {
-  // Handle wishlist creation from form
-  handleCreateWishlist: () => {
-    return wishlistActions.submitCreateForm();
-  },
-
-  // Handle save action (add gift to selected wishlists)
-  handleSave: (giftData?: { slug?: string; name?: string }) => {
-    return wishlistActions.saveSelectedWishlists(giftData);
-  },
-};
-
-// DOM integration helpers
-export const wishlistDOMHelpers = {
-  // Initialize wishlist selector checkboxes
-  initializeCheckboxes: () => {
-    if (typeof window === "undefined") return;
-
-    const checkboxes = document.querySelectorAll(
-      ".wishlist-selector__checkbox"
-    ) as NodeListOf<HTMLInputElement>;
-
-    checkboxes.forEach((checkbox) => {
-      const wishlistId = checkbox.value;
-
-      // Set initial state
-      checkbox.checked = wishlistDataActions.isWishlistSelected(wishlistId);
-
-      // Add event listener
-      checkbox.addEventListener("change", () => {
-        wishlistDataActions.toggleWishlistSelection(wishlistId);
-      });
-    });
-  },
-
-  // Update save button state
-  updateSaveButton: () => {
-    if (typeof window === "undefined") return;
-
-    const saveButton = document.getElementById(
-      "wishlist-menu-save"
-    ) as HTMLButtonElement;
-    if (saveButton) {
-      const hasChanges = wishlistDataActions.hasChanges();
-      saveButton.disabled = !hasChanges;
-    }
-  },
-
-  // Sync DOM with store state
-  syncDOMWithStore: () => {
-    wishlistDOMHelpers.initializeCheckboxes();
-    wishlistDOMHelpers.updateSaveButton();
-  },
-};
-
-// Subscribe to store changes to update DOM
-if (typeof window !== "undefined") {
-  $wishlistDataStore.subscribe(() => {
-    wishlistDOMHelpers.syncDOMWithStore();
-  });
-}
 
 // Export stores for direct access when needed
 export { $wishlistMenuStore, $wishlistCreatorStore, $wishlistDataStore };

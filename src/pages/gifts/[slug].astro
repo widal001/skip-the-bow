@@ -2,6 +2,7 @@
 import Layout from "@/layouts/Layout.astro";
 import { getGiftIdeas } from "@/lib/services/gift-service";
 import Pill from "@/components/Pill.astro";
+import WishlistMenuButton from "@/components/wishlist/WishlistMenuButton";
 import "@/styles/colors.css";
 import { db } from "@/db";
 
@@ -67,14 +68,21 @@ const { gift } = Astro.props;
         >
       </div>
 
-      <a
-        href={gift.link}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="gift-detail__link"
-      >
-        Learn More
-      </a>
+      <div class="gift-detail__actions">
+        <WishlistMenuButton
+          client:load
+          giftSlug={gift.slug}
+          giftName={gift.name}
+        />
+        <a
+          href={gift.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="gift-detail__link"
+        >
+          Learn More
+        </a>
+      </div>
     </div>
   </article>
 </Layout>
@@ -244,6 +252,12 @@ const { gift } = Astro.props;
     color: var(--category-primary);
   }
 
+  .gift-detail__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
   .gift-detail__link {
     display: inline-flex;
     align-items: center;
@@ -297,6 +311,11 @@ const { gift } = Astro.props;
 
     .gift-detail__price {
       margin-bottom: 0;
+    }
+
+    .gift-detail__actions {
+      flex-direction: row;
+      gap: 1rem;
     }
 
     .gift-detail__link {

@@ -8,12 +8,20 @@ import {
   $wishlistMenuStore,
 } from "../../lib/stores/wishlist/useWishlistStore";
 
-const WishlistMenuIsland: React.FC = () => {
+interface WishlistMenuButtonProps {
+  giftSlug?: string;
+  giftName?: string;
+}
+
+const WishlistMenuButton: React.FC<WishlistMenuButtonProps> = ({
+  giftSlug,
+  giftName,
+}) => {
   // Use useStore to automatically subscribe to the menu state
   const menuState = useStore($wishlistMenuStore);
 
   const handleWishlistButtonClick = () => {
-    wishlistActions.startWishlistSelection();
+    wishlistActions.startWishlistSelection(giftSlug);
   };
 
   const handleCancel = () => {
@@ -21,7 +29,10 @@ const WishlistMenuIsland: React.FC = () => {
   };
 
   const handleSave = () => {
-    wishlistActions.saveSelectedWishlists();
+    wishlistActions.saveSelectedWishlists({
+      slug: giftSlug,
+      name: giftName,
+    });
   };
 
   return (
@@ -35,6 +46,7 @@ const WishlistMenuIsland: React.FC = () => {
       </button>
       <WishlistMenu
         isOpen={menuState.isOpen}
+        giftSlug={giftSlug}
         onCancel={handleCancel}
         onSave={handleSave}
         creatorSlot={<WishlistCreator />}
@@ -44,4 +56,4 @@ const WishlistMenuIsland: React.FC = () => {
   );
 };
 
-export default WishlistMenuIsland;
+export default WishlistMenuButton;
