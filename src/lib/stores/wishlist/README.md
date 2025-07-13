@@ -7,19 +7,25 @@ This directory contains a modular wishlist store implementation that separates c
 The wishlist functionality is split into three focused stores:
 
 ### 1. `wishlist-menu-store.ts`
+
 Manages the wishlist menu state:
+
 - Menu open/closed state
 - Loading states for menu operations
 - Menu-specific error handling
 
 ### 2. `wishlist-creator-store.ts`
+
 Manages the wishlist creation form:
+
 - Form open/closed state
 - Form data (name, description)
 - Form validation errors
 
 ### 3. `wishlist-data-store.ts`
+
 Manages wishlist data and selection:
+
 - Array of wishlists
 - Selected wishlist IDs
 - CRUD operations for wishlists
@@ -31,10 +37,10 @@ Manages wishlist data and selection:
 Import the unified hook for most use cases:
 
 ```typescript
-import { 
-  wishlistActions, 
+import {
+  wishlistActions,
   getWishlists,
-  getWishlistMenuOpen 
+  getWishlistMenuOpen,
 } from "@/lib/stores/useWishlistStore";
 
 // Open menu
@@ -53,13 +59,13 @@ const isMenuOpen = getWishlistMenuOpen();
 For more control, import individual stores:
 
 ```typescript
-import { 
-  $wishlistMenuStore, 
-  $wishlistCreatorStore, 
+import {
+  $wishlistMenuStore,
+  $wishlistCreatorStore,
   $wishlistDataStore,
   wishlistMenuActions,
   wishlistCreatorActions,
-  wishlistDataActions 
+  wishlistDataActions,
 } from "@/lib/stores/useWishlistStore";
 
 // Subscribe to specific store changes
@@ -105,7 +111,10 @@ function MyComponent() {
 Subscribe to store changes for reactive UI updates:
 
 ```typescript
-import { $wishlistDataStore, wishlistActions } from "@/lib/stores/useWishlistStore";
+import {
+  $wishlistDataStore,
+  wishlistActions,
+} from "@/lib/stores/useWishlistStore";
 
 // Subscribe to selection changes
 $wishlistDataStore.subscribe((state) => {
@@ -142,7 +151,7 @@ describe("Wishlist Menu Store", () => {
   it("should open and close menu", () => {
     wishlistMenuActions.open();
     expect($wishlistMenuStore.get().isOpen).toBe(true);
-    
+
     wishlistMenuActions.close();
     expect($wishlistMenuStore.get().isOpen).toBe(false);
   });
@@ -151,4 +160,4 @@ describe("Wishlist Menu Store", () => {
 
 ## Backward Compatibility
 
-All existing APIs are maintained through re-exports in `wishlist-store.ts`, ensuring no breaking changes for existing code. 
+All existing APIs are maintained through re-exports in `wishlist-store.ts`, ensuring no breaking changes for existing code.
