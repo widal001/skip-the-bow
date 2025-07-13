@@ -26,6 +26,6 @@ beforeAll(async () => {
   } catch (error) {
     // Ignore migration errors (like "relation already exists")
     // These are expected when running tests multiple times
-    console.log("Migration completed (some notices are expected)");
+    console.log("Migration completed (some notices are expected):", error);
   }
 });

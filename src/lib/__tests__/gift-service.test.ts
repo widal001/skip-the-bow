@@ -288,7 +288,7 @@ describe("Gift Service", async () => {
     it("should update an existing gift and its tags", async () => {
       await withTransaction(db, async (tx) => {
         // First create a gift
-        const initialGift = await upsertGift(
+        await upsertGift(
           db,
           {
             slug: "existing-gift",

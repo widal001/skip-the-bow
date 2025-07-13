@@ -36,10 +36,9 @@ const fetchWishlistsFromAPI = async (): Promise<{
 
   const { wishlists } = await response.json();
 
-  // For now, return empty originallySelectedIds since we don't have gift context
-  // This will be updated when we have gift-specific wishlist fetching
+  // TODO: @widal001 (2025-07-13) - Add gift-specific wishlist fetching
   return {
-    wishlists: wishlists.map((wishlist: any) => ({
+    wishlists: wishlists.map((wishlist: Wishlist) => ({
       id: wishlist.id,
       name: wishlist.name,
       description: wishlist.description,
@@ -71,6 +70,7 @@ const createWishlistViaAPI = async (
   };
 };
 
+// TODO: @widal001 (2025-07-13) - Combine with fetchWishlistsFromAPI
 const fetchGiftWishlistsFromAPI = async (
   giftSlug: string
 ): Promise<string[]> => {
@@ -229,10 +229,7 @@ export const wishlistActions = {
 
     try {
       // Update the gift's wishlists using the API
-      const result = await updateGiftWishlistsViaAPI(
-        giftData.slug,
-        selectedWishlistIds
-      );
+      await updateGiftWishlistsViaAPI(giftData.slug, selectedWishlistIds);
 
       wishlistMenuActions.close();
 
