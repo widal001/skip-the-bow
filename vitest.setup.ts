@@ -23,9 +23,22 @@ const db = drizzle(client);
 beforeAll(async () => {
   try {
     await migrate(db, { migrationsFolder: "./migrations" });
-  } catch (error) {
-    // Ignore migration errors (like "relation already exists")
-    // These are expected when running tests multiple times
-    console.log("Migration completed (some notices are expected):", error);
+  } catch (error: unknown) {
+    // Check if this is a duplicate key error (expected when migrations already exist)
+    const errorObj = error as { code?: string; message?: string };
+    if (
+      errorObj?.code === "23505" ||
+      errorObj?.message?.includes("duplicate key") ||
+      errorObj?.message?.includes("already exists")
+    ) {
+      console.log(
+        "Migration completed (duplicate/conflict errors are expected when migrations already exist):",
+        errorObj.message
+      );
+    } else {
+      // Re-throw unexpected errors
+      console.error("Unexpected migration error:", error);
+      throw error;
+    }
   }
 });
