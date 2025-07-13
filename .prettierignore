@@ -1,0 +1,5 @@
+# Other common files to ignore
+dist/
+.astro/
+node_modules/ 
+netlify/
