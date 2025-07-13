@@ -12,6 +12,8 @@
     "format": "prettier --write .",
     "check:lint": "eslint",
     "check:format": "prettier --check .",
+    "check:astro": "astro check",
+    "checks": "npm run check:format && npm run check:lint && npm run check:astro",
     "db:generate": "drizzle-kit generate",
     "db:studio": "drizzle-kit studio",
     "db:migrate": "drizzle-kit migrate",
