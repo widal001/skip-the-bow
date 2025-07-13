@@ -42,22 +42,22 @@ jobs:
       - name: Verify Docker is available
         run: |
           docker --version
-          docker-compose --version
+          docker compose version
 
       - name: Pull Docker images
         run: |
           docker pull postgres:16-alpine
-          docker-compose pull
+          docker compose pull
 
       - name: Start database
-        run: docker-compose up -d postgres postgres_test
+        run: docker compose up -d postgres postgres_test
 
       - name: Wait for database to be ready
         run: |
           # Wait for main database
-          timeout 30 bash -c 'until docker-compose exec -T postgres pg_isready -U postgres; do sleep 1; done'
+          timeout 30 bash -c 'until docker compose exec -T postgres pg_isready -U postgres; do sleep 1; done'
           # Wait for test database  
-          timeout 30 bash -c 'until docker-compose exec -T postgres_test pg_isready -U postgres; do sleep 1; done'
+          timeout 30 bash -c 'until docker compose exec -T postgres_test pg_isready -U postgres; do sleep 1; done'
 
       - name: Run checks
         run: npm run checks
