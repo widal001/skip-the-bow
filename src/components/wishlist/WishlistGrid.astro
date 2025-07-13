@@ -1,0 +1,60 @@
+---
+import type { Wishlist } from "@/db/schema";
+import WishlistCard from "@/components/wishlist/WishlistCard.astro";
+
+interface Props {
+  wishlists: Array<
+    Wishlist & {
+      wishlistItems: Array<{
+        gift: {
+          id: number;
+          slug: string;
+          name: string;
+          minPrice: number;
+          maxPrice: number;
+          giftTags?: Array<{
+            tag: {
+              name: string;
+            };
+          }>;
+        };
+      }>;
+    }
+  >;
+  tabletColumns?: number;
+  desktopColumns?: number;
+}
+
+const { wishlists, tabletColumns = 2, desktopColumns = 3 } = Astro.props;
+---
+
+<div
+  class="wishlist-grid"
+  style={`--tablet-columns: ${tabletColumns}; --desktop-columns: ${desktopColumns};`}
+>
+  {wishlists.map((wishlist) => <WishlistCard wishlist={wishlist} />)}
+</div>
+
+<style>
+  .wishlist-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+  }
+
+  /* Tablet and up (md: 768px) */
+  @media (min-width: 768px) {
+    .wishlist-grid {
+      grid-template-columns: repeat(var(--tablet-columns), minmax(0, 1fr));
+      gap: 1.5rem;
+    }
+  }
+
+  /* Desktop (lg: 1024px) */
+  @media (min-width: 1024px) {
+    .wishlist-grid {
+      grid-template-columns: repeat(var(--desktop-columns), minmax(0, 1fr));
+      gap: 2rem;
+    }
+  }
+</style>

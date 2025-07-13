@@ -1,7 +1,9 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import GiftGrid from "@/components/gift/GiftGrid.astro";
+import WishlistGrid from "@/components/wishlist/WishlistGrid.astro";
 import { getUserBookmarks } from "@/lib/services/bookmark-service";
+import { getUserWishlists } from "@/lib/services/wishlist-service";
 import { getCurrentUser } from "@/lib/services/user-service";
 import { db } from "@/db";
 
@@ -11,6 +13,8 @@ if (!user) {
 }
 
 const bookmarks = await getUserBookmarks(db, user.id);
+const wishlists = await getUserWishlists(db, user.id);
+
 const gifts = bookmarks.map((bookmark) => ({
   slug: bookmark.gift.slug,
   name: bookmark.gift.name,
@@ -28,11 +32,53 @@ const gifts = bookmarks.map((bookmark) => ({
 export const prerender = false;
 ---
 
-<Layout title="My bookmarks">
+<Layout title="Profile">
   <div class="container">
-    <h1>Profile</h1>
-    <h2>Bookmarked gifts</h2>
-    <GiftGrid gifts={gifts} tabletColumns={2} desktopColumns={3} />
+    <h1>My profile</h1>
+
+    <!-- Wishlists Section -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Wishlists</h2>
+        <p class="section-description">
+          Organize your favorite gifts into wishlists
+        </p>
+      </div>
+
+      {
+        wishlists.length > 0 ? (
+          <WishlistGrid
+            wishlists={wishlists}
+            tabletColumns={2}
+            desktopColumns={3}
+          />
+        ) : (
+          <div class="empty-state">
+            <p>You haven't created any wishlists yet.</p>
+            <p>Start by browsing gifts and adding them to wishlists!</p>
+          </div>
+        )
+      }
+    </section>
+
+    <!-- Bookmarked Gifts Section -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Saved gifts</h2>
+        <p class="section-description">Your saved gifts</p>
+      </div>
+
+      {
+        gifts.length > 0 ? (
+          <GiftGrid gifts={gifts} tabletColumns={2} desktopColumns={3} />
+        ) : (
+          <div class="empty-state">
+            <p>You haven't bookmarked any gifts yet.</p>
+            <p>Browse gifts to start building your collection!</p>
+          </div>
+        )
+      }
+    </section>
   </div>
 </Layout>
 
@@ -42,5 +88,47 @@ export const prerender = false;
     max-width: 1280px;
     margin: 0 auto;
     padding: 1rem;
+  }
+
+  /* Section styling */
+  .section {
+    margin-bottom: 3rem;
+  }
+
+  .section-header {
+    margin-bottom: 2rem;
+  }
+
+  .section-header h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .section-description {
+    color: #6b7280;
+    font-size: 1rem;
+    margin: 0;
+  }
+
+  /* Empty state */
+  .empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    background: #f9fafb;
+    border-radius: 0.75rem;
+    border: 2px dashed #d1d5db;
+  }
+
+  .empty-state p {
+    color: #6b7280;
+    margin: 0.5rem 0;
+  }
+
+  .empty-state p:first-child {
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: #374151;
   }
 </style>

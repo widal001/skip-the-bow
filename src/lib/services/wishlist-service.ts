@@ -100,7 +100,15 @@ export async function getWishlist(db: DrizzleDatabase, wishlistId: string) {
     with: {
       wishlistItems: {
         with: {
-          gift: true,
+          gift: {
+            with: {
+              giftTags: {
+                with: {
+                  tag: true,
+                },
+              },
+            },
+          },
         },
       },
     },
