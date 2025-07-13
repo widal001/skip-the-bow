@@ -1,0 +1,137 @@
+---
+import type { Wishlist } from "@/db/schema";
+
+interface Props {
+  wishlist: Wishlist & {
+    wishlistItems: Array<{
+      gift: {
+        id: number;
+        slug: string;
+        name: string;
+        minPrice: number;
+        maxPrice: number;
+      };
+    }>;
+  };
+}
+
+const { wishlist } = Astro.props;
+
+// Calculate total price range
+const totalMinPrice = wishlist.wishlistItems.reduce(
+  (sum, item) => sum + item.gift.minPrice,
+  0
+);
+const totalMaxPrice = wishlist.wishlistItems.reduce(
+  (sum, item) => sum + item.gift.maxPrice,
+  0
+);
+---
+
+<a href={`/wishlist/${wishlist.id}`} class="wishlist-card">
+  <div class="card-header">
+    <h3 class="wishlist-name">{wishlist.name}</h3>
+    {
+      wishlist.description && (
+        <p class="wishlist-description">{wishlist.description}</p>
+      )
+    }
+  </div>
+
+  <div class="card-content">
+    <div class="stats">
+      <div class="stat">
+        <span class="stat-label">Gifts</span>
+        <span class="stat-value">{wishlist.wishlistItems.length}</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Total Price</span>
+        <span class="stat-value">
+          ${totalMinPrice.toFixed(0)} - ${totalMaxPrice.toFixed(0)}
+        </span>
+      </div>
+    </div>
+  </div>
+</a>
+
+<style>
+  .wishlist-card {
+    display: block;
+    padding: 1.5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    background: white;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.2s ease-in-out;
+    hover: {
+      border-color: #3b82f6;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+      transform: translateY(-2px);
+    }
+  }
+
+  .card-header {
+    margin-bottom: 1rem;
+  }
+
+  .wishlist-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #111827;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .wishlist-description {
+    color: #6b7280;
+    font-size: 0.875rem;
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .stats {
+    display: flex;
+    gap: 1.5rem;
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .stat-value {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #111827;
+  }
+
+  @media (min-width: 768px) {
+    .wishlist-card {
+      padding: 2rem;
+    }
+
+    .card-content {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .stats {
+      gap: 2rem;
+    }
+  }
+</style>

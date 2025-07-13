@@ -12,6 +12,12 @@
   --color-gray-800: #1f2937;
   --color-gray-900: #111827;
 
+  --color-red-500: #EF4444;
+  --color-red-600: #DC2626;
+  --color-red-700: #B91C1C;
+  --color-red-800: #991B1B;
+  --color-red-900: #7F1D1D;
+
   /* Theme colors */
   --color-primary: #4338CA;    /* Indigo - matches donation category */
   --color-primary-light: #EEF2FF;

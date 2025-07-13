@@ -1,0 +1,69 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import GiftGrid from "@/components/gift/GiftGrid.astro";
+import { db } from "@/db";
+import { getWishlist } from "@/lib/services/wishlist-service";
+import type { Gift } from "@/content/types";
+
+export const prerender = false;
+
+interface Props {
+  id: string;
+}
+
+const { id } = Astro.params;
+
+// Fetch wishlist data
+const wishlist = await getWishlist(db, id as string);
+
+if (!wishlist) {
+  return Astro.redirect("/");
+}
+
+// Convert database gifts to content gift format
+const gifts: Gift[] = wishlist.wishlistItems.map((item) => ({
+  slug: item.gift.slug,
+  name: item.gift.name,
+  description: item.gift.description,
+  priceRange: {
+    min: item.gift.minPrice,
+    max: item.gift.maxPrice,
+  },
+  link: item.gift.link,
+  tags: item.gift.giftTags?.map((gt) => gt.tag.name) || [],
+  isHidden: item.gift.isHidden,
+  category: item.gift.category as any,
+}));
+---
+
+<Layout title={`${wishlist.name} - Wishlist`}>
+  <main class="container mx-auto px-4 py-8">
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">{wishlist.name}</h1>
+      {
+        wishlist.description && (
+          <p class="text-gray-600">{wishlist.description}</p>
+        )
+      }
+      <p class="text-sm text-gray-500 mt-2">
+        {gifts.length} gift{gifts.length !== 1 ? "s" : ""} in this wishlist
+      </p>
+    </div>
+
+    {
+      gifts.length > 0 ? (
+        <GiftGrid gifts={gifts} />
+      ) : (
+        <div class="text-center py-12">
+          <p class="text-gray-500 text-lg">This wishlist is empty.</p>
+          <a
+            href="/gifts"
+            class="text-blue-600 hover:text-blue-800 mt-4 inline-block"
+          >
+            Browse gifts to add to your wishlist
+          </a>
+        </div>
+      )
+    }
+  </main>
+</Layout>

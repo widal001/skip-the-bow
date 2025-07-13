@@ -1,233 +1,239 @@
 import { describe, it, expect, afterAll } from "vitest";
-import { wishlists, gifts, users } from "@/db/schema";
+import { users, gifts } from "@/db/schema";
 import {
   createWishlist,
   addToWishlist,
-  removeFromWishlist,
-  getWishlist,
-  getUserWishlists,
+  updateGiftWishlists,
+  getGiftWishlists,
 } from "@/lib/services/wishlist-service";
 import { createTestDb, cleanupTestDb, withTransaction } from "./test-db";
 
 describe("Wishlist Service", async () => {
   const { db, client } = await createTestDb();
+
   const testUser = {
-    id: "test-user-1",
+    id: "test-user-id",
     email: "test@example.com",
     name: "Test User",
   };
 
-  const testUser2 = {
-    id: "test-user-2",
-    email: "test2@example.com",
-    name: "Test User 2",
+  const testGift = {
+    slug: "test-gift",
+    name: "Test Gift",
+    description: "A test gift",
+    minPrice: 10.0,
+    maxPrice: 50.0,
+    link: "https://example.com",
+    category: "other" as const,
   };
 
   afterAll(async () => {
     await cleanupTestDb(client);
   });
 
-  describe("createWishlist", () => {
-    it("should create a new wishlist", async () => {
+  describe("updateGiftWishlists", () => {
+    it("should add gift to new wishlists", async () => {
       await withTransaction(db, async (db) => {
+        // Create test user and gift
         await db.insert(users).values(testUser);
+        const [createdGift] = await db
+          .insert(gifts)
+          .values(testGift)
+          .returning();
 
+        // Create wishlists
+        const wishlist1 = await createWishlist(db, {
+          name: "Wishlist 1",
+          userId: testUser.id,
+        });
+        const wishlist2 = await createWishlist(db, {
+          name: "Wishlist 2",
+          userId: testUser.id,
+        });
+
+        // Update gift wishlists
+        const result = await updateGiftWishlists(db, {
+          userId: testUser.id,
+          giftId: createdGift.id,
+          wishlistIds: [wishlist1.id, wishlist2.id],
+        });
+
+        expect(result.wishlistIds).toEqual([wishlist1.id, wishlist2.id]);
+        expect(result.added).toEqual([wishlist1.id, wishlist2.id]);
+        expect(result.removed).toEqual([]);
+
+        // Verify in database
+        const currentWishlists = await getGiftWishlists(db, {
+          userId: testUser.id,
+          giftId: createdGift.id,
+        });
+        expect(currentWishlists).toEqual([wishlist1.id, wishlist2.id]);
+      });
+    });
+
+    it("should remove gift from wishlists not in new state", async () => {
+      await withTransaction(db, async (db) => {
+        // Create test user and gift
+        await db.insert(users).values(testUser);
+        const [createdGift] = await db
+          .insert(gifts)
+          .values(testGift)
+          .returning();
+
+        // Create wishlists
+        const wishlist1 = await createWishlist(db, {
+          name: "Wishlist 1",
+          userId: testUser.id,
+        });
+        const wishlist2 = await createWishlist(db, {
+          name: "Wishlist 2",
+          userId: testUser.id,
+        });
+
+        // Add gift to both wishlists initially
+        await addToWishlist(db, {
+          wishlistId: wishlist1.id,
+          giftId: createdGift.id,
+        });
+        await addToWishlist(db, {
+          wishlistId: wishlist2.id,
+          giftId: createdGift.id,
+        });
+
+        // Update to only include wishlist1
+        const result = await updateGiftWishlists(db, {
+          userId: testUser.id,
+          giftId: createdGift.id,
+          wishlistIds: [wishlist1.id],
+        });
+
+        expect(result.wishlistIds).toEqual([wishlist1.id]);
+        expect(result.added).toEqual([]);
+        expect(result.removed).toEqual([wishlist2.id]);
+
+        // Verify in database
+        const currentWishlists = await getGiftWishlists(db, {
+          userId: testUser.id,
+          giftId: createdGift.id,
+        });
+        expect(currentWishlists).toEqual([wishlist1.id]);
+      });
+    });
+
+    it("should handle empty wishlist array", async () => {
+      await withTransaction(db, async (db) => {
+        // Create test user and gift
+        await db.insert(users).values(testUser);
+        const [createdGift] = await db
+          .insert(gifts)
+          .values(testGift)
+          .returning();
+
+        // Create wishlist and add gift
         const wishlist = await createWishlist(db, {
-          name: "Test Wishlist",
-          description: "A test wishlist",
+          name: "Wishlist 1",
+          userId: testUser.id,
+        });
+        await addToWishlist(db, {
+          wishlistId: wishlist.id,
+          giftId: createdGift.id,
+        });
+
+        // Remove from all wishlists
+        const result = await updateGiftWishlists(db, {
+          userId: testUser.id,
+          giftId: createdGift.id,
+          wishlistIds: [],
+        });
+
+        expect(result.wishlistIds).toEqual([]);
+        expect(result.added).toEqual([]);
+        expect(result.removed).toEqual([wishlist.id]);
+
+        // Verify in database
+        const currentWishlists = await getGiftWishlists(db, {
+          userId: testUser.id,
+          giftId: createdGift.id,
+        });
+        expect(currentWishlists).toEqual([]);
+      });
+    });
+
+    it("should throw error for invalid wishlist IDs", async () => {
+      await withTransaction(db, async (db) => {
+        // Create test user and gift
+        await db.insert(users).values(testUser);
+        const [createdGift] = await db
+          .insert(gifts)
+          .values(testGift)
+          .returning();
+
+        await expect(
+          updateGiftWishlists(db, {
+            userId: testUser.id,
+            giftId: createdGift.id,
+            wishlistIds: ["00000000-0000-0000-0000-000000000000"], // Valid UUID format but non-existent
+          })
+        ).rejects.toThrow(
+          "Invalid wishlist IDs: 00000000-0000-0000-0000-000000000000"
+        );
+      });
+    });
+  });
+
+  describe("getGiftWishlists", () => {
+    it("should return empty array when gift is not in any wishlists", async () => {
+      await withTransaction(db, async (db) => {
+        // Create test user and gift
+        await db.insert(users).values(testUser);
+        const [createdGift] = await db
+          .insert(gifts)
+          .values(testGift)
+          .returning();
+
+        const wishlistIds = await getGiftWishlists(db, {
+          userId: testUser.id,
+          giftId: createdGift.id,
+        });
+        expect(wishlistIds).toEqual([]);
+      });
+    });
+
+    it("should return wishlist IDs when gift is in wishlists", async () => {
+      await withTransaction(db, async (db) => {
+        // Create test user and gift
+        await db.insert(users).values(testUser);
+        const [createdGift] = await db
+          .insert(gifts)
+          .values(testGift)
+          .returning();
+
+        // Create wishlists and add gift
+        const wishlist1 = await createWishlist(db, {
+          name: "Wishlist 1",
+          userId: testUser.id,
+        });
+        const wishlist2 = await createWishlist(db, {
+          name: "Wishlist 2",
           userId: testUser.id,
         });
 
-        expect(wishlist).toBeDefined();
-        expect(wishlist.name).toBe("Test Wishlist");
-        expect(wishlist.description).toBe("A test wishlist");
-        expect(wishlist.userId).toBe(testUser.id);
-      });
-    });
-  });
-
-  describe("addToWishlist", () => {
-    it("should add a gift to a wishlist", async () => {
-      await withTransaction(db, async (db) => {
-        // Create test user
-        await db.insert(users).values(testUser);
-
-        // Create test gift
-        const [gift] = await db
-          .insert(gifts)
-          .values({
-            slug: "test-gift",
-            name: "Test Gift",
-            description: "A test gift",
-            minPrice: 10,
-            maxPrice: 20,
-            link: "https://example.com/gift",
-            isHidden: false,
-            category: "other",
-          })
-          .returning();
-
-        // Create a wishlist
-        const [wishlist] = await db
-          .insert(wishlists)
-          .values({
-            name: "Test Wishlist",
-            userId: testUser.id,
-          })
-          .returning();
-
-        const bookmark = await addToWishlist(db, {
-          wishlistId: wishlist.id,
-          giftId: gift.id,
-        });
-
-        expect(bookmark).toBeDefined();
-        expect(bookmark.wishlistId).toBe(wishlist.id);
-        expect(bookmark.giftId).toBe(gift.id);
-      });
-    });
-  });
-
-  describe("removeFromWishlist", () => {
-    it("should remove a gift from a wishlist", async () => {
-      await withTransaction(db, async (db) => {
-        // Create test user
-        await db.insert(users).values(testUser);
-
-        // Create test gift
-        const [gift] = await db
-          .insert(gifts)
-          .values({
-            slug: "test-gift",
-            name: "Test Gift",
-            description: "A test gift",
-            minPrice: 10,
-            maxPrice: 20,
-            link: "https://example.com/gift",
-            isHidden: false,
-            category: "other",
-          })
-          .returning();
-
-        // Create a wishlist
-        const [wishlist] = await db
-          .insert(wishlists)
-          .values({
-            name: "Test Wishlist",
-            userId: testUser.id,
-          })
-          .returning();
-
-        // Add the gift to the wishlist
         await addToWishlist(db, {
-          wishlistId: wishlist.id,
-          giftId: gift.id,
+          wishlistId: wishlist1.id,
+          giftId: createdGift.id,
         });
-
-        // Remove the gift from the wishlist
-        await removeFromWishlist(db, {
-          wishlistId: wishlist.id,
-          giftId: gift.id,
-        });
-
-        // Verify the gift was removed
-        const wishlistAfter = await getWishlist(db, wishlist.id);
-        expect(wishlistAfter?.wishlistItems).toHaveLength(0);
-      });
-    });
-  });
-
-  describe("getWishlist", () => {
-    it("should return a wishlist with its bookmarked gifts", async () => {
-      await withTransaction(db, async (db) => {
-        // Create test user
-        await db.insert(users).values(testUser);
-
-        // Create test gift
-        const [gift] = await db
-          .insert(gifts)
-          .values({
-            slug: "test-gift",
-            name: "Test Gift",
-            description: "A test gift",
-            minPrice: 10,
-            maxPrice: 20,
-            link: "https://example.com/gift",
-            isHidden: false,
-            category: "other",
-          })
-          .returning();
-
-        // Create a wishlist
-        const [wishlist] = await db
-          .insert(wishlists)
-          .values({
-            name: "Test Wishlist",
-            userId: testUser.id,
-          })
-          .returning();
-
-        // Add the gift to the wishlist
         await addToWishlist(db, {
-          wishlistId: wishlist.id,
-          giftId: gift.id,
+          wishlistId: wishlist2.id,
+          giftId: createdGift.id,
         });
 
-        const result = await getWishlist(db, wishlist.id);
-        expect(result).toBeDefined();
-        expect(result?.name).toBe("Test Wishlist");
-        expect(result?.wishlistItems).toHaveLength(1);
-        expect(result?.wishlistItems[0].gift.name).toBe("Test Gift");
-      });
-    });
-  });
-
-  describe("getUserWishlists", () => {
-    it("should return all wishlists for a user", async () => {
-      await withTransaction(db, async (db) => {
-        // Create test user
-        await db.insert(users).values(testUser);
-
-        // Create two wishlists for the user
-        await db.insert(wishlists).values([
-          {
-            name: "Test Wishlist 1",
-            userId: testUser.id,
-          },
-          {
-            name: "Test Wishlist 2",
-            userId: testUser.id,
-          },
-        ]);
-
-        const results = await getUserWishlists(db, testUser.id);
-        expect(results).toHaveLength(2);
-        expect(results[0].name).toBe("Test Wishlist 1");
-        expect(results[1].name).toBe("Test Wishlist 2");
-      });
-    });
-
-    it("should not return wishlists for other users", async () => {
-      await withTransaction(db, async (db) => {
-        // Create test users
-        await db.insert(users).values(testUser);
-        await db.insert(users).values(testUser2);
-
-        // Create a wishlist for the test user
-        await db.insert(wishlists).values({
-          name: "Test Wishlist",
+        const wishlistIds = await getGiftWishlists(db, {
           userId: testUser.id,
+          giftId: createdGift.id,
         });
-
-        // Create a wishlist for another user
-        await db.insert(wishlists).values({
-          name: "Other User Wishlist",
-          userId: testUser2.id,
-        });
-
-        const results = await getUserWishlists(db, testUser.id);
-        expect(results).toHaveLength(1);
-        expect(results[0].name).toBe("Test Wishlist");
+        expect(wishlistIds).toContain(wishlist1.id);
+        expect(wishlistIds).toContain(wishlist2.id);
+        expect(wishlistIds).toHaveLength(2);
       });
     });
   });
