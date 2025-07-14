@@ -17,23 +17,6 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Cache Docker layers
-        uses: actions/cache@v4
-        with:
-          # Cache Docker build layers to speed up subsequent builds
-          path: /tmp/.buildx-cache
-          # Primary cache key: OS + buildx prefix + commit SHA
-          # This creates a unique cache entry for each commit
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          # Fallback restore keys for cache reuse
-          # If exact key not found, try to use any cache from same OS + buildx prefix
-          # This allows reusing cache from previous commits (very effective for Docker layers)
-          restore-keys: |
-            ${{ runner.os }}-buildx-
-
       - name: Install dependencies
         # Installs dependencies directly from package.lock
         # and skips dependency resolution etc.
