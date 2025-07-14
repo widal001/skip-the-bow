@@ -4,6 +4,8 @@ on:
   pull_request:
 
 env:
+  AUTH_SECRET: "test_secret"
+  AUTH_TRUST_HOST: "true"
   GITHUB_CLIENT_ID: "test_client_id"
   GITHUB_CLIENT_SECRET: "test_client_secret"
   NETLIFY_DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/skipthebow"
