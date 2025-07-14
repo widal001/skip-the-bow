@@ -4,6 +4,7 @@ import GiftGrid from "@/components/gift/GiftGrid.astro";
 import { db } from "@/db";
 import { getWishlist } from "@/lib/services/wishlist-service";
 import type { Gift } from "@/content/types";
+import type { GiftCategory } from "@/content/types";
 
 export const prerender = false;
 
@@ -32,7 +33,7 @@ const gifts: Gift[] = wishlist.wishlistItems.map((item) => ({
   link: item.gift.link,
   tags: item.gift.giftTags?.map((gt) => gt.tag.name) || [],
   isHidden: item.gift.isHidden,
-  category: item.gift.category as any,
+  category: item.gift.category as GiftCategory,
 }));
 ---
 

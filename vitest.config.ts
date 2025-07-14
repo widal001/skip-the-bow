@@ -4,6 +4,7 @@ import path from "path";
 export default defineConfig({
   test: {
     setupFiles: ["./vitest.setup.ts"],
+    globalSetup: ["./vitest-global.setup.ts"],
   },
   resolve: {
     alias: {

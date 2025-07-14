@@ -24,27 +24,6 @@ export async function createTestDb() {
 export async function cleanupTestDb(client: postgres.Sql) {
   await client.end();
 }
-
-export async function cleanAllTables(db: DrizzleDatabase) {
-  // Disable foreign key checks temporarily
-  await db.execute(sql`SET session_replication_role = 'replica';`);
-
-  // Delete all data from tables in the correct order
-  await db.execute(sql`
-    TRUNCATE TABLE 
-      bookmarks,
-      wishlists,
-      gift_tags,
-      gifts,
-      tags,
-      users
-    RESTART IDENTITY CASCADE;
-  `);
-
-  // Re-enable foreign key checks
-  await db.execute(sql`SET session_replication_role = 'origin';`);
-}
-
 // Helper to run a test in a transaction
 export async function withTransaction<T>(
   db: DrizzleDatabase,

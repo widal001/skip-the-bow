@@ -12,49 +12,49 @@
   --color-gray-800: #1f2937;
   --color-gray-900: #111827;
 
-  --color-red-500: #EF4444;
-  --color-red-600: #DC2626;
-  --color-red-700: #B91C1C;
-  --color-red-800: #991B1B;
-  --color-red-900: #7F1D1D;
+  --color-red-500: #ef4444;
+  --color-red-600: #dc2626;
+  --color-red-700: #b91c1c;
+  --color-red-800: #991b1b;
+  --color-red-900: #7f1d1d;
 
   /* Theme colors */
-  --color-primary: #4338CA;    /* Indigo - matches donation category */
-  --color-primary-light: #EEF2FF;
-  --color-primary-dark: #312E81;
-  
-  --color-secondary: #059669;  /* Emerald - matches subscription category */
-  --color-secondary-light: #ECFDF5;
-  --color-secondary-dark: #065F46;
-  
-  --color-accent: #D97706;     /* Amber - matches experience category */
-  --color-accent-light: #FFFBEB;
-  --color-accent-dark: #92400E;
+  --color-primary: #4338ca; /* Indigo - matches donation category */
+  --color-primary-light: #eef2ff;
+  --color-primary-dark: #312e81;
+
+  --color-secondary: #059669; /* Emerald - matches subscription category */
+  --color-secondary-light: #ecfdf5;
+  --color-secondary-dark: #065f46;
+
+  --color-accent: #d97706; /* Amber - matches experience category */
+  --color-accent-light: #fffbeb;
+  --color-accent-dark: #92400e;
 
   /* Category colors - Donation */
-  --color-donation-primary: #4338CA;
-  --color-donation-secondary: #EEF2FF;
-  --color-donation-accent: #6366F1;
+  --color-donation-primary: #4338ca;
+  --color-donation-secondary: #eef2ff;
+  --color-donation-accent: #6366f1;
 
   /* Category colors - Subscription */
   --color-subscription-primary: #059669;
-  --color-subscription-secondary: #ECFDF5;
-  --color-subscription-accent: #10B981;
+  --color-subscription-secondary: #ecfdf5;
+  --color-subscription-accent: #10b981;
 
   /* Category colors - Experience */
-  --color-experience-primary: #D97706;
-  --color-experience-secondary: #FFFBEB;
-  --color-experience-accent: #F59E0B;
+  --color-experience-primary: #d97706;
+  --color-experience-secondary: #fffbeb;
+  --color-experience-accent: #f59e0b;
 
   /* Category colors - Giftcard */
-  --color-giftcard-primary: #7C3AED;
-  --color-giftcard-secondary: #F5F3FF;
-  --color-giftcard-accent: #8B5CF6;
+  --color-giftcard-primary: #7c3aed;
+  --color-giftcard-secondary: #f5f3ff;
+  --color-giftcard-accent: #8b5cf6;
 
   /* Category colors - Other */
-  --color-other-primary: #BE185D;
-  --color-other-secondary: #FDF2F8;
-  --color-other-accent: #EC4899;
+  --color-other-primary: #be185d;
+  --color-other-secondary: #fdf2f8;
+  --color-other-accent: #ec4899;
 }
 
 /* Category color mapping */
@@ -105,4 +105,4 @@
   --theme-color: var(--color-accent);
   --theme-color-light: var(--color-accent-light);
   --theme-color-dark: var(--color-accent-dark);
-} 
+}

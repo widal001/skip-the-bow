@@ -1,0 +1,51 @@
+name: "CI - Run checks"
+
+on:
+  pull_request:
+
+env:
+  AUTH_SECRET: "test_secret"
+  AUTH_TRUST_HOST: "true"
+  GITHUB_CLIENT_ID: "test_client_id"
+  GITHUB_CLIENT_SECRET: "test_client_secret"
+  NETLIFY_DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/skipthebow"
+  TEST_DATABASE_URL: "postgresql://postgres:postgres@localhost:5433/skipthebow_test"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        # Installs dependencies directly from package.lock
+        # and skips dependency resolution etc.
+        run: npm ci
+
+      - name: Verify Docker is available
+        run: |
+          docker --version
+          docker compose version
+
+      - name: Pull Docker images
+        run: |
+          docker pull postgres:16-alpine
+          docker compose pull
+
+      - name: Start database
+        run: docker compose up -d postgres postgres_test
+
+      - name: Wait for database to be ready
+        run: |
+          # Wait for main database
+          timeout 30 bash -c 'until docker compose exec -T postgres pg_isready -U postgres; do sleep 1; done'
+          # Wait for test database  
+          timeout 30 bash -c 'until docker compose exec -T postgres_test pg_isready -U postgres; do sleep 1; done'
+
+      - name: Run checks
+        run: npm run checks
+
+      - name: Run tests
+        run: npm run test

@@ -41,12 +41,8 @@
           "name": "bookmarks_user_id_users_id_fk",
           "tableFrom": "bookmarks",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -54,12 +50,8 @@
           "name": "bookmarks_gift_id_gifts_id_fk",
           "tableFrom": "bookmarks",
           "tableTo": "gifts",
-          "columnsFrom": [
-            "gift_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["gift_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -67,10 +59,7 @@
       "compositePrimaryKeys": {
         "bookmarks_user_id_gift_id_pk": {
           "name": "bookmarks_user_id_gift_id_pk",
-          "columns": [
-            "user_id",
-            "gift_id"
-          ]
+          "columns": ["user_id", "gift_id"]
         }
       },
       "uniqueConstraints": {},
@@ -115,12 +104,8 @@
           "name": "gift_tags_gift_id_gifts_id_fk",
           "tableFrom": "gift_tags",
           "tableTo": "gifts",
-          "columnsFrom": [
-            "gift_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["gift_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -128,12 +113,8 @@
           "name": "gift_tags_tag_id_tags_id_fk",
           "tableFrom": "gift_tags",
           "tableTo": "tags",
-          "columnsFrom": [
-            "tag_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tag_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -141,10 +122,7 @@
       "compositePrimaryKeys": {
         "gift_tags_gift_id_tag_id_pk": {
           "name": "gift_tags_gift_id_tag_id_pk",
-          "columns": [
-            "gift_id",
-            "tag_id"
-          ]
+          "columns": ["gift_id", "tag_id"]
         }
       },
       "uniqueConstraints": {},
@@ -233,9 +211,7 @@
         "gifts_slug_unique": {
           "name": "gifts_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},
@@ -280,9 +256,7 @@
         "tags_name_unique": {
           "name": "tags_name_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "name"
-          ]
+          "columns": ["name"]
         }
       },
       "policies": {},
@@ -333,9 +307,7 @@
         "users_email_unique": {
           "name": "users_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -379,12 +351,8 @@
           "name": "wishlist_items_wishlist_id_wishlists_id_fk",
           "tableFrom": "wishlist_items",
           "tableTo": "wishlists",
-          "columnsFrom": [
-            "wishlist_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["wishlist_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -392,12 +360,8 @@
           "name": "wishlist_items_gift_id_gifts_id_fk",
           "tableFrom": "wishlist_items",
           "tableTo": "gifts",
-          "columnsFrom": [
-            "gift_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["gift_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -405,10 +369,7 @@
       "compositePrimaryKeys": {
         "wishlist_items_wishlist_id_gift_id_pk": {
           "name": "wishlist_items_wishlist_id_gift_id_pk",
-          "columns": [
-            "wishlist_id",
-            "gift_id"
-          ]
+          "columns": ["wishlist_id", "gift_id"]
         }
       },
       "uniqueConstraints": {},
@@ -465,12 +426,8 @@
           "name": "wishlists_user_id_users_id_fk",
           "tableFrom": "wishlists",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }

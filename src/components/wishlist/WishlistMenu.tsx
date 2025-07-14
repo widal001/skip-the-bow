@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import { useStore } from "@nanostores/react";
 import {
-  $wishlistDataStore,
   wishlistDataActions,
+  $wishlistDataStore,
 } from "@/lib/stores/wishlist/useWishlistStore";
 import styles from "./WishlistMenu.module.css";
 
@@ -25,8 +25,8 @@ const WishlistMenu: React.FC<WishlistMenuProps> = ({
   const menuRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
-  // Subscribe to wishlist data to determine save button state
-  const wishlistData = useStore($wishlistDataStore);
+  // Subscribe to wishlist data to trigger re-renders when changes occur
+  useStore($wishlistDataStore);
 
   // Reactive state calculations
   const hasChanges = wishlistDataActions.hasChanges();
