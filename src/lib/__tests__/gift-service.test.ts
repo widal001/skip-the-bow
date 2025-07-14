@@ -1,4 +1,4 @@
-import { describe, it, expect, afterAll } from "vitest";
+import { describe, it, expect } from "vitest";
 import { gifts, tags, giftTags } from "@/db/schema";
 import {
   getGiftIdeas,
@@ -7,14 +7,10 @@ import {
   searchGifts,
   upsertGift,
 } from "@/lib/services/gift-service";
-import { createTestDb, cleanupTestDb, withTransaction } from "./test-db";
+import { createTestDb, withTransaction } from "./test-db";
 
 describe("Gift Service", async () => {
-  const { db, client } = await createTestDb();
-
-  afterAll(async () => {
-    await cleanupTestDb(client);
-  });
+  const { db } = await createTestDb();
 
   describe("getGiftIdeas", () => {
     it("should return all non-hidden gifts with their tags", async () => {

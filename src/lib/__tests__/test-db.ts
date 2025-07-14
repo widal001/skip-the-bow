@@ -1,29 +1,17 @@
-import { drizzle } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
-import * as schema from "../../db/schema";
 import * as dotenv from "dotenv";
 import type { DrizzleDatabase } from "../../db";
 import { sql } from "drizzle-orm";
 
 dotenv.config();
 
+// Import the shared database instance from vitest setup
+import { db as sharedDb, client as sharedClient } from "../../../vitest.setup";
+
 export async function createTestDb() {
-  if (!process.env.TEST_DATABASE_URL) {
-    throw new Error("TEST_DATABASE_URL environment variable is not set");
-  }
-
-  const client = postgres(process.env.TEST_DATABASE_URL, {
-    max: 1,
-    onnotice: () => {}, // Suppress notices
-  });
-  const db = drizzle(client, { schema });
-
-  return { db, client };
+  // Return the shared database instance instead of creating a new one
+  return { db: sharedDb, client: sharedClient };
 }
 
-export async function cleanupTestDb(client: postgres.Sql) {
-  await client.end();
-}
 // Helper to run a test in a transaction
 export async function withTransaction<T>(
   db: DrizzleDatabase,

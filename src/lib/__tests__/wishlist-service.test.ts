@@ -1,4 +1,4 @@
-import { describe, it, expect, afterAll } from "vitest";
+import { describe, it, expect } from "vitest";
 import { users, gifts } from "@/db/schema";
 import {
   createWishlist,
@@ -6,10 +6,10 @@ import {
   updateGiftWishlists,
   getGiftWishlists,
 } from "@/lib/services/wishlist-service";
-import { createTestDb, cleanupTestDb, withTransaction } from "./test-db";
+import { createTestDb, withTransaction } from "./test-db";
 
 describe("Wishlist Service", async () => {
-  const { db, client } = await createTestDb();
+  const { db } = await createTestDb();
 
   const testUser = {
     id: "test-user-id",
@@ -26,10 +26,6 @@ describe("Wishlist Service", async () => {
     link: "https://example.com",
     category: "other" as const,
   };
-
-  afterAll(async () => {
-    await cleanupTestDb(client);
-  });
 
   describe("updateGiftWishlists", () => {
     it("should add gift to new wishlists", async () => {

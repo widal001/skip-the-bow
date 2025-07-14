@@ -1,4 +1,4 @@
-import { describe, it, expect, afterAll } from "vitest";
+import { describe, it, expect } from "vitest";
 import { users } from "@/db/schema";
 import {
   createUser,
@@ -8,19 +8,15 @@ import {
   deleteUser,
   findOrCreateUser,
 } from "@/lib/services/user-service";
-import { createTestDb, cleanupTestDb, withTransaction } from "./test-db";
+import { createTestDb, withTransaction } from "./test-db";
 
 describe("User Service", async () => {
-  const { db, client } = await createTestDb();
+  const { db } = await createTestDb();
   const testUser = {
     id: "test-user-1",
     email: "test@example.com",
     name: "Test User",
   };
-
-  afterAll(async () => {
-    await cleanupTestDb(client);
-  });
 
   describe("createUser", () => {
     it("should create a new user successfully", async () => {

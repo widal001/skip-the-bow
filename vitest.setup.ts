@@ -4,6 +4,7 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as dotenv from "dotenv";
 import { vi } from "vitest";
+import * as schema from "./src/db/schema";
 
 dotenv.config();
 
@@ -18,6 +19,11 @@ const client = postgres(process.env.TEST_DATABASE_URL!, {
   onnotice: () => {}, // Suppress notices
 });
 
+// Create shared database instance
+const db = drizzle(client, { schema });
+
 // Run migrations
-const db = drizzle(client);
 await migrate(db, { migrationsFolder: "./migrations" });
+
+// Export the shared database instance for tests
+export { db, client };

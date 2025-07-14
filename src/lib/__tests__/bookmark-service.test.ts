@@ -1,4 +1,4 @@
-import { describe, it, expect, afterAll } from "vitest";
+import { describe, it, expect } from "vitest";
 import { users, gifts } from "@/db/schema";
 import {
   addGiftToBookmarks,
@@ -6,10 +6,10 @@ import {
   isGiftBookmarked,
   getUserBookmarks,
 } from "@/lib/services/bookmark-service";
-import { createTestDb, cleanupTestDb, withTransaction } from "./test-db";
+import { createTestDb, withTransaction } from "./test-db";
 
 describe("Bookmark Service", async () => {
-  const { db, client } = await createTestDb();
+  const { db } = await createTestDb();
 
   const testUser = {
     id: "test-user-1",
@@ -36,10 +36,6 @@ describe("Bookmark Service", async () => {
     link: "https://example.com/gift2",
     category: "experience" as const,
   };
-
-  afterAll(async () => {
-    await cleanupTestDb(client);
-  });
 
   describe("addGiftToBookmarks", () => {
     it("should add a gift to user's bookmarks successfully", async () => {
