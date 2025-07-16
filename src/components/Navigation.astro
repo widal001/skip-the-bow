@@ -149,7 +149,7 @@ const user = session?.user;
 
   document.querySelector("#login")?.addEventListener("click", async () => {
     sessionStorage.removeItem("isLoggedIn");
-    await signIn("github");
+    await signIn("google");
   });
 
   document.querySelector("#logout")?.addEventListener("click", async () => {
