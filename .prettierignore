@@ -3,3 +3,4 @@ dist/
 .astro/
 node_modules/ 
 netlify/
+.github/pull_request_template.md
