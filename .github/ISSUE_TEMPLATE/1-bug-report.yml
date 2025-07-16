@@ -1,6 +1,5 @@
 name: Bug Report
 description: Report a bug
-type: Bug
 body:
   - type: textarea
     id: summary
