@@ -1,6 +1,5 @@
 name: Internal - Task
 description: Describe a task that needs to be completed
-type: Task
 body:
   - type: textarea
     id: summary
