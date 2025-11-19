@@ -27,7 +27,7 @@
     "@nanostores/react": "^1.0.0",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
-    "astro": "^5.6.1",
+    "astro": "^5.15.9",
     "auth-astro": "^4.2.0",
     "dotenv": "^16.4.5",
     "drizzle-kit": "^0.31.1",
